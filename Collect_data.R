@@ -1,6 +1,6 @@
 library(tidyverse)
 library(eurostat)
-library(jsonlite)
+library(RJSONIO)
 library(data.table)
 library(httr)
 library(dplyr)
@@ -67,7 +67,7 @@ response <- httr::POST(url = "https://api.statworx.com/covid",
 
 # Convert to data frame
 content <- rawToChar(response$content)
-covid <- data.frame(fromJSON(content))
+covid <- data.frame(fromJSON(content, nullValue=NA))
 
 test <- subset(covid, covid$code %in% pop_eurostat$geo)
 length(table(test$code)) # Should be 27
