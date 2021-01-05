@@ -5,6 +5,7 @@ library(lubridate)
 library(rnoaa)
 library(jsonlite)
 library(httr)
+library(data.table)
 
 source("functions/Data_preparation_functions.R")
 source("data_collection/Save_data.R")
