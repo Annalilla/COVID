@@ -5,7 +5,7 @@ old_tdata <- read.csv("data/tdata.csv")
 source("data_collection/Save_data.R")
 source("data_collection/Collect_data.R")
 source("data_collection/Merge_data.R")
-source("data_collection/Data_revision_functions.R")
+source("functions/Data_revision_functions.R")
 
 to_compare <- tdata[which(tdata$date <= old_tdata$date),]
 
