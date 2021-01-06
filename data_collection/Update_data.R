@@ -178,6 +178,16 @@ fb <- prepare_fb(fb)
 tdata <- replace_old(fb, vars_to_drop = c("country_code", "date"),
                      vars_to_merge = c("country_code", "date"))
 
+# Vaccination
+url_vaccin <- "https://covid.ourworldindata.org/data/owid-covid-data.csv"
+vaccination <- fread(url_vaccin)
+
+vaccination <- prepare_vaccination(vaccination)
+
+# Replace NAs with new values
+tdata <- replace_old(vaccination, vars_to_drop = c("country", "date"),
+                     vars_to_merge = c("country", "date"))
+
 tdata <- tdata[names(old_tdata)]
 tdata <- tdata[order(tdata$country, tdata$date),]
 
