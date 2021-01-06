@@ -111,6 +111,13 @@ covid <- prepare_covid(covid)
 # Merging with covid
 tdata <- merge(covid, tdata, by = c("country", "date"), all = TRUE)
 
+# Vaccination
+vaccination <- prepare_vaccination(vaccination)
+
+# Merging with vaccination
+tdata <- merge(tdata, vaccination, by = c("country", "date"), all.x = TRUE)
+
+
 # Year and week numeric
 tdata$year <- as.numeric(tdata$year)
 tdata$week <- as.numeric(tdata$week)
