@@ -86,3 +86,7 @@ for(i in unique(capitals$country_fb)){
 available <- c("US", "BR", "MX", "IN", "GB", "JP", "DE", "IT", "AR", "ID", "CO", "TR", "FR", "EG", "VN", "PH", "PK", "BD", "RO", "PL", "TH", "MY", "NG")
 capitals$country_code_iso2[which(capitals$country_code_iso2 %in% available)]
 
+# Vaccination
+# https://github.com/owid/covid-19-data/tree/master/public/data
+url_vaccin <- "https://covid.ourworldindata.org/data/owid-covid-data.csv"
+vaccination <- fread(url_vaccin)
