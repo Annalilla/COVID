@@ -27,7 +27,7 @@ show_new_vars()
 #old_tdata <- update_var("tavg", records = "all")
 
 # Add new variables
-#add_new_var("fb_data.dc_se_unw")
+#old_tdata <- add_new_var("fb_data.dc_se_unw")
 
 # Use only the new data
 #old_tdata <- to_compare
