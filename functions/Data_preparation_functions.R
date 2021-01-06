@@ -138,4 +138,32 @@ prepare_fb <- function(fb_dat){
   colnames(fb_dat)[which(colnames(fb_dat) == "fb_data.survey_date")] <- "date"
   return(fb_dat)
 }
+                     
+#
+# Vaccination
+# Replace NAs before the first vaccination in the country with 0
+replace_na_before_first_vacc <- function(dat){
+  nonmissing <- dat[which(rowSums(dat[, -c(1:3)], na.rm = TRUE) > 0),]
+  first_date <- nonmissing %>%
+    group_by(iso_code) %>%
+    summarise(first = min(date))
+  dat <- merge(dat, first_date, by = "iso_code", all.x = TRUE)
+  dat[which(dat$date < dat$first),] <- dat[which(dat$date < dat$first),] %>%
+    replace(is.na(.), 0)
+  dat <- subset(dat, select = -first)
+  return(dat)
+}
+
+# Prepare vaccination
+prepare_vaccination <- function(vaccine_dat){
+  vaccine_dat <- vaccine_dat[which(vaccine_dat$iso_code %in% capitals$country_code_iso)]
+  vaccine_cols <- which(grepl("vaccin", colnames(vaccine_dat)))
+  vaccine_dat <- vaccine_dat %>%
+    subset(select = c(iso_code, location, date, vaccine_cols))
+  vaccine_dat <- replace_na_before_first_vacc(vaccine_dat)
+  colnames(vaccine_dat)[which(colnames(vaccine_dat) == "location")] <- "country"
+  vaccine_dat$date <- as.character(vaccine_dat$date)
+  return(vaccine_dat)
+} 
+
 
