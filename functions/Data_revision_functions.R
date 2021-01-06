@@ -55,6 +55,7 @@ update_var <- function(varname, records = "all"){
 add_new_var <- function(varname){
   old_tdata <- cbind(old_tdata, to_compare[, which(colnames(to_compare) == varname)])
   colnames(old_tdata)[ncol(old_tdata)] <- varname
+  return(old_tdata)
 }
 
 
