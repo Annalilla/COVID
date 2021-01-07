@@ -7,7 +7,7 @@ source("data_collection/Collect_data.R")
 source("data_collection/Merge_data.R")
 source("functions/Data_revision_functions.R")
 
-to_compare <- tdata[which(tdata$date <= old_tdata$date),]
+to_compare <- tdata[which(tdata$date <= max(old_tdata$date)),]
 
 differences <- list()
 for(i in 1:ncol(old_tdata)){
