@@ -88,7 +88,7 @@ response_testing <- merge(response_testing, capitals[,c("country", "country_code
 
 #
 # Merging with temperature
-resp_test_temp <- merge(response_testing, tempavg, by = c("country_code", "date"), all = TRUE)
+resp_test_temp <- merge(response_testing, tempavg, by = c("country_code", "date"), all = TRUE) #tempavg már nem másolódik hozzá, de nincs hibaüzenet
 # Adding year, week number and country
 resp_test_temp$year[which(is.na(resp_test_temp$year))] <- str_extract(resp_test_temp$date[which(is.na(resp_test_temp$year))], "^\\d+")
 resp_test_temp$week[which(is.na(resp_test_temp$week))] <- strftime(resp_test_temp$date[which(is.na(resp_test_temp$week))], format = "%V")
@@ -103,7 +103,7 @@ colnames(resp_test_temp)[colnames(resp_test_temp) == "country.x"] <- "country"
 fb <- prepare_fb(fb)
 
 # Merging with fb data
-tdata <- merge(resp_test_temp, fb, by = c("country_code", "date"), all = TRUE)
+tdata <- merge(resp_test_temp, fb, by = c("country_code", "date"), all = TRUE) #fb nem másolódik hozzá, de nincs hibaüzenet
 
 # Covid
 covid <- prepare_covid(covid)
