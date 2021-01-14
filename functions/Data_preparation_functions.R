@@ -91,8 +91,8 @@ prepare_testing <- function(test_dat, rangefrom = NA){
     test_dat <- filter(test_dat, week >= rangefrom)
   }
   
-  # Filtering out non-eu countries
-  test_dat <- test_dat[which(test_dat$country %in% capitals$country),]
+  # Filtering out non-eu countries and subnational records
+  test_dat <- test_dat[which((test_dat$country %in% capitals$country) & (test_dat$testing_level == "national")),]
   
   return(test_dat)
 }
