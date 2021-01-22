@@ -1,6 +1,7 @@
 library(lubridate)
 
 source("functions/Data_preparation_functions.R")
+source("functions/Data_cleansing_functions.R")
 
 ### Country characteristics
 
@@ -68,14 +69,17 @@ country_char <- country_char[country_char$geo %in% capitals$country_code_iso2,]
 #
 # Weather
 tempavg <- prepare_weather(weather)
+tempavg <- clean_weather(tempavg)
 
 #
 # Response measurements
 response <- prepare_response(response, rangefrom = NA)
+response <- clean_reponse(response)
 
 #
 # Testing
 testing <- prepare_testing(testing, rangefrom = NA)
+testing <- clean_testing(testing)
 
 #
 # Merging testing and response
@@ -112,6 +116,7 @@ tdata <- merge(covid, tdata, by = c("country", "date"), all = TRUE)
 
 # Vaccination
 vaccination <- prepare_vaccination(vaccination)
+vaccination <- clean_vaccination(vaccination)
 
 # Merging with vaccination
 tdata <- merge(tdata, vaccination, by = c("country", "date"), all.x = TRUE)
