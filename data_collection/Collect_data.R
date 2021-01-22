@@ -69,9 +69,12 @@ for(i in unique(capitals$country_fb)){
       if(nrow(act_signal) == 0){
         act_signal <- data.frame(fb_content)
       }else{
-        act_signal <- cbind(act_signal, data.frame(fb_content))
+        #act_signal <- cbind(act_signal, data.frame(fb_content))
+        act_signal <- merge(act_signal, data.frame(fb_content),
+                            by = c("data.survey_date", "data.country", "data.iso_code", "data.gid_0", "status"), all = TRUE)
       }
     }
+    #cat(paste(i, j, ncol(act_signal), "\n", sep = "---- * ---"))
   }
   if(nrow(act_signal) > 0){
     fb <- rbind(fb, act_signal)
