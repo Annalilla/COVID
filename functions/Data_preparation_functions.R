@@ -8,14 +8,22 @@ days_in_interval <- function(start, end){
 }
 
 # Response measurements - data preparation
+# Response measurements - data preparation
 prepare_response <- function(resp_dat, rangefrom = NA){
   resp_dat[which(is.na(resp_dat$date_end)), "date_end"] <- maxdate
   resp_dat <- resp_dat[with(resp_dat, order(Country, Response_measure)),]
+  
+  # Replace some values for consistency
+  resp_dat$Response_measure[which(resp_dat$Response_measure %in% c("OutdoorOver5", "IndoorOver5"))] <- "PrivateGatheringRestrictions"
+  resp_dat$Response_measure[which(resp_dat$Response_measure  == "HotelsOtherAccommodation")] <- "HotelsAccommodation"
+  resp_dat$Response_measure[which(resp_dat$Response_measure  == "HotelsOtherAccommodationPartial")] <- "HotelsAccommodationPartial"
+  resp_dat <- unique(resp_dat)
   
   days <- mapply(days_in_interval, resp_dat$date_start, resp_dat$date_end)
   resp_dat <- cbind(resp_dat, days)
   
   # Measurements occurring more than once
+  resp_dat <- resp_dat[order(resp_dat[,c("Response_measure", "Country")])]
   dupl <- sort(which(duplicated(resp_dat[,c("Country", "Response_measure")]) |
                        duplicated(resp_dat[,c("Country", "Response_measure")], fromLast = TRUE)), decreasing = TRUE)
   to_keep <- NULL
@@ -72,7 +80,7 @@ prepare_response <- function(resp_dat, rangefrom = NA){
   
   return(resp_dat)
 }
-
+                     
 #
 # Testing
 prepare_testing <- function(test_dat, rangefrom = NA){
