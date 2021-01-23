@@ -74,7 +74,6 @@ tempavg <- clean_weather(tempavg)
 #
 # Response measurements
 response <- prepare_response(response, rangefrom = NA)
-response <- clean_reponse(response)
 
 #
 # Testing
@@ -116,7 +115,6 @@ tdata <- merge(covid, tdata, by = c("country", "date"), all = TRUE)
 
 # Vaccination
 vaccination <- prepare_vaccination(vaccination)
-vaccination <- clean_vaccination(vaccination)
 
 # Merging with vaccination
 tdata <- merge(tdata, vaccination, by = c("country", "date"), all.x = TRUE)
