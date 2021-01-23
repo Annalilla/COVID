@@ -87,7 +87,6 @@ all_labels <- c(response_labels, testing_labels, weather_labels, vaccination_lab
 #
 # Adding labels
 label(tdata) <- as.list(all_labels[match(names(tdata), names(all_labels))])
-label(tdata) = as.list(var.labels[match(names(data), names(var.labels))])
 
 
 
