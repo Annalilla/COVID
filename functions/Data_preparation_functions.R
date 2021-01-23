@@ -120,7 +120,7 @@ prepare_weather <- function(weat_dat){
 #
 # Covid
 prepare_covid <- function(cov_dat){
-  cov_dat <- spread(cov_dat, key = data_type, value = cases)
+  cov_dat <- spread(cov_dat, key = type, value = cases)
   colnames(cov_dat)[1] <- "country"
   cov_dat$date <- as.character(cov_dat$date)
   return(cov_dat)
