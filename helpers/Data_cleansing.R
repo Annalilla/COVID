@@ -26,38 +26,9 @@ dicti <- as.data.frame(do.call(rbind, rows))
 colnames(dicti) <- c("Variable", "Definition")
 dicti$Variable <- str_replace_all(dicti$Variable, " ", "")
 
-# COntroll is all response variables are in the dictionary
+# Controll is all response variables are in the dictionary (Output: "Country" "date"    "year"    "week")
 colnames(response)[which(!(colnames(response)) %in% dicti$Variable)]
 
-mes <- as.data.frame(sapply(response[,-c("Country", "date", "year", "week")], as.numeric))
-mes <- cbind(mes, "Country" = response$Country)
-
-# Number of days of response measures by country
-mes_c <- mes %>%
-  group_by(Country) %>%
-  summarise_each(funs(sum))
-
-# Number of countries in the response measures introduced were
-mes_all <- mes_c[, -which(colnames(mes_c) == "Country")] %>%
-  replace(.>0, 1)%>%
-  group_by() %>%
-  summarise_all(funs(sum))
-
-# Response measures introduced in most countries
-print.data.frame(mes_all[order(mes_all, decreasing = TRUE)])
-length(mes_all)
-
-# Selecting response measures that were introduced in at least 15 countries
-selected_response <- colnames(mes_all)[which(mes_all > 5)]
-length(selected_response)
-
-# Average number of days with the selected restrictions
-n_days <- mes_c[,which(colnames(mes_c) %in% selected_response),] %>%
-  group_by() %>%
-  summarise_all(funs(mean))
-print.data.frame(n_days)
-
-dicti <- dicti[which(dicti$Variable %in% selected_response),]
 dicti <- dicti[order(dicti$Variable),]
 
 # Save dictionary for documentation
