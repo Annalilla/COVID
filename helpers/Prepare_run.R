@@ -12,8 +12,8 @@ capitals <- data.frame("country" = c("Austria", "Belgium", "Bulgaria", "Croatia"
                                         "Poland", "Portugal", "Romania", "Slovakia", "Slovenia", "Spain", "Sweden"),
                        "country_code" = c("AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR", "DE", "GR", "HU", "IE", "IT", "LVA",
                                           "LT", "LU", "MT", "NL", "POL", "PT", "RO", "SK", "SI", "ES", "SE"),
-                       "country_code_iso" = c("AUT", "BEL", "BGR", "HRV", "CYP", "CZE", "DNK", "EST", "EST", "FIN", "FRA", "DEU", "GRC", "HUN", "IRL",
-                                              "ITA", "LVA", "LTU", "MLT", "NLD", "POL", "PRT", "ROU", "SVK", "SVN", "ESP", "SWE"),
+                       "country_code_iso" = c("AUT", "BEL", "BGR", "HRV", "CYP", "CZE", "DNK", "EST", "FIN", "FRA", "DEU", "GRC", "HUN", "IRL",
+                                              "ITA", "LVA", "LTU", "LUX", "MLT", "NLD", "POL", "PRT", "ROU", "SVK", "SVN", "ESP", "SWE"),
                        "country_code_iso2" = c("AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR", "DE", "EL", "HU", "IE", "IT", "LV",
                                                "LT", "LU", "MT", "NL", "PL", "PT", "RO", "SK", "SI", "ES", "SE"),
                        "Capital" = c("Vienna", "Brussels", "Sofia", "Zagreb", "Nicosia", "Prague", "Copenhagen", "Tallinn", "Helsinki", "Paris",
@@ -33,3 +33,4 @@ capitals <- data.frame("country" = c("Austria", "Belgium", "Bulgaria", "Croatia"
                        "Station" = c("AU000005901", "BE000006447", "BUM00015614", "HR000142360", "CY000176090", "EZM00011520", "DA000032020", "EN000026038", "FIE00142101", "FR000007150",
                                      "GMM00010385", "GR000016716", "HUM00012843", "EI000003969", "IT000016239", "USW00014768", "LH000026730", "LU000006590", "MT000016597", "NLM00006260",
                                      "PLM00012375", "PO000008535", "ROE00108889", "AU000005901", "SIM00014015", "SP000003195", "SWM00002589"))
+
