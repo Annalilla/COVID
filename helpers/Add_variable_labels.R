@@ -81,12 +81,38 @@ vaccination_labels <- c(total_vaccinations = "total number of doses administered
                                     total_vaccinations_per_hundred = "people vaccinated per 100 people in the total population of the country",
                                     new_vaccinations_smoothed_per_million = "daily vaccinations per 1,000,000 people in the total population of the country")
 
+covid_labels <- c(cases_new = "Confirmed daily new cases ", 
+                  death_new = "Daily number of deaths ",
+                  recovered_new = "Daily number of the recovered ")
+
+fb_labels <- c(fb_data.iso_code = " ISO country codes",
+               fb_data.percent_cli ="weighted percentage of respondents that have reported CLI",
+               fb_data.cli_se ="standard error of percent_cli",
+               fb_data.percent_cli_unw ="unweighted percentage of respondents that have reported CLI",
+               fb_data.cli_se_unw = " standard error of percent_cli_unw",
+               fb_data.sample_size =" sample size",
+               fb_data.percent_mc ="weighted percentage of respondents that have reported using a mask",
+               fb_data.mc_se.x ="X" ,
+               fb_data.percent_mc_unw ="unweighted percentage of respondents that have reported use mask cover" ,
+               fb_data.mc_se_unw ="standard error of percent_mc_unw" ,
+               fb_data.sample_size_mc =" sample size for calculating mask coverage" ,
+               fb_data.percent_dc ="weighted percentage of respondents that have reported had direct contact 
+                                    (longer than one minute) with people not staying with them in last 24 hours",
+               fb_data.mc_se.y ="Y" ,
+               fb_data.percent_dc_unw ="unweighted percentage of respondents that have reported use have direct contact 
+                                      with people not staying with them", 
+               fb_data.dc_se_unw ="standard error of percent_dc_unw" ,
+               fb_data.sample_size_dc ="sample size for calculating direct contact" )
+               
+
 # All labels
-all_labels <- c(response_labels, testing_labels, weather_labels, vaccination_labels)
+all_labels <- c(response_labels, testing_labels, weather_labels, vaccination_labels, covid_labels, fb_labels)
+
 
 #
 # Adding labels
 label(tdata) <- as.list(all_labels[match(names(tdata), names(all_labels))])
+label(tdata) = as.list(var.labels[match(names(data), names(var.labels))])
 
 
 
