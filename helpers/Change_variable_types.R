@@ -20,6 +20,9 @@ vars_to_factor <- c("country", "country_code", "iso_code")
 vars_to_date <- c("date")
 
 # Convert variables to numerical
+# Handling decimals
+tdata[, which(colnames(tdata) %in% vars_to_numerical)] <-
+  lapply(tdata[, which(colnames(tdata) %in% vars_to_numerical)], function(x) gsub(",", "\\.", x))
 tdata[, which(colnames(tdata) %in% vars_to_numerical)] <-
   lapply(tdata[, which(colnames(tdata) %in% vars_to_numerical)], as.numeric)
 
