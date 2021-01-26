@@ -45,3 +45,51 @@ tempavg[which(is.na(tempavg$tavg)),]
 # Vaccination
 vaccination[rowSums(is.na(vaccination)) > 0,]
 vaccination[which(is.na(vaccination$new_vaccinations_smoothed)),]
+
+#
+#Coronavirus, df:covid
+
+# Missing values
+covid[rowSums(is.na(covid)) > 0,] #no NA
+
+
+#Negative new cases
+
+length(which(covid$cases_new <0)) #20
+covid[covid$cases_new < 0,]
+
+length(which(covid$deaths_new <0)) #51
+covid[covid$deaths_new < 0,]
+
+length(which(covid$recovered_new <0)) #58
+covid[covid$recovered_new < 0,]
+
+#https://github.com/RamiKrispin/coronavirus/issues/55 24.01.2021:
+#The coronavirus dataset calculates the daily new cases (confirmed, recovered, death) by taking the delta of each day with the previous one. 
+#Therefore, negative cases could occur when there is a drop in the cumulative number of cases with respect to the previous day. 
+#This so far occurred when:
+#-There is a change in the counting methodology or data resource (for example this issue and this one)
+#-Updating new cases (or removing false-positive cases) not on the day that they were count
+#-Errors in the raw data
+
+
+#
+#FB, UMD; df: fb
+
+#Missing values
+
+fb[rowSums(is.na(fb)) > 0,] 
+# NA in only 4 rows in these variables  fb_data.percent_mc fb_data.mc_se.x fb_data.percent_mc_unw fb_data.mc_se_unw fb_data.sample_size_mc 
+#fb_data.percent_dc fb_data.mc_se.y fb_data.percent_dc_unw fb_data.dc_se_unw fb_data.sample_size_dc country_code. 
+#As the rest of the variables for these rows are not NA, I do not delete these rows.
+
+# Check for implausible values, outside of [0;1]
+
+fb <-as_tibble(fb)
+which(fb < 0, arr.ind=TRUE) #none
+
+impvar_fb <- fb %>% select(fb_data.percent_cli: fb_data.dc_se_unw, -contains("sample_size"))
+which(impvar_fb > 1, arr.ind=TRUE) #none
+
+
+
