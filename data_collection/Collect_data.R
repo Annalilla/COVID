@@ -60,26 +60,69 @@ for(i in 1:nrow(capitals)){
 # FB
 rangeto <- str_replace_all(as.character(maxdate), "-", "")
 indi <- c("covid", "mask", "contact")
+type_mark <- c("cli", "mc", "dc")
+merge_vars <- c("data.country", "data.iso_code", "data.gid_0", "data.survey_date",  "status")
 fb <- data.frame()
 for(i in unique(capitals$country_fb)){
   act_signal <- data.frame()
   for(j in indi)
   {
-    path <- paste("https://covidmap.umd.edu/api/resources?indicator=", j, "&type=daily&country=", i, "&daterange=20200227-",
+    # Daily
+    path_daily <- paste("https://covidmap.umd.edu/api/resources?indicator=", j, "&type=daily&country=", i, "&daterange=20200227-",
                   rangeto, sep = "")
-    request <- GET(url = path)
-    fb_response <- content(request, as = "text", encoding = "UTF-8")
-    fb_content <- jsonlite::fromJSON(fb_response, flatten = TRUE)
-    if(length(fb_content[[1]]) > 0){
-      if(nrow(act_signal) == 0){
-        act_signal <- data.frame(fb_content)
+    request_daily <- GET(url = path_daily)
+    fb_response_daily <- content(request_daily, as = "text", encoding = "UTF-8")
+    fb_content_daily <- jsonlite::fromJSON(fb_response_daily, flatten = TRUE)
+    
+    # Smoothed
+    path_smoothed <- paste("https://covidmap.umd.edu/api/resources?indicator=", j, "&type=smoothed&country=", i, "&daterange=20200227-",
+                        rangeto, sep = "")
+    request_smoothed <- GET(url = path_smoothed)
+    fb_response_smoothed <- content(request_smoothed, as = "text", encoding = "UTF-8")
+    fb_content_smoothed <- jsonlite::fromJSON(fb_response_smoothed, flatten = TRUE)
+    
+    # If non of the data is available
+    if(length(fb_content_daily$data) == 0 & length(fb_content_smoothed$data) == 0){
+      fb_content <- data.frame()
+    }
+    
+    # If smoothed data available
+    if(length(fb_content_smoothed$data) > 0){
+      fb_content_smoothed <- data.frame(fb_content_smoothed)
+      #Mark variable names with smoothed (if not yet marked)
+      marked_smoothed <- unique(c(which(colnames(fb_content_smoothed) %in% merge_vars),
+                                  which(grepl("smoothed", colnames(fb_content_smoothed)))))
+      colnames(fb_content_smoothed)[-marked_smoothed] <-
+        paste(colnames(fb_content_smoothed)[-marked_smoothed], "smoothed", sep ="_")
+      
+      # If smoothed and daily data available
+      if(length(fb_content_daily$data) > 0){
+        fb_content_daily <- data.frame(fb_content_daily)
+        fb_content <- merge(fb_content_daily, fb_content_smoothed,
+                            by = merge_vars, all = TRUE)
       }else{
-        #act_signal <- cbind(act_signal, data.frame(fb_content))
-        act_signal <- merge(act_signal, data.frame(fb_content),
-                            by = c("data.survey_date", "data.country", "data.iso_code", "data.gid_0", "status"), all = TRUE)
+      # If only smoothed data available
+        fb_content <- fb_content_smoothed
+      }
+    }else if(length(fb_content_daily$data) > 0){
+    # If only daily data available
+      fb_content <- data.frame(fb_content_daily)
+    }
+    
+    if(nrow(fb_content) > 0){
+    # Mark variables with indicators (if not yet marked)
+    marked_indi <- unique(c(which(colnames(fb_content) %in% merge_vars),
+                     which(grepl(type_mark[match(j, indi)], colnames(fb_content)))))
+    colnames(fb_content)[-marked_indi] <-
+      paste(colnames(fb_content)[-marked_indi], type_mark[match(j, indi)], sep ="_")
+    
+      if(nrow(act_signal) == 0){
+        act_signal <- fb_content
+      }else{
+        act_signal <- merge(act_signal, fb_content,
+                            by = merge_vars, all = TRUE)
       }
     }
-    #cat(paste(i, j, ncol(act_signal), "\n", sep = "---- * ---"))
   }
   if(nrow(act_signal) > 0){
     fb <- rbind(fb, act_signal)
