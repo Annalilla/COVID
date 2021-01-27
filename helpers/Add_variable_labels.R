@@ -1,5 +1,14 @@
 library(Hmisc)
 
+population_labels <- c(`Y_LT5` = "Less than 5 years", `Y5-9` = "From 5 to 9 years", `Y10-14` = "From 10 to 14 years",
+                       `Y15-19` = "From 15 to 19 years", `Y20-24` = "From 20 to 24 years", `Y25-29` = "From 25 to 29 years",
+                       `Y30-34` = "From 30 to 34 years", `Y35-39` = "From 35 to 39 years", `Y40-44` = "From 40 to 44 years",
+                       `Y45-49` = "From 45 to 49 years", `Y50-54` = "From 50 to 54 years", `Y55-59` = "From 55 to 59 years",
+                       `Y60-64` = "From 60 to 64 years", `Y65-69` = "From 65 to 69 years", `Y70-74` = "From 70 to 74 years",
+                       `Y75-79` = "From 75 to 79 years", `Y_GE75` = "75 years or over", `Y80-84` = "From 80 to 84 years",
+                       `Y_GE80` = "80 years or over", `Y_GE85` = "85 years or over",
+                       T = "Total", M = "Males", F = "Females")
+
 response_labels <- c(AdaptationOfWorkplace = "Adaptationof workplaces(e.g. to reduce risk of transmission)",
                      AdaptationOfWorkplacePartial = "Adaptation of workplaces (e.g. to reduce risk of transmission)-partially relaxed measure",
                      BanOnAllEvents = "Interventions are in place to limit all indoor/outdoor mass/public gatherings",
@@ -103,7 +112,18 @@ fb_labels <- c(fb_data.iso_code = " ISO country codes",
                                       with people not staying with them", 
                fb_data.dc_se_unw ="standard error of percent_dc_unw" ,
                fb_data.sample_size_dc ="sample size for calculating direct contact" )
-               
+
+#
+# country_char
+# All labels
+all_labels_c <- c(population_labels)
+
+# Adding labels
+label(country_char) <- as.list(all_labels_c[match(names(country_char), names(all_labels_c))])
+
+
+#
+# tdata
 
 # All labels
 all_labels <- c(response_labels, testing_labels, weather_labels, vaccination_labels, covid_labels, fb_labels)
@@ -112,7 +132,6 @@ all_labels <- c(response_labels, testing_labels, weather_labels, vaccination_lab
 #
 # Adding labels
 label(tdata) <- as.list(all_labels[match(names(tdata), names(all_labels))])
-label(tdata) = as.list(var.labels[match(names(data), names(var.labels))])
 
 
 
