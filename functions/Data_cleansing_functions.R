@@ -17,13 +17,3 @@ clean_weather <- function(weath_data)
   return(weath_data)
 }
 
-
-clean_fb <- function(fb_dat)
-{
-  #Remove "FB_status"
-  fb_dat <- subset(fb_dat, select(-fb_status))
-  
-  return(fb_dat)
-}
-
-
