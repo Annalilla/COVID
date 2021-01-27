@@ -17,9 +17,13 @@ vars_to_numerical <- c("testing_rate", "testing_positivity_rate", "tavg", "total
                        "StayHomeGenPartial", "StayHomeOrder", "StayHomeOrderPartial", "StayHomeRiskG", "StayHomeRiskGPartial",
                        "Teleworking", "TeleworkingPartial", "WorkplaceClosures", "WorkplaceClosuresPartial",
                        "cases_new", "deaths_new", "recovered_new",
-                       "fb_data.percent_cli", "fb_data.cli_se", "fb_data.percent_cli_unw", "fb_data.cli_se_unw","fb_data.sample_size",
-                       "fb_data.percent_mc", "fb_data.mc_se.x", "fb_data.percent_mc_unw", "fb_data.mc_se_unw", "fb_data.sample_size_mc", 
-                       "fb_data.percent_dc", "fb_data.mc_se.y","fb_data.percent_dc_unw", "fb_data.dc_se_unw", "fb_data.sample_size_dc")
+                       "date fb_data.percent_cli", "fb_data.cli_se", "fb_data.percent_cli_unw", "fb_data.cli_se_unw", "fb_data.sample_size_cli",
+                       "fb_data.smoothed_cli", "fb_data.smoothed_cli_se", "fb_data.sample_size_smoothed_cli", "fb_data.percent_mc",
+                       "fb_data.mc_se", "fb_data.percent_mc_unw", "fb_data.mc_se_unw", "fb_data.sample_size_mc", "fb_data.smoothed_mc", 
+                       "fb_data.smoothed_mc_se", "fb_data.sample_size_mc_smoothed", "fb_data.percent_dc", "fb_data.mc_se_dc",
+                       "fb_data.percent_dc_unw", "fb_data.dc_se_unw", "fb_data.sample_size_dc", "fb_data.smoothed_dc", "fb_data.smoothed_dc_se",
+                       "fb_data.sample_size_dc_smoothed")
+                       
 
 vars_to_factor <- c("country", "country_code", "iso_code", "fb_data.iso_code", "fb_data.country")
 
