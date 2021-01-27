@@ -1,3 +1,33 @@
+#
+# country_char variables
+
+#
+# Population
+
+# Whole population
+which(is.na(total$values))
+which(!(capitals$country_code_iso2 %in% total$geo))
+summary(total[total$geo %in% capitals$country_code_iso2, "values"])
+
+# Population by sex
+which(is.na(sex$values))
+which(!(capitals$country_code_iso2 %in% sex$geo))
+summary(sex[sex$geo %in% capitals$country_code_iso2, "values"])
+
+# Population by age
+which(is.na(age$values))
+which(!(capitals$country_code_iso2 %in% age$geo))
+summary(age[age$geo %in% capitals$country_code_iso2, "values"])
+
+# Population by age
+which(is.na(age$values))
+which(!(capitals$country_code_iso2 %in% age$geo))
+summary(age[age$geo %in% capitals$country_code_iso2, "values"])
+
+#
+# tdata variables
+
+#
 # Response measures
 
 # Labels
