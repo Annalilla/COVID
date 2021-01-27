@@ -109,9 +109,6 @@ covid[covid$recovered_new < 0,]
 #Missing values
 
 fb[rowSums(is.na(fb)) > 0,] 
-# NA in only 4 rows in these variables  fb_data.percent_mc fb_data.mc_se.x fb_data.percent_mc_unw fb_data.mc_se_unw fb_data.sample_size_mc 
-#fb_data.percent_dc fb_data.mc_se.y fb_data.percent_dc_unw fb_data.dc_se_unw fb_data.sample_size_dc country_code. 
-#As the rest of the variables for these rows are not NA, I do not delete these rows.
 
 # Check for implausible values, outside of [0;1]
 
