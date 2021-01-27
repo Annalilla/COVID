@@ -103,7 +103,7 @@ colnames(resp_test_temp)[colnames(resp_test_temp) == "country.x"] <- "country"
 
 # Fb
 fb <- prepare_fb(fb)
-fb <- clean_fb(fb)
+
 
 # Merging with fb data
 tdata <- merge(resp_test_temp, fb, by = c("country_code", "date"), all = TRUE)
