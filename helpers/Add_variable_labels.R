@@ -86,32 +86,41 @@ testing_labels <- c(testing_new_cases = "Number of new confirmed cases", tests_d
 weather_labels <- c(tavg = "Average daily temperature")
 
 vaccination_labels <- c(total_vaccinations = "total number of doses administered", new_vaccinations = "daily change in the total number of doses administered",
-                                    new_vaccinations_smoothed = "new doses administered per day (7-day smoothed)",
-                                    total_vaccinations_per_hundred = "people vaccinated per 100 people in the total population of the country",
-                                    new_vaccinations_smoothed_per_million = "daily vaccinations per 1,000,000 people in the total population of the country")
+                        new_vaccinations_smoothed = "new doses administered per day (7-day smoothed)",
+                        total_vaccinations_per_hundred = "people vaccinated per 100 people in the total population of the country",
+                        new_vaccinations_smoothed_per_million = "daily vaccinations per 1,000,000 people in the total population of the country")
 
 covid_labels <- c(cases_new = "Confirmed daily new cases ", 
                   death_new = "Daily number of deaths ",
                   recovered_new = "Daily number of the recovered ")
 
 fb_labels <- c(fb_data.iso_code = " ISO country codes",
-               fb_data.percent_cli ="weighted percentage of respondents that have reported CLI",
+               fb_data.percent_cli ="weighted percentage of respondents that have reported Covid Like Illness",
                fb_data.cli_se ="standard error of percent_cli",
                fb_data.percent_cli_unw ="unweighted percentage of respondents that have reported CLI",
                fb_data.cli_se_unw = " standard error of percent_cli_unw",
-               fb_data.sample_size =" sample size",
+               fb_data.sample_size_cli =" sample size for calculating CLI",
+               fb_data.smoothed_cli="smoothed percentage of respondents that have reported Covid Like Illness",
+               fb_data.smoothed_cli_se="standard error of smoothed percent_cli",
+               fb_data.sample_size_smoothed_cli="sample size for calculating smoothed CLI",
                fb_data.percent_mc ="weighted percentage of respondents that have reported using a mask",
-               fb_data.mc_se.x ="X" ,
+               fb_data.mc_se ="standard error of percent_mc" ,
                fb_data.percent_mc_unw ="unweighted percentage of respondents that have reported use mask cover" ,
                fb_data.mc_se_unw ="standard error of percent_mc_unw" ,
                fb_data.sample_size_mc =" sample size for calculating mask coverage" ,
+               fb_data.smoothed_mc= "smoothed percentage of respondents that have reported use mask cover",
+               fb_data.smoothed_mc_se= "standard error of smoothed percent_mc",
+               fb_data.sample_size_mc_smoothed="sample size for calculating smoothed mc", 
                fb_data.percent_dc ="weighted percentage of respondents that have reported had direct contact 
                                     (longer than one minute) with people not staying with them in last 24 hours",
-               fb_data.mc_se.y ="Y" ,
+               fb_data.mc_se_dc ="?" ,
                fb_data.percent_dc_unw ="unweighted percentage of respondents that have reported use have direct contact 
                                       with people not staying with them", 
                fb_data.dc_se_unw ="standard error of percent_dc_unw" ,
-               fb_data.sample_size_dc ="sample size for calculating direct contact" )
+               fb_data.sample_size_dc ="sample size for calculating direct contact", 
+               fb_data.smoothed_dc ="smoothed percentage of respondents that have reported direct contact",
+               fb_data.smoothed_dc_se ="standard error of smoothed percent_dc",
+               fb_data.sample_size_dc_smoothed = "sample size for calculating smoothed dc")
 
 #
 # country_char
