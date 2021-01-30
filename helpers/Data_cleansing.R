@@ -64,18 +64,29 @@ dicti <- dicti[order(dicti$Variable),]
 # Save dictionary for documentation
 write.csv2(dicti, "data/dictionary_response_measures.csv", quote = FALSE, row.names = FALSE)
 
+# Only 0 and 1 values (yes)
+responses <- select(response, -c(Country, date, year, week))
+imp_resp <- unlist(lapply(lapply(responses, function(x) x %nin% c("0", "1")), sum))
+imp_resp[which(imp_resp > 0)]
+
 #
 # Temperature
 
 # Missing values
 length(which(is.na(tempavg$tavg)))
 tempavg[which(is.na(tempavg$tavg)),]
+# implausible values
+summary(tempavg)
+tempavg[which(tempavg$tavg == max(tempavg$tavg, na.rm = TRUE)),]
+tempavg[which(tempavg$tavg == min(tempavg$tavg, na.rm = TRUE)),]
 
 #
 # Vaccination
 vaccination[rowSums(is.na(vaccination)) > 0,]
 vaccination[which(is.na(vaccination$new_vaccinations_smoothed)),]
-
+# Negativ cases (none)
+which(select(vaccination, select = -c("iso_code", "country", "date")) < 0, arr = TRUE)
+                                 
 #
 #Coronavirus, df:covid
 
