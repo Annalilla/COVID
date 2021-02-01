@@ -31,7 +31,7 @@ save_data_online <- function(data, datname, archieve = FALSE)
         sheet_rename(covid_sheet, sheet = datname, new_name = paste(datname, attach, sep = "_"))
       }
     }
-    sheet_write(tdata, ss = covid_sheet, sheet = datname)
+    sheet_write(data, ss = covid_sheet, sheet = datname)
   }else{
       cat("Save data to googlesheets was unsuccesfull - File for authentication not available")
   }
