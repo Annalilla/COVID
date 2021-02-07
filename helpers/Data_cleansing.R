@@ -24,6 +24,78 @@ which(is.na(age$values))
 which(!(capitals$country_code_iso2 %in% age$geo))
 summary(age[age$geo %in% capitals$country_code_iso2, "values"])
 
+
+
+# Physicians
+
+physicians$geo #data available for only 6 countries: "IE" "IS" "IT" "LI" "NO" "UK", so physicians will not be used.
+#Inactivated in collect_data.R and Merge_data.R
+
+# Health expenditures
+
+str(health_expenditures_eurostat)
+
+which(is.na(health_exp$geo))
+which(is.na(health_exp$values))
+which(is.na(health_exp$variable))
+
+summary(values[health_exp$geo %in% capitals$country_code_iso2, "values"])
+
+health_expenditures_eurostat$icha11_hc <-as.factor(health_expenditures_eurostat$icha11_hc)
+levels(health_expenditures_eurostat$icha11_hc)
+
+# Are levels additive, i.e. mutually exclusive? What is "Current health care expenditure (CHE)" ?
+
+# https://ec.europa.eu/eurostat/cache/metadata/en/hlth_sha11_esms.htm :
+#health care by function (ICHA-HC)
+#Health care functions
+
+#Healthcare functions relate to the type of need that current expenditure on healthcare aims to satisfy or the kind of objective pursued. The following main items are defined:
+  
+#  curative care, which means the healthcare services during which the principal intent is to relieve symptoms or to reduce the severity of an illness or injury, or to protect against its exacerbation or complication that could threaten life or normal function;
+#rehabilitative care, which means the services to stabilise, improve or restore impaired body functions and structures, compensate for the absence or loss of body functions and structures, improve activities and participation and prevent impairments, medical complications and risks;
+#inpatient care, which means the treatment and/or care provided in a healthcare facility to patients formally admitted and requiring an overnight stay;
+#outpatient care, which means the medical and ancillary services delivered in a healthcare facility to a patient who is not formally admitted and does not stay overnight;
+#day care, which means the planned medical and paramedical services delivered in a healthcare facility to patients who have been formally admitted for diagnosis, treatment or other types of healthcare and are discharged on the same day;
+#long-term care (health), which means a range of medical and personal care services that are consumed with the primary goal of alleviating pain and suffering and reducing or managing the deterioration in health status in patients with a degree of long-term dependency. Main results and findings from a questionnaire submitted to countries on sources and methodology for long-term care spending can be found as an annex.
+#home-based care, which means the medical, ancillary and nursing services that are consumed by patients at their home and involve the providers' physical presence;
+#   ancillary services (non-specified by function), which means the healthcare or long-term care related services non-specified by function and non-specified by mode of provision, which the patient consumes directly, in particular during an independent contact with the health system and that are not integral part of a care service package, such as laboratory or imaging services or patient transportation and emergency rescue;
+#   pharmaceuticals and other medical non-durable goods (non-specified by function), which means pharmaceutical products and non-durable medical goods intended for use in the diagnosis, cure, mitigation or treatment of disease, including prescribed medicines and over-the-counter drugs, where the function and mode of provision are not specified;
+#   therapeutic appliances and other medical goods (non-specified by function), which means medical durable goods including orthotic devices that support or correct deformities and/or abnormalities of the human body, orthopaedic appliances, prostheses or artificial extensions that replace a missing body part, and other prosthetic devices including implants which replace or supplement the functionality of a missing biological structure and medico-technical devices, where the function and the mode of provision are not specified;
+#   preventive care, which means any measure that aims to avoid or reduce the number or the severity of injuries and diseases, their sequelae and complications; Preventive care includes interventions for both individual and collective consumption
+#   governance, and health system and financing administration, which means services that focus on the health system rather than direct healthcare, direct and support health system functioning, and are considered to be collective, as they are not allocated to specific individuals but benefit all health system users.
+
+# !Finally, current expenditure on healthcare means the final consumption expenditure of resident units on healthcare goods and services, including the healthcare goods and services provided directly to individual persons as well as collective healthcare services.
+
+# Eurostat answer is pending.
+
+
+str(health_exp)
+
+which(!(capitals$country_code_iso2 %in% health_exp$geo))
+
+summary(health_exp$values)
+
+
+#Cultural participation
+
+#Percentage of 16 years and older, under 30, above 75 who didn't attend any cultural event in the last 12 months
+
+str(cult_part)
+
+which(is.na(cult_part$geo))
+which(is.na(cult_part$values))
+which(is.na(cult_part$variable))
+
+which(!(capitals$country_code_iso2 %in% cult_part$geo))
+
+cult_part$variable <- as.factor(cult_part$variable)
+levels(cult_part$variable)
+
+summary(cult_part$values)
+#percentages are between 0 and 100
+
+
 #
 # tdata variables
 
@@ -128,6 +200,5 @@ which(fb < 0, arr.ind=TRUE) #none
 
 impvar_fb <- fb %>% select(fb_data.percent_cli: fb_data.dc_se_unw, -contains("sample_size"))
 which(impvar_fb > 1, arr.ind=TRUE) #none
-
 
 
