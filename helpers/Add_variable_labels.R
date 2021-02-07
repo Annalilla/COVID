@@ -9,6 +9,14 @@ population_labels <- c(`Y_LT5` = "Less than 5 years", `Y5-9` = "From 5 to 9 year
                        `Y_GE80` = "80 years or over", `Y_GE85` = "85 years or over",
                        T = "Total", M = "Males", F = "Females")
 
+
+health_exp_lables <- c(health_expenditures="Total heath expenditures")
+
+cult_part_labels <- c(cult_Y_GE16 ="16 years or over", cult_Y_GE75 = "75 years or over", `cult_Y16-24` = "From 16 to 24 years",  
+                      `cult_Y16-29` = "From 16 to 29 years", `cult_Y25-34` ="From 25 to 34 years", `cult_Y25-64`= "From 25 to 64 years", 
+                      `cult_Y35-49`="From 35 to 49 years", `cult_Y50-64` ="From 50 to 64 years", `cult_Y65-74`="From 65 to 74 years")
+
+
 response_labels <- c(AdaptationOfWorkplace = "Adaptationof workplaces(e.g. to reduce risk of transmission)",
                      AdaptationOfWorkplacePartial = "Adaptation of workplaces (e.g. to reduce risk of transmission)-partially relaxed measure",
                      BanOnAllEvents = "Interventions are in place to limit all indoor/outdoor mass/public gatherings",
@@ -125,7 +133,7 @@ fb_labels <- c(fb_data.iso_code = " ISO country codes",
 #
 # country_char
 # All labels
-all_labels_c <- c(population_labels)
+all_labels_c <- c(population_labels, health_exp_lables, cult_part_labels)
 
 # Adding labels
 label(country_char) <- as.list(all_labels_c[match(names(country_char), names(all_labels_c))])
