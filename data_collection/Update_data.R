@@ -8,9 +8,10 @@ library(httr)
 library(data.table)
 
 source("functions/Data_preparation_functions.R")
+source("functions/Data_cleansing_functions.R")
 source("data_collection/Save_data.R")
 
-old_tdata <- read.csv("data/tdata.csv")
+old_tdata <- get_data("tdata")
 
 # Functions to replace missing values with the new values
 replace_old <- function(new_data, vars_to_drop, vars_to_merge = NA, vars_to_merge_x = NA, vars_to_merge_y = NA)
@@ -67,6 +68,9 @@ tdata <- tdata %>%
   subset(select = -c(country_code.y))
 colnames(tdata)[colnames(tdata) == "country_code.x"] <- "country_code"
 
+# Changing variable types
+source("helpers/Change_variable_types.R")
+
 #
 # Response measurements
 data_untill <- old_tdata[!(is.na(old_tdata$AdaptationOfWorkplace)),] %>%
@@ -96,6 +100,7 @@ url_testing <- "https://opendata.ecdc.europa.eu/covid19/testing/csv"
 testing <- fread(url_testing)
 
 new_testing <- prepare_testing(testing, rangefrom = minweek_t)
+new_testing <- clean_testing(new_testing)
 new_testing <- subset(new_testing, select = -c(country_code))
 
 # Replace NAs with new values
@@ -104,15 +109,15 @@ tdata <- replace_old(new_testing, vars_to_drop = c("country", "year", "week"),
 
 #
 # Covid cases
-data_untill <- old_tdata[!(is.na(old_tdata$cases_new)),] %>%
+data_untill <- old_tdata[!(is.na(old_tdata$confirmed)),] %>%
   group_by(country) %>%
   summarise(maxdate = max(date))
 mindate_c <- as.Date(min(data_untill$maxdate)) + 1
 
-covid <- refresh_coronavirus_jhu()%>%
-  group_by(location, date, data_type) %>%
-  summarise(cases = sum(value)) %>%
-  filter(location %in% capitals$country & date >= mindate_c)
+covid <- coronavirus %>%
+  group_by(country, date, type) %>%
+  summarise(cases = sum(cases)) %>%
+  filter(country %in% capitals$country & date >= mindate_c)
 
 covid <- prepare_covid(covid)
 
@@ -136,6 +141,7 @@ for(i in 1:nrow(capitals)){
 }
 
 tempavg <- prepare_weather(weather)
+tempavg <- clean_weather(tempavg)
 
 # Replace NAs with new values
 tdata <- replace_old(tempavg, vars_to_drop = c("country_code", "date"),
@@ -148,22 +154,68 @@ data_untill <- old_tdata[!(is.na(old_tdata$fb_data.iso_code)),] %>%
 mindate_fb <- as.character(as.Date(min(data_untill$maxdate)) + 1)
 rangefrom <- str_replace_all(as.character(mindate_fb), "-", "")
 rangeto <- str_replace_all(as.character(maxdate), "-", "")
+type_mark <- c("cli", "mc", "dc")
+merge_vars <- c("data.country", "data.iso_code", "data.gid_0", "data.survey_date",  "status")
 indi <- c("covid", "mask", "contact")
 fb <- data.frame()
 for(i in unique(capitals$country_fb)){
   act_signal <- data.frame()
   for(j in indi)
   {
-    path <- paste("https://covidmap.umd.edu/api/resources?indicator=", j, "&type=daily&country=", i, "&daterange=", rangefrom, "-",
-                  rangeto, sep = "")
-    request <- GET(url = path)
-    fb_response <- content(request, as = "text", encoding = "UTF-8")
-    fb_content <- jsonlite::fromJSON(fb_response, flatten = TRUE)
-    if(length(fb_content[[1]]) > 0){
-      if(nrow(act_signal) == 0){
-        act_signal <- data.frame(fb_content)
+    # Daily
+    path_daily <- paste("https://covidmap.umd.edu/api/resources?indicator=", j, "&type=daily&country=", i, "&daterange=", rangefrom, "-",
+                        rangeto, sep = "")
+    request_daily <- GET(url = path_daily)
+    fb_response_daily <- content(request_daily, as = "text", encoding = "UTF-8")
+    fb_content_daily <- jsonlite::fromJSON(fb_response_daily, flatten = TRUE)
+    
+    # Smoothed
+    path_smoothed <- paste("https://covidmap.umd.edu/api/resources?indicator=", j, "&type=smoothed&country=", i, "&daterange=", rangefrom, "-",
+                           rangeto, sep = "")
+    request_smoothed <- GET(url = path_smoothed)
+    fb_response_smoothed <- content(request_smoothed, as = "text", encoding = "UTF-8")
+    fb_content_smoothed <- jsonlite::fromJSON(fb_response_smoothed, flatten = TRUE)
+    
+    # If non of the data is available
+    if(length(fb_content_daily$data) == 0 & length(fb_content_smoothed$data) == 0){
+      fb_content <- data.frame()
+    }
+    
+    # If smoothed data available
+    if(length(fb_content_smoothed$data) > 0){
+      fb_content_smoothed <- data.frame(fb_content_smoothed)
+      #Mark variable names with smoothed (if not yet marked)
+      marked_smoothed <- unique(c(which(colnames(fb_content_smoothed) %in% merge_vars),
+                                  which(grepl("smoothed", colnames(fb_content_smoothed)))))
+      colnames(fb_content_smoothed)[-marked_smoothed] <-
+        paste(colnames(fb_content_smoothed)[-marked_smoothed], "smoothed", sep ="_")
+      
+      # If smoothed and daily data available
+      if(length(fb_content_daily$data) > 0){
+        fb_content_daily <- data.frame(fb_content_daily)
+        fb_content <- merge(fb_content_daily, fb_content_smoothed,
+                            by = merge_vars, all = TRUE)
       }else{
-        act_signal <- cbind(act_signal, data.frame(fb_content))
+        # If only smoothed data available
+        fb_content <- fb_content_smoothed
+      }
+    }else if(length(fb_content_daily$data) > 0){
+      # If only daily data available
+      fb_content <- data.frame(fb_content_daily)
+    }
+    
+    if(nrow(fb_content) > 0){
+      # Mark variables with indicators (if not yet marked)
+      marked_indi <- unique(c(which(colnames(fb_content) %in% merge_vars),
+                              which(grepl(type_mark[match(j, indi)], colnames(fb_content)))))
+      colnames(fb_content)[-marked_indi] <-
+        paste(colnames(fb_content)[-marked_indi], type_mark[match(j, indi)], sep ="_")
+      
+      if(nrow(act_signal) == 0){
+        act_signal <- fb_content
+      }else{
+        act_signal <- merge(act_signal, fb_content,
+                            by = merge_vars, all = TRUE)
       }
     }
   }
@@ -171,7 +223,6 @@ for(i in unique(capitals$country_fb)){
     fb <- rbind(fb, act_signal)
   }
 }
-
 fb <- prepare_fb(fb)
 
 # Replace NAs with new values
