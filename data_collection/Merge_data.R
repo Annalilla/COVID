@@ -37,10 +37,11 @@ age <- age[,c("geo", "time", "values", "variable")]
 
 #
 # physicians_eurostat
-physicians <- physicians_eurostat %>%
-  group_by(geo, time) %>%
-  summarise(values = sum(values))
-physicians$variable <- "physicians"
+#As physicians data is available for only 6 countries, we do not use them.
+#physicians <- physicians_eurostat %>%
+#  group_by(geo, time) %>%
+#  summarise(values = sum(values))
+#physicians$variable <- "physicians"
 
 #
 # health_expenditures_eurostat
@@ -58,7 +59,8 @@ cult_part <- cultural_participation_eurostat %>%
 cult_part$age <- paste("cult", cult_part$age, sep = "_")
 colnames(cult_part)[colnames(cult_part) == "age"] <- "variable"
 
-pop <- rbind(total, sex, age, physicians, health_exp, cult_part)
+# pop <- rbind(total, sex, age, physicians, health_exp, cult_part)
+pop <- rbind(total, sex, age, health_exp, cult_part)
 pop <- subset(pop, select = -time)
 
 country_char <- spread(pop, key = variable, value = values)
