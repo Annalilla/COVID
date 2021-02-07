@@ -14,20 +14,24 @@ library(jsonlite)
 eu_countries
 
 pop_eurostat <- get_eurostat("demo_pjangroup", time_format = "num")
-physicians_eurostat <- get_eurostat("hlth_rs_spec", time_format = "num")
+
+#As physicians data is available for only 6 countries, we do not use them.
+#physicians_eurostat <- get_eurostat("hlth_rs_spec", time_format = "num")
+
 health_expenditures_eurostat <- get_eurostat("hlth_sha11_hc", time_format = "num")
+
 cultural_participation_eurostat <- get_eurostat("ilc_scp03", time_format = "num")
 
 # Relabel
-physicians_eurostat$med_spec <- label_eurostat(physicians_eurostat)$med_spec
+#physicians_eurostat$med_spec <- label_eurostat(physicians_eurostat)$med_spec
 health_expenditures_eurostat$icha11_hc <- label_eurostat(health_expenditures_eurostat)$icha11_hc
 cultural_participation_eurostat$acl00 <- label_eurostat(cultural_participation_eurostat)$acl00
 
 # Last year available
 pop_eurostat <- subset(pop_eurostat, time == 2019) # 2019
-physicians_eurostat <- subset(physicians_eurostat, time == 2019) # 2019
+#physicians_eurostat <- subset(physicians_eurostat, time == 2019) # 2019
 health_expenditures_eurostat <- subset(health_expenditures_eurostat, time == 2018) # 2018
-cultural_participation_eurostat <- subset(cultural_participation_eurostat, time == 2015) #
+cultural_participation_eurostat <- subset(cultural_participation_eurostat, time == 2015) # 2015
 
 #
 # Response measures and testing
