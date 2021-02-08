@@ -7,7 +7,7 @@ source("data_collection/Merge_data.R")
 source("functions/Data_revision_functions.R")
 
 new_tdata <- tdata
-tdata <- get_data("tdata_2021-02-06_08_59_29")
+tdata <- get_data("tdata")
 # Changing variable types
 source("helpers/Change_variable_types.R")
 old_tdata <- as.data.frame(tdata)
@@ -17,20 +17,9 @@ to_compare <- as.data.frame(tdata[which(tdata$date <= max(old_tdata$date)),])
 # Check if records are for the same country and date
 sum(old_tdata$date != to_compare$date) + sum(old_tdata$country != to_compare$country)
 
-# differences between records occurring in both datasets
-diff_vars <- c(which(colnames(to_compare) %nin% colnames(old_tdata)),
-               which(colnames(old_tdata) %nin% colnames(to_compare)))
-if(length(diff_vars) > 0){
-  common_vars <- to_compare[,-c(which(colnames(to_compare) %nin% colnames(old_tdata)),
-                                which(colnames(old_tdata) %nin% colnames(to_compare)))]
-}else{
-  common_vars <- to_compare
-}
-if(length(which(colnames(old_tdata) %nin% colnames(common_vars))) > 0){
-  old_tdata_common <- old_tdata[,-which(colnames(old_tdata) %nin% colnames(common_vars))]
-}else{
-  old_tdata_common <- old_tdata
-}
+# to find differences between records occurring in both datasets
+common_vars <- common_new()
+old_tdata_common <- common_old()
 # Match column numbers
 colnum_old_tdata <- unlist(lapply(seq_along(common_vars), function(i){which(colnames(old_tdata_common) == colnames(common_vars)[i])}))
 
@@ -60,4 +49,4 @@ show_extinct_vars()
 #old_tdata <- to_compare
 
 # Save data
-save_data(old_tdata, datname = "tdata", dirname = "data", archieve = TRUE)
+#save_data_online(old_tdata, datname = "tdata", archieve = TRUE)
