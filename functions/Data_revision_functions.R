@@ -64,3 +64,25 @@ add_new_var <- function(varname){
   colnames(old_tdata)[ncol(old_tdata)] <- varname
   return(old_tdata)
 }
+
+# Common new variables
+common_new <- function(){
+  diff_vars <- c(which(colnames(to_compare) %nin% colnames(old_tdata)),
+                 which(colnames(old_tdata) %nin% colnames(to_compare)))
+  if(length(diff_vars) > 0){
+    comm_dat <- to_compare[,-diff_vars]
+  }else{
+    comm_dat <- to_compare
+  }
+  return(comm_dat)
+}
+
+# Old dataset without extinct variables
+common_old <- function(){
+  diff_vars <- which(colnames(old_tdata) %nin% colnames(common_vars))
+  if(length(diff_vars) > 0){
+    old_tdata_common <- old_tdata[,-diff_vars]
+  }else{
+    old_tdata_common <- old_tdata
+  }
+}
