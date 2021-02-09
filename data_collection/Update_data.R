@@ -242,4 +242,6 @@ tdata <- replace_old(vaccination, vars_to_drop = c("country", "date"),
 tdata <- tdata[names(old_tdata)]
 tdata <- tdata[order(tdata$country, tdata$date),]
 
-save_data(tdata, datname = "tdata", dirname = "data", archieve = FALSE)
+# Save data local or to google sheets
+save_data(tdata, datname = "tdata", dirname = "data", archieve = TRUE)
+save_data_online(tdata, datname = "tdata", archieve = TRUE)
