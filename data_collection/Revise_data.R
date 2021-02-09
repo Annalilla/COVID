@@ -49,4 +49,5 @@ show_extinct_vars()
 #old_tdata <- to_compare
 
 # Save data
+#save_data(tdata, datname = "tdata", dirname = "data", archieve = TRUE)
 #save_data_online(old_tdata, datname = "tdata", archieve = TRUE)
