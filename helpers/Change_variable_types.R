@@ -1,7 +1,8 @@
 #
 # tdata
-vars_to_numerical <- c("testing_rate", "testing_positivity_rate", "tavg", "total_vaccinations_per_hundred",
-                       "people_vaccinated_per_hundred", "people_fully_vaccinated_per_hundred",
+vars_to_numerical <- c("testing_rate", "testing_positivity_rate", "tavg", "total_vaccinations", "people_vaccinated",
+                       "people_fully_vaccinated", "new_vaccinations", "new_vaccinations_smoothed", "total_vaccinations_per_hundred",
+                       "people_vaccinated_per_hundred", "people_fully_vaccinated_per_hundred", "new_vaccinations_smoothed_per_million",
                        "AdaptationOfWorkplace", "AdaptationOfWorkplacePartial", "BanOnAllEvents", "BanOnAllEventsPartial",
                        "ClosDaycare", "ClosDaycarePartial", "ClosHigh", "ClosHighPartial", "ClosPrim", "ClosPrimPartial",
                        "ClosPubAny", "ClosPubAnyPartial", "ClosSec", "ClosSecPartial", "ClosureOfPublicTransport",
