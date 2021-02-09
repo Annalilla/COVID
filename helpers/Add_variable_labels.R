@@ -96,7 +96,11 @@ weather_labels <- c(tavg = "Average daily temperature")
 vaccination_labels <- c(total_vaccinations = "total number of doses administered", new_vaccinations = "daily change in the total number of doses administered",
                         new_vaccinations_smoothed = "new doses administered per day (7-day smoothed)",
                         total_vaccinations_per_hundred = "people vaccinated per 100 people in the total population of the country",
-                        new_vaccinations_smoothed_per_million = "daily vaccinations per 1,000,000 people in the total population of the country")
+                        new_vaccinations_smoothed_per_million = "daily vaccinations per 1,000,000 people in the total population of the country",
+                        people_vaccinated = "total number of people who received at least one vaccine dose",
+                        people_fully_vaccinated = "total number of people who received all doses prescribed by the vaccination protocol",
+                        people_vaccinated_per_hundred = "people vaccinated per 100 people in the total population of the country",
+                        people_fully_vaccinated_per_hundred = "people fully vaccinated per 100 people in the total population of the country")
 
 covid_labels <- c(cases_new = "Confirmed daily new cases ", 
                   death_new = "Daily number of deaths ",
