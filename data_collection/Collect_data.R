@@ -42,16 +42,16 @@ response <- fread(url_response)
 testing <- fread(url_testing)
 
 # Covid cases
-#covid <- refresh_coronavirus_jhu()%>%
-#  group_by(location, date, data_type) %>%
-#  summarise(cases = sum(value)) %>%
-#  filter(location %in% capitals$country)
+covid <- refresh_coronavirus_jhu()%>%
+  group_by(location, date, data_type) %>%
+  summarise(cases = sum(value)) %>%
+  filter(location %in% capitals$country)
 
-data("coronavirus")
-covid <- coronavirus %>%
-    group_by(country, date, type) %>%
-    summarise(cases = sum(cases)) %>%
-    filter(country %in% capitals$country)
+#data("coronavirus")
+#covid <- coronavirus %>%
+#    group_by(country, date, type) %>%
+#    summarise(cases = sum(cases)) %>%
+#    filter(country %in% capitals$country)
 
 # Weather
 weather <- list()
