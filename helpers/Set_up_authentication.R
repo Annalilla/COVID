@@ -1,3 +1,6 @@
+# Don’t run this. The purpose of this script is only to demonstrate, how the authentication file was created
+# Generates the token to access the private Google Sheets where the data are stored
+
 library(googlesheets4)
 
 # Setting up authentication
