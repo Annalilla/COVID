@@ -1,4 +1,5 @@
-#
+# Explores the data to discover the necessary data cleansing steps
+
 # country_char variables
 
 #
