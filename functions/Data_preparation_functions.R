@@ -1,3 +1,5 @@
+# Contains functions used during the preparation and merge of the data
+
 #Response measurements
 # Get active days for response measurements
 days_in_interval <- function(start, end){
