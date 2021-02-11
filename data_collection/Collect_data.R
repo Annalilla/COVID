@@ -1,3 +1,5 @@
+# Downloads data from all sources listed in the documentation
+
 library(tidyverse)
 library(eurostat)
 library(coronavirus)
