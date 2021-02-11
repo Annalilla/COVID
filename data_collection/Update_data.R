@@ -1,3 +1,5 @@
+# Updates tdata with new records since the last download and saves it
+
 library(tidyverse)
 library(eurostat)
 library(coronavirus)
