@@ -114,10 +114,10 @@ data_untill <- old_tdata[!(is.na(old_tdata$confirmed)),] %>%
   summarise(maxdate = max(date))
 mindate_c <- as.Date(min(data_untill$maxdate)) + 1
 
-covid <- coronavirus %>%
-  group_by(country, date, type) %>%
-  summarise(cases = sum(cases)) %>%
-  filter(country %in% capitals$country & date >= mindate_c)
+covid <- refresh_coronavirus_jhu()%>%
+  group_by(location, date, data_type) %>%
+  summarise(cases = sum(value)) %>%
+  filter(location %in% capitals$country & date >= mindate_c)
 
 covid <- prepare_covid(covid)
 
