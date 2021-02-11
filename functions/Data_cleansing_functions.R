@@ -1,3 +1,5 @@
+# Contains functions for data cleansing
+
 library(Hmisc)
 
 clean_testing <- function(test_dat)
