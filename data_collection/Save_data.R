@@ -1,3 +1,5 @@
+# Contains two functions (save database to local or to online location) to save the databases
+
 save_data <- function(data, datname, dirname = NA, archieve = FALSE)
 {
   filename <- paste(getwd(), "/", dirname, "/", datname, ".csv", sep = "")
