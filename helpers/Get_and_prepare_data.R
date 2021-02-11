@@ -1,3 +1,6 @@
+# Loads the two (tdata and country_char) databases from Google Sheets
+# Adds variable labels and changes the variable types if necessary
+
 source("functions/Get_data.R")
 
 tdata <- get_data("tdata", local = FALSE)
