@@ -1,3 +1,5 @@
+# Contains a function to load the databases form a local or online location
+
 get_data <- function(datname, dirname = NA, local = FALSE)
 {
   if(local == TRUE){
