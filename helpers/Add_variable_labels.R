@@ -103,7 +103,7 @@ vaccination_labels <- c(total_vaccinations = "total number of doses administered
                         people_fully_vaccinated_per_hundred = "people fully vaccinated per 100 people in the total population of the country")
 
 covid_labels <- c(cases_new = "Confirmed daily new cases ", 
-                  death_new = "Daily number of deaths ",
+                  deaths_new = "Daily number of deaths ",
                   recovered_new = "Daily number of the recovered ")
 
 fb_labels <- c(fb_data.iso_code = " ISO country codes",
