@@ -1,3 +1,5 @@
+# Lists and selects weather station IDs near to capitals
+
 library(rnoaa)
 library(tidyverse)
 
