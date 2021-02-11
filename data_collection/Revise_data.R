@@ -1,3 +1,6 @@
+# Recollects and merges data with time variable from all data sources.
+# Function are available to examine the differences between the old and the new data, and to update the old data with new values
+
 library(compare)
 
 source("functions/Get_data.R")
