@@ -1,3 +1,5 @@
+# Formats the data and merges it into two databases
+
 library(lubridate)
 
 source("functions/Data_preparation_functions.R")
