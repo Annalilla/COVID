@@ -1,3 +1,5 @@
+# Adds labels to the variables
+
 library(Hmisc)
 
 population_labels <- c(`Y_LT5` = "Less than 5 years", `Y5-9` = "From 5 to 9 years", `Y10-14` = "From 10 to 14 years",
