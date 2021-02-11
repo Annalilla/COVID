@@ -1,4 +1,5 @@
-#
+# Change variable types (to numerical, factor or date)
+
 # tdata
 vars_to_numerical <- c("testing_rate", "testing_positivity_rate", "tavg", "total_vaccinations", "people_vaccinated",
                        "people_fully_vaccinated", "new_vaccinations", "new_vaccinations_smoothed", "total_vaccinations_per_hundred",
