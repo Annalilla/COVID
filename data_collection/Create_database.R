@@ -1,3 +1,5 @@
+# Downloads data from all sources, creates and saves two databases
+
 source("data_collection/Save_data.R")
 source("data_collection/Collect_data.R")
 source("data_collection/Merge_data.R")
