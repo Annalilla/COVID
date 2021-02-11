@@ -1,3 +1,5 @@
+# Contains functions used during the data revision
+
 show_number_of_differences <- function(){
   no_diff <- lapply(differences, length)
   return(no_diff)
