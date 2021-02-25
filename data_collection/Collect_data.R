@@ -37,7 +37,7 @@ cultural_participation_eurostat <- subset(cultural_participation_eurostat, time 
 
 #
 # Response measures and testing
-url_response <- "https://www.ecdc.europa.eu/sites/default/files/documents/data_response_graphs_0.csv"
+url_response <- response_page %>% html_nodes(xpath = "//*[contains(text(), 'Download data on country response measures')]") %>% html_attr('href')
 url_testing <- "https://opendata.ecdc.europa.eu/covid19/testing/csv"
 
 response <- fread(url_response)
