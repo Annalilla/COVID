@@ -60,7 +60,7 @@ prepare_response <- function(resp_dat, rangefrom = NA){
   }
   
   # Subset response
-  resp_dat <- subset(resp_dat, select = -c(change, date_start, date_end, days))
+  resp_dat <- subset(resp_dat, select = -c(date_start, date_end, days))
   resp_dat <- split(resp_dat[, -1], f = resp_dat$Country)
   resp_dat <- sapply(resp_dat, t)
   resp_dat <- lapply(resp_dat, function(x) tail("colnames<-"(x, x[1, ]), -1))
