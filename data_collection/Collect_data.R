@@ -8,6 +8,7 @@ library(httr)
 library(dplyr)
 library(rnoaa)
 library(jsonlite)
+library(rvest)
 
 # eurostat
 # Access to eurostat
@@ -37,6 +38,7 @@ cultural_participation_eurostat <- subset(cultural_participation_eurostat, time 
 
 #
 # Response measures and testing
+response_page <- read_html("https://www.ecdc.europa.eu/en/publications-data/download-data-response-measures-covid-19")
 url_response <- response_page %>% html_nodes(xpath = "//*[contains(text(), 'Download data on country response measures')]") %>% html_attr('href')
 url_testing <- "https://opendata.ecdc.europa.eu/covid19/testing/csv"
 
