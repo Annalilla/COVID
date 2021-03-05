@@ -1,3 +1,5 @@
+# Contains the content and functionality of the shiny dashboard application
+
 library(shinydashboard)
 
 ui <- dashboardPage(
