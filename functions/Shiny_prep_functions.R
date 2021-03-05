@@ -1,3 +1,6 @@
+# Contains functions to respond interactively to the queries in the shiny application.
+# Prepares selected variables and time intervals for the visualization.
+
 library(RColorBrewer)
 
 smooth_or_not <- function(to_smooth, cvar, min_date, max_date){
