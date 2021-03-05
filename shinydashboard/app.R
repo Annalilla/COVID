@@ -41,7 +41,6 @@ ui <- dashboardPage(
                                      choices = rest_names), width = 4
                 ),
                   
-                #uiOutput("box_test")
                 box(title = textOutput("charttitle"), textOutput("chartsubtitle"), status = "info",
                     plotOutput("plot1"), width = 8)
               )
@@ -73,11 +72,11 @@ server <- function(input, output) {
       lead_bad <- is.na(as.numeric(input$lead))
       if(!lead_bad){
         input_lead <- as.numeric(input$lead)
-        if(input$lead > 0 & input_lead < nrow(df)){
+        if(input_lead > 0 & input_lead < nrow(plotData())){
           paste("Number of infections with", input$lead, "days lead", sep = " ")
-        }else if(input$lead < 0){
+        }else if(input_lead < 0){
           paste("Lead has to be positive")
-        }else if(input$lead == 0){
+        }else if(input_lead == 0){
           paste("Number of infections")
         }else{
           paste("Lead is too big")
