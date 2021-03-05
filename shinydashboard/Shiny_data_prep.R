@@ -1,3 +1,5 @@
+#Prepares the data for the dashboard to enable fast visualisation and to improve interactivity.
+
 library(zoo)
 library(tidyverse)
 
@@ -23,5 +25,5 @@ sel_rest_country <- lapply(rest_list, function(x) colnames(x[,-which(colnames(x)
 #Deleting missing values from the beginning
 rest_list <- lapply(rest_list, function(x) x[-which(apply(x[, -which(colnames(x) == "date")], 1, function(y) all(is.na(y)))),])
 
-# Creating the x coordinates for the rectangles to display restrictions
+# Creating variables to calculate the x coordinates later for the visualization
 rest_prev <- lapply(rest_list, function(x) cbind(x, rbind(rep(NA, ncol(x)), x[1:(nrow(x) - 1),])))
