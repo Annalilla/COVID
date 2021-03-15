@@ -78,6 +78,13 @@ rf2
 ###########################
 # With modified data
 
+rf_dat <- tdata[(((tdata$date >= "2020-05-01") & (tdata$date <= "2021-02-28")) & tdata$country %nin% mis_c), -which(colnames(tdata) %in% c("testing_new_cases", "tests_done", "testing_population",
+                                                                                                                                           "testing_rate", "testing_positivity_rate", "fb_data.iso_code",
+                                                                                                                                           "fb_data.country", "fb_status"))]
+rf_dat <- rf_dat[which(rf_dat$country == "Austria"), c("date", "cases_new", "ClosDaycare", "ClosPubAny", "StayHomeOrder",
+                                                       "ClosDaycarePartial", "ClosPubAnyPartial", "StayHomeOrderPartial",
+                                                       "fb_data.percent_mc", "fb_data.percent_dc", "tavg")]
+
 # Lead for new cases
 rf_dat$cases_new <- lead(rf_dat$cases_new, 14)
 
@@ -93,8 +100,11 @@ rf_dat$tavg <- rollmean(rf_dat$tavg, 7, fill = NA)
 rf_dat$fb_data.percent_mc <- rollmean(rf_dat$fb_data.percent_mc, 7, fill = NA)
 rf_dat$fb_data.percent_dc <- rollmean(rf_dat$fb_data.percent_dc, 7, fill = NA)
 
-# Missing values 
+# Missing values
 rf_dat <- rf_dat[complete.cases(rf_dat),]
+
+# Merging partially and not partially applied restrictions
+rf_dat <- merge_all_partial_rest(rf_dat)
 
 ######
 # Train and test set
