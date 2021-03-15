@@ -4,6 +4,8 @@ library(iml)
 library(zoo)
 library(randomForest)
 
+source("functions/Data_process_functions.R")
+
 # Some countries are missing from fb data
 mis_c <- c("Cyprus", "Estonia", "Latvia", "Lithuania", "Luxembourg", "Malta")
 rf_dat <- tdata[(((tdata$date >= "2020-05-01") & (tdata$date <= "2021-02-28")) & tdata$country %nin% mis_c), -which(colnames(tdata) %in% c("testing_new_cases", "tests_done", "testing_population",
