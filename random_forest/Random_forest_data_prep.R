@@ -2,6 +2,7 @@ library(caret)
 library(ranger)
 library(iml)
 library(zoo)
+library(randomForest)
 
 # Some countries are missing from fb data
 mis_c <- c("Cyprus", "Estonia", "Latvia", "Lithuania", "Luxembourg", "Malta")
