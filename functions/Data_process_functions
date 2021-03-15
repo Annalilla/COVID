@@ -11,7 +11,7 @@ merge_partial_rest <- function(rest){
 
 # Merge all restriction in the dataset
 merge_all_partial_rest <- function(dat){
-  part_vars <- colnames(dat)[grepl("Partial", colnames(tdata))]
+  part_vars <- colnames(dat)[grepl("Partial", colnames(dat))]
   
   #Pair of these restrictions
   part_pairs <- str_replace_all(part_vars, "Partial", "")
