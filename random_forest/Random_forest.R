@@ -5,6 +5,7 @@ library(zoo)
 library(randomForest)
 library(Hmisc)
 library(dplyr)
+library(stringr)
 
 source("functions/Data_process_functions.R")
 
