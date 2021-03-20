@@ -3,6 +3,7 @@ library(ranger)
 library(iml)
 library(zoo)
 library(randomForest)
+library(Hmisc)
 
 source("functions/Data_process_functions.R")
 
@@ -27,9 +28,9 @@ rf_dat %>%
 # Train and test set
 set.seed(9985)
 to_train <- createDataPartition(rf_dat$cases_new,
-                               p = .8,
-                               list = FALSE,
-                               times = 1)
+                                p = .8,
+                                list = FALSE,
+                                times = 1)
 
 rf_train <- rf_dat[to_train,]
 rf_test <- rf_dat[-to_train,]
