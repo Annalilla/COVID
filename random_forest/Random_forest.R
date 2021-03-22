@@ -60,6 +60,27 @@ varImp(rf1)
 
 rf1
 
+#RF with cumulative outcome 'cases_new'
+
+rf_dat$cum_cases_new <- cumsum(rf_dat$cases_new)
+
+# RF
+rf <- train(as.numeric(cum_cases_new) ~ .,
+            data = rf_train[,-which(colnames(rf_train) %in% c("date", "cases_new"))],
+            method = "rf",
+            trControl = ctrl,
+            tuneGrid = grid)
+
+rf1.1 <- rf$finalModel
+
+# Interpretation
+varImpPlot(rf1.1)
+importance(rf1.1)
+varImp(rf1.1)
+
+rf1.1
+
+
 # RF with timeslice
 ctrl <- trainControl(method = "timeslice",
                      initialWindow = 28,
