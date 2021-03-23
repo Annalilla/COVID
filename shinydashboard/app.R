@@ -1,6 +1,8 @@
 # Content and functionality of the shiny dashboard application.
 # Contains functions to respond interactively to the queries in the shiny application.
 
+# Interactive data visualization
+
 library(shinydashboard)
 library(tidyverse)
 library(RColorBrewer)
@@ -24,6 +26,36 @@ smooth_or_not <- function(to_smooth, cvar, min_date, max_date){
   }
   colnames(df) <- c("date", "cases")
   return(df)
+}
+
+ci_from_se <- function(var, se){
+  res <- cbind((var - (qnorm(0.995) * se)), (var + (qnorm(0.995) * se)))
+  return(res)
+}
+
+fb_smooth_or_not <- function(to_smooth, cvar, min_date, max_date, max_y){
+  df <- country_list[[cvar]][which((country_list[[cvar]]$date >= min_date) & (country_list[[cvar]]$date <= max_date)),]
+  if(to_smooth == TRUE){
+    df <- cbind(df[,c("fb_data.smoothed_cli", "fb_data.smoothed_mc", "fb_data.smoothed_dc")],
+                ci_from_se(df$fb_data.smoothed_cli, df$fb_data.smoothed_cli_se),
+                ci_from_se(df$fb_data.smoothed_mc, df$fb_data.smoothed_mc_se),
+                ci_from_se(df$fb_data.smoothed_dc, df$fb_data.smoothed_dc_se))
+  }else{
+    df <- cbind(df[,c(which(colnames(df) %in% c("fb_data.percent_cli", "fb_data.percent_mc", "fb_data.percent_dc")))],
+                ci_from_se(df$fb_data.percent_cli, df$fb_data.cli_se),
+                ci_from_se(df$fb_data.percent_mc, df$fb_data.mc_se),
+                ci_from_se(df$fb_data.percent_dc, df$fb_data.dc_se))
+  }
+  colnames(df) <- c("cli", "mc", "dc", "cli_ci_l", "cli_ci_u", "mc_ci_l", "mc_ci_u", "dc_ci_l", "dc_ci_u")
+  df <- apply(df, 2, function(x) x * max_y)
+  return(df)
+}
+
+number_of_cases <- function(cvar, min_date, max_date){
+  no_cases <- sum(country_list[[cvar]][which((country_list[[cvar]]$date >= min_date) & (country_list[[cvar]]$date <= max_date)), "cases_new"], na.rm = TRUE)
+  no_deaths <- sum(country_list[[cvar]][which((country_list[[cvar]]$date >= min_date) & (country_list[[cvar]]$date <= max_date)), "deaths_new"], na.rm = TRUE)
+  no_recovered <- sum(country_list[[cvar]][which((country_list[[cvar]]$date >= min_date) & (country_list[[cvar]]$date <= max_date)), "recovered_new"], na.rm = TRUE)
+  number_of_cases <- c(no_cases, no_deaths, no_recovered)
 }
 
 add_lead <- function(dat, lead_to_add){
@@ -115,28 +147,41 @@ ui <- dashboardPage(
       # First tab content
       tabItem(tabName = "overview",
               fluidRow(
-                box(
-                  title = "Controls", status = "info",
-                  
-                  selectInput("country", "Variable:",
-                              choices = unique(tdata$country)),
-                  
-                  sliderInput("dateinterval", "Date Range",
-                              min = min(tdata$date),
-                              max = max(tdata$date),
-                              value = c(min(tdata$date), max(tdata$date))
-                  ),
-                  
-                  checkboxInput("smoothed", "Smoothed", TRUE),
-                  
-                  textInput("lead", "Lead:", value = "0", width = NULL, placeholder = NULL),
-                  
-                  checkboxGroupInput("restriction", "Restriction:",
-                                     choices = rest_names), width = 4
+                column(4,
+                  box(
+                    title = "Controls", status = "info",
+                    
+                    selectInput("country", "Variable:",
+                                choices = unique(tdata$country)),
+                    
+                    sliderInput("dateinterval", "Date Range",
+                                min = min(tdata$date),
+                                max = max(tdata$date),
+                                value = c(min(tdata$date), max(tdata$date))
+                    ),
+                    
+                    checkboxInput("cli", "CLI", FALSE),
+                    
+                    checkboxInput("mc", "MC", FALSE),
+                    
+                    checkboxInput("dc", "DC", FALSE),
+                    
+                    checkboxInput("smoothed", "Smoothed", TRUE),
+                    
+                    textInput("lead", "Lead:", value = "0", width = NULL, placeholder = NULL),
+                    
+                    checkboxGroupInput("restriction", "Restriction:",
+                                       choices = rest_names), width = 12
+                  )
                 ),
                 
-                box(title = textOutput("charttitle"), textOutput("chartsubtitle"), status = "info",
-                    plotOutput("plot1"), width = 8)
+                column(8,
+                       infoBox("Infections", textOutput("no_cases"), fill = TRUE),
+                       infoBox("Deaths", textOutput("no_deaths"), fill = TRUE),
+                       infoBox("Recovered", textOutput("no_recovered"), fill = TRUE),
+                       box(title = textOutput("charttitle"), textOutput("chartsubtitle"), status = "info",
+                           plotOutput("plot1"), width = 12)
+                       )
               )
       ),
       
@@ -158,6 +203,24 @@ server <- function(input, output) {
   output$charttitle <- renderText({
     titleText()
   })
+  
+  # Dynamic number of cases/deaths/recovred
+  numberCases <- reactive({
+    number_of_cases(input$country,input$dateinterval[1], input$dateinterval[2])
+  })
+  
+  output$no_cases <- renderText({
+    numberCases()[1]
+  })
+  
+  output$no_deaths <- renderText({
+    numberCases()[2]
+  })
+  
+  output$no_recovered <- renderText({
+    numberCases()[3]
+  })
+  
   
   #Subtitle
   subtitleText <- reactive({
@@ -193,7 +256,7 @@ server <- function(input, output) {
     smoothed <- input$smoothed
     min_date <- input$dateinterval[1]
     max_date <- input$dateinterval[2]
-    df <- smooth_or_not(smoothed, var, min_date, max_date)
+    df <-  cbind(smooth_or_not(smoothed, var, min_date, max_date), fb_smooth_or_not(smoothed, var, min_date, max_date, yLimit()))
     
     # Lead for the infections
     if(!is.na(input$lead))
@@ -253,6 +316,31 @@ server <- function(input, output) {
             panel.grid.minor = element_blank()) +
       coord_cartesian(xlim = c(min(plotData()$date), max(plotData()$date)), clip = 'off') +
       theme(plot.margin = unit(c(1,12,1,1), "lines"))
+    
+    if(input$cli == TRUE)
+    {
+      p <- p +
+        geom_line(aes(x = date, y = cli_ci_l), size = 0.8, color = brewer.pal(n = 3, name = 'Dark2')[1], alpha=0.7) +
+        geom_line(aes(x = date, y = cli_ci_u), size = 0.8, color = brewer.pal(n = 3, name = 'Dark2')[1], alpha=0.7) +
+        geom_line(aes(x = date, y = cli), size = 0.8, color = brewer.pal(n = 3, name = 'Dark2')[1]) +
+        geom_ribbon(aes(x = date, ymin = cli_ci_l, ymax = cli_ci_u), fill = brewer.pal(n = 3, name = 'Dark2')[1], alpha=0.3)
+    }
+    if(input$mc == TRUE)
+    {
+      p <- p +
+        geom_line(aes(x = date, y = mc_ci_l), size = 0.8, color = brewer.pal(n = 3, name = 'Dark2')[2], alpha=0.7) +
+        geom_line(aes(x = date, y = mc_ci_u), size = 0.8, color = brewer.pal(n = 3, name = 'Dark2')[2], alpha=0.7) +
+        geom_line(aes(x = date, y = mc), size = 0.8, color = brewer.pal(n = 3, name = 'Dark2')[2]) +
+        geom_ribbon(aes(x = date, ymin = mc_ci_l, ymax = mc_ci_u), fill = brewer.pal(n = 3, name = 'Dark2')[2], alpha=0.3)
+    }
+    if(input$dc == TRUE)
+    {
+      p <- p +
+        geom_line(aes(x = date, y = dc_ci_l), size = 0.8, color = brewer.pal(n = 3, name = 'Dark2')[3], alpha=0.7) +
+        geom_line(aes(x = date, y = dc_ci_u), size = 0.8, color = brewer.pal(n = 3, name = 'Dark2')[3], alpha=0.7) +
+        geom_line(aes(x = date, y = dc), size = 0.8, color = brewer.pal(n = 3, name = 'Dark2')[3]) +
+        geom_ribbon(aes(x = date, ymin = dc_ci_l, ymax = dc_ci_u), fill = brewer.pal(n = 3, name = 'Dark2')[3], alpha=0.3)
+    }
     
     if(length(input$restriction) > 0){
       p +
