@@ -3,6 +3,8 @@
 library(zoo)
 library(tidyverse)
 
+dir.create("dat", showWarnings = FALSE)
+
 # Smooth variables as new variable in tdata: cases, tavg
 country_list <- split(tdata, tdata$country)
 country_list <- lapply(country_list, function(x) cbind(x, "smoothed_cases" = rollmean(x$cases_new, 7, fill = NA)))
