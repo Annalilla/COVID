@@ -1,3 +1,6 @@
+# Reading the data prepared by Shiny_data_prep.R
+# Functions to process the data by the users queries
+
 country_list <- readRDS("dat/country_list.RDS")
 rest_names <- readRDS("dat/rest_names.RDS")
 y_limit_list <- readRDS("dat/y_limit_list.RDS")
