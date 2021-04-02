@@ -1,11 +1,11 @@
 # Reading the data prepared by Shiny_data_prep.R
 # Functions to process the data by the users queries
 
-country_list <- readRDS("dat/country_list.RDS")
-rest_names <- readRDS("dat/rest_names.RDS")
-y_limit_list <- readRDS("dat/y_limit_list.RDS")
-rest_prev <- readRDS("dat/rest_prev.RDS")
-sel_rest_country <- readRDS("dat/sel_rest_country.RDS")
+country_list <- readRDS("shinydashboard/dat/country_list.RDS")
+rest_names <- readRDS("shinydashboard/dat/rest_names.RDS")
+y_limit_list <- readRDS("shinydashboard/dat/y_limit_list.RDS")
+rest_prev <- readRDS("shinydashboard/dat/rest_prev.RDS")
+sel_rest_country <- readRDS("shinydashboard/dat/sel_rest_country.RDS")
 
 # Functions
 smooth_or_not <- function(to_smooth, cvar, min_date, max_date){
