@@ -3,7 +3,7 @@
 
 library(shinydashboard)
 
-source("functions/Shiny_prep_functions.R")
-source("helpers/Shiny_data_prep.R")
+source("helpers/Get_and_prepare_data.R")
+source("shinydashboard/Shiny_data_prep.R")
 
 runApp("shinydashboard")
