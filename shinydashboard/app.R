@@ -175,7 +175,7 @@ server <- function(input, output) {
     p <- exp_plot_base(plotData(), yLimit()[1], yLimit()[2], input$mc, input$dc, input$vacc)
     p <- exp_plot_add_temp(p, input$tavg, plotData())
     p <- exp_plot_add_fb_vacc(p, input$mc, input$dc, input$vacc, plotData())
-    exp_display_plot(p, input$restriction, plotRest(), plotData(), restrictionPlotLabels(), input$mc, input$dc)
+    exp_display_plot(p, input$restriction, plotRest(), plotData(), restrictionPlotLabels(), input$mc, input$dc, input$tavg, input$vacc)
   })
 }
 
