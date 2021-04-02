@@ -3,6 +3,7 @@
 library(zoo)
 library(tidyverse)
 
+dir.create("shinydashboard", showWarnings = FALSE)
 dir.create("shinydashboard/dat", showWarnings = FALSE)
 
 # Smooth variables as new variable in tdata: cases, tavg
