@@ -61,7 +61,7 @@ exp_plot_add_temp <- function(plot, temp, dat){
     multi <- max(dat$cases, na.rm = TRUE)/max(dat$tavg, na.rm = TRUE)
     labpx1 <- (dat[which.max(dat$tavg), "date"] + x_dist)
     labpy1 <- (multi * dat[1, "tavg"] + multi)
-    labt1 <- paste(round(dat[1, "tavg"], 1), "°C", sep = "")
+    labt1 <- paste(round(dat[1, "tavg"], 1), "Â°C", sep = "")
     pointx1 <- dat[1, "date"]
     pointy1 <- (multi * dat[1, "tavg"])
     labpx <- (dat[which.max(dat$tavg), "date"] + x_dist)
@@ -124,11 +124,11 @@ exp_plot_add_fb_vacc <- function(plot, mc, dc, vacc, dat){
   return(plot)
 }
 
-exp_display_plot <- function(plot, rest, plotrest, plotdata, restlabels, mc, dc){
+exp_display_plot <- function(plot, rest, plotrest, plotdata, restlabels, mc, dc, temp, vacc){
   if(length(rest) > 0){
     # x axis for restriction labels
-    if(mc == FALSE & dc == FALSE) {rest_x <- rep(max(plotdata$date) + 5, nrow(restlabels))}
-    else{rest_x <- rep(max(plotdata$date) + 100, nrow(restlabels))} 
+    if(mc == FALSE & dc == FALSE & vacc == FALSE & temp == FALSE) {rest_x <- rep(max(plotdata$date) + 5, nrow(restlabels))}
+    else{rest_x <- rep(max(plotdata$date) + 70, nrow(restlabels))} 
     if(is.Date(plotrest$x_min) & is.Date(plotrest$x_max)){
       plotrest$x_max[which(plotrest$x_max > max(plotdata$date, na.rm = TRUE))] <- max(plotdata$date, na.rm = TRUE)
       plotrest$x_min[which(plotrest$x_min < min(plotdata$date, na.rm = TRUE))] <- min(plotdata$date, na.rm = TRUE)
@@ -138,7 +138,7 @@ exp_display_plot <- function(plot, rest, plotrest, plotdata, restlabels, mc, dc)
       plotrest$x_max[which(plotrest$x_max < min(plotdata$date, na.rm = TRUE))] <- NA
       # Adding restrictions to plot
       plot <- plot +
-        theme(plot.margin = unit(c(1,12,0,1), "lines")) +
+        theme(plot.margin = unit(c(1,13,0,1), "lines")) +
         geom_rect(data = plotrest, aes(xmin = x_min, xmax = x_max, ymin = y_min, ymax = y_max, fill = color), show.legend = FALSE, alpha = 0.4) +
         annotate("text", x = rest_x, y = restlabels$y, label = restlabels$restriction, hjust = 0)
     }
