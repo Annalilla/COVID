@@ -70,7 +70,7 @@ ui <- dashboardPage(
               fluidRow(
                 box(
                   checkboxGroupInput("restriction", "Restriction Measures:",
-                                     choices = rest_names, inline = TRUE), width = 12, status = "info"
+                                     choices = rest_names, selected = NULL, inline = TRUE), width = 12, status = "info"
                 #  prettyCheckboxGroup("restriction", "Restriction Measures:",
                  #                    choices = rest_names, inline = TRUE, shape = "curve"), width = 12
                 )
@@ -85,7 +85,7 @@ ui <- dashboardPage(
   )
 )
 
-server <- function(input, output) {
+server <- function(input, output, session) {
   
   # Dynamic name for the chart
   titleText <- reactive({
@@ -116,8 +116,8 @@ server <- function(input, output) {
   
   # Applied restrictions per countries
   observeEvent(input$country,{
-    updateCheckboxGroupInput(inputId = "restriction", selected = NULL, inline = TRUE)
-    updateCheckboxGroupInput(inputId = "restriction", choices = sel_rest_country[[input$country]],  inline = TRUE)
+    updateCheckboxGroupInput(session, inputId = "restriction", selected = NULL, inline = TRUE)
+    updateCheckboxGroupInput(session, inputId = "restriction", choices = sel_rest_country[[input$country]],  inline = TRUE)
   })
   
   # Data preparing from input
