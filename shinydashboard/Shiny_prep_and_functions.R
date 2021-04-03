@@ -117,17 +117,11 @@ get_x_for_rest <- function(rest, data){
     k_coord <- data.frame("x_min" = k$x_min[which(!is.na(k$x_min))], "x_max" = k$x_max[which(!is.na(k$x_max))])
     k_coord <- cbind("restriction" = rep(rest, nrow(k_coord)), k_coord)
   }else{
-    k_coord <- cbind("restriction" = rest, "x_min" = 1999, "x_max" = NA)
+    k_coord <- cbind("restriction" = NA, "x_min" = NA, "x_max" = NA)
   }
   return(k_coord)
 }
 
-get_x_for_country <- function(country){
-  act_all_rest <- sel_rest_country[[which(names(sel_rest_country) == country)]]
-  act_x <- lapply(act_all_rest, function(x) get_x_for_rest(x, rest_prev[[which(names(rest_prev) == country)]]))
-  names(act_x) <- act_all_rest
-  act_x
-}
 
 get_coord_for_country <- function(country, rest_list, max_y){
   dat <- rest_prev[[which(names(rest_prev) == country)]]
@@ -160,4 +154,3 @@ get_coord_for_country <- function(country, rest_list, max_y){
   
   rest_coord
 }
-
