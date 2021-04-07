@@ -49,10 +49,10 @@ ci_from_se <- function(var, se){
 fb_smooth_or_not <- function(to_smooth, cvar, min_date, max_date, max_y){
   df <- country_list[[cvar]][which((country_list[[cvar]]$date >= min_date) & (country_list[[cvar]]$date <= max_date)),]
   if(to_smooth == TRUE){
-    df <- cbind(df[,c("fb_data.smoothed_cli", "fb_data.smoothed_mc", "fb_data.smoothed_dc")],
-                ci_from_se(df$fb_data.smoothed_cli, df$fb_data.smoothed_cli_se),
-                ci_from_se(df$fb_data.smoothed_mc, df$fb_data.smoothed_mc_se),
-                ci_from_se(df$fb_data.smoothed_dc, df$fb_data.smoothed_dc_se))
+    df <- cbind(df[,c("smoothed_fb_cli", "smoothed_fb_mc", "smoothed_fb_dc")],
+                ci_from_se(df$fb_data.smoothed_cli, df$smoothed_fb_cli_se),
+                ci_from_se(df$fb_data.smoothed_mc, df$smoothed_fb_mc_se),
+                ci_from_se(df$fb_data.smoothed_dc, df$smoothed_fb_dc_se))
   }else{
     df <- cbind(df[,c(which(colnames(df) %in% c("fb_data.percent_cli", "fb_data.percent_mc", "fb_data.percent_dc")))],
                 ci_from_se(df$fb_data.percent_cli, df$fb_data.cli_se),
