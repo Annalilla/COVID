@@ -1,12 +1,12 @@
 # Contains functions to respond interactively to the queries in the shiny application.
 
-exp_subtitle <- function(ilead, max_lead){
+exp_subtitle <- function(ilead, dat, mc, dc, vacc, tavg){
   if(!is.na(ilead) & ilead != "")
   {
     lead_bad <- is.na(as.numeric(ilead))
     if(!lead_bad){
       input_lead <- as.numeric(ilead)
-      if(input_lead > 0 & input_lead < nrow(max_lead)){
+      if(input_lead > 0 & input_lead < nrow(dat)){
         subt <- paste("Number of infections with", ilead, "days lead", sep = " ")
       }else if(input_lead < 0){
         subt <- paste("Lead has to be positive")
@@ -20,6 +20,17 @@ exp_subtitle <- function(ilead, max_lead){
     }
   }else{
     subt <- paste("Number of infections")
+  }
+  subsubt <- NULL
+  if(!all(isFALSE(c(mc, dc, vacc, tavg)))){
+    if(mc == TRUE){ if(all(is.na(dat$mc))) subsubt <- c(subsubt, "Mask Coverage")}
+    if(dc == TRUE){ if(all(is.na(dat$dc))) subsubt <- c(subsubt, "Direct Contact")}
+    if(vacc == TRUE){ if(all(is.na(dat$vaccination))) subsubt <- c(subsubt, "Vaccination")}
+    if(tavg == TRUE){ if(all(is.na(dat$tavg))) subsubt <- c(subsubt, "Average daily temperature")}
+  }
+  if(length(subsubt) > 0){
+    subsubt <- paste("No data available for", paste(subsubt, collapse = ", "))
+    subt <- paste(subt, paste('<p style="color:red">', subsubt, '</p>', sep = ""))
   }
   return(subt)
 }
@@ -36,10 +47,10 @@ exp_plot_base <- function(dat, y_min, y_max, mc, dc, vacc){
               plot.margin = unit(c(1,1,0,1), "lines")) +
         coord_cartesian(xlim = c(min(dat$date), max(dat$date)), clip = 'off')
   # Second Y axis labels
-  if(mc == TRUE | dc == TRUE | (vacc == TRUE & length(which(dat$vaccination > 0)) > 0)){
+  if((mc == TRUE & !all(is.na(dat$mc))) | (dc == TRUE & !all(is.na(dat$dc))) | (vacc == TRUE & length(which(dat$vaccination > 0)) > 0)){
   varnames <- NULL
-  if(mc == TRUE) varnames <- c(varnames, "Mask Coverage")
-  if(dc == TRUE) varnames <- c(varnames, "Direct Contact")
+  if(mc == TRUE & !all(is.na(dat$mc))) varnames <- c(varnames, "Mask Coverage")
+  if(dc == TRUE & !all(is.na(dat$dc))) varnames <- c(varnames, "Direct Contact")
   if((vacc == TRUE & length(which(dat$vaccination > 0)) > 0)) varnames <- c(varnames, "Vaccination")
   axis_title <- paste(paste(varnames, collapse = " & "), "%", sep = " ")
   p <- p +
@@ -61,7 +72,7 @@ exp_plot_add_temp <- function(plot, temp, dat){
     multi <- max(dat$cases, na.rm = TRUE)/max(dat$tavg, na.rm = TRUE)
     labpx1 <- (dat[which.max(dat$tavg), "date"] + x_dist)
     labpy1 <- (multi * dat[1, "tavg"] + multi)
-    labt1 <- paste(round(dat[1, "tavg"], 1), "Â°C", sep = "")
+    labt1 <- paste(round(dat[1, "tavg"], 1), "°C", sep = "")
     pointx1 <- dat[1, "date"]
     pointy1 <- (multi * dat[1, "tavg"])
     labpx <- (dat[which.max(dat$tavg), "date"] + x_dist)
@@ -86,7 +97,7 @@ exp_plot_add_temp <- function(plot, temp, dat){
 }
 
 exp_plot_add_fb_vacc <- function(plot, mc, dc, vacc, dat){
-  if(mc == TRUE | dc == TRUE | (vacc == TRUE & length(which(dat$vaccination > 0)) > 0)){
+  if((mc == TRUE & !all(is.na(dat$mc))) | (dc == TRUE & !all(is.na(dat$dc))) | (vacc == TRUE & length(which(dat$vaccination > 0)) > 0)){
     select <- NULL
     varnames <- NULL
     if(mc == TRUE){
@@ -110,12 +121,12 @@ exp_plot_add_fb_vacc <- function(plot, mc, dc, vacc, dat){
             legend.title = element_blank()) +
       scale_color_brewer(palette = "Dark2")
     
-    if(mc == TRUE)
+    if(mc == TRUE & !all(is.na(dat$mc)))
     {
       plot <- plot +
         geom_ribbon(data = dat, aes(x = date, ymin = mc_ci_l, ymax = mc_ci_u), fill ="grey", alpha=0.3)
     }
-    if(dc == TRUE)
+    if(dc == TRUE & !all(is.na(dat$dc)))
     {
       plot <- plot +
         geom_ribbon(data = dat, aes(x = date, ymin = dc_ci_l, ymax = dc_ci_u), fill = "grey", alpha=0.3)
