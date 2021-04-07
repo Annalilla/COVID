@@ -6,6 +6,7 @@ library(RColorBrewer)
 library(gridExtra)
 library(lubridate)
 library(reshape2)
+library(shinyBS)
 
 source("Shiny_prep_and_functions.R")
 source("Shiny_vis_functions.R")
@@ -40,6 +41,8 @@ ui <- dashboardPage(
                          
                          selectInput("country", "Country:",
                                      choices = names(country_list)),
+                         bsTooltip(id = "country", title = "Select a country", 
+                                   placement = "left", trigger = "hover"),
                          
                          checkboxInput("smoothed", "Smoothed", TRUE),
                          
@@ -54,7 +57,7 @@ ui <- dashboardPage(
                          checkboxInput("mc", "Mask Coverage", FALSE),
                          checkboxInput("dc", "Direct Contact", FALSE),
                          checkboxInput("vacc", "Vaccination", FALSE),
-                         checkboxInput("tavg", "Average daily temperature", FALSE), width = 12, height = 450
+                         checkboxInput("tavg", "Average daily temperature", FALSE), width = 12, height = 480
                        )
                 ),
                 
@@ -63,8 +66,8 @@ ui <- dashboardPage(
                   #     valueBoxOutput("deathBox", width = 3),
                   #     valueBoxOutput("recovBox", width = 3),
                   #     valueBoxOutput("vaccinBox", width = 3),
-                       box(title = textOutput("charttitle"), textOutput("chartsubtitle"),
-                           plotOutput("plot1",  height = 350), width = 12, height = 450)
+                       box(title = textOutput("charttitle"), htmlOutput("chartsubtitle"),
+                           plotOutput("plot1",  height = 350), width = 12, height = 480)
                 )
               ),
               fluidRow(
@@ -108,7 +111,7 @@ server <- function(input, output, session) {
   
   # Subtitle
   subtitleText <- reactive({ 
-      exp_subtitle(input$lead, plotData())
+      exp_subtitle(input$lead, plotData(), input$mc, input$dc, input$vacc, input$tavg)
   })
   output$chartsubtitle <- renderText({
     subtitleText()
