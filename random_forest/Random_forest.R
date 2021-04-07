@@ -206,4 +206,18 @@ varImp(rf1)
 
 rf1
 
+## All countries (with fb data)
 
+# Removing countries without fb data
+rf_dat_fb <- rf_dat[-which(rf_dat$country %in% c("Cyprus", "Estonia", "Latvia", "Lithuania", "Luxembourg", "Malta")),]
+# Refactor country
+rf_dat_fb$country <- as.factor(as.character(rf_dat_fb$country))
+
+# Split by countries
+c_rf_dat_fb <- c_rf_dat <- split(rf_dat_fb, rf_dat_fb$country)
+
+country_res <- lapply(c_rf_dat_fb, function(x) rf_model(x))
+
+
+p <- varImpPlot(country_res[[8]])
+p + title(names(country_res)[8])
