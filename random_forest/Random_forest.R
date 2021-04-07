@@ -15,11 +15,6 @@ source("functions/Get_data.R")
 
 tdata <- get_data("tdata", local = FALSE)
 
-
-tdata<- read_rds("C:/Users/balan/Documents/IPSDS/MDM/Master_Thesis/Data/tdata.rds")
-
-
-
 # Change variable types (to numerical, factor or date)
 
 # tdata
@@ -72,7 +67,7 @@ tdata$date <- as.Date(tdata$date)
 
 
 
-source("functions/Data_process_functions.R")
+source("functions/RF_functions.R")
 
 
 ###preprocessing
