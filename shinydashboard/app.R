@@ -6,11 +6,11 @@ library(RColorBrewer)
 library(gridExtra)
 library(lubridate)
 library(reshape2)
+library(shinyBS)
 
 source("Shiny_prep_and_functions.R")
 source("Shiny_vis_functions.R")
 
-##
 ##
 # Shiny
 
@@ -118,7 +118,7 @@ server <- function(input, output, session) {
   
   # Subtitle
   subtitleText <- reactive({ 
-    exp_subtitle(input$lead, plotData())
+    exp_subtitle(input$lead, plotData(), input$mc, input$dc, input$vacc, input$tavg)
   })
   output$chartsubtitle <- renderText({
     subtitleText()
