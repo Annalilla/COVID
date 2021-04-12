@@ -148,7 +148,7 @@ exp_display_plot <- function(plot, rest, plotrest, plotdata, restlabels, mc, dc,
       }
     }else{
       if(x_length > 20){
-        x_to_add <- rest_x <- round(as.numeric(difftime(max(plotdata$date), min(plotdata$date), units = "days"))/8 + 1, 0)
+        x_to_add <- rest_x <- round(as.numeric(difftime(max(plotdata$date), min(plotdata$date), units = "days"))/6 + 1, 0)
       }else if(x_length > 8){
         x_to_add <- 2
       }else if(x_length > 4){
