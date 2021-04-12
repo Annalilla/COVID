@@ -72,17 +72,17 @@ exp_plot_add_temp <- function(plot, temp, dat){
     multi <- max(dat$cases, na.rm = TRUE)/max(dat$tavg, na.rm = TRUE)
     labpx1 <- (dat[which.max(dat$tavg), "date"] + x_dist)
     labpy1 <- (multi * dat[1, "tavg"] + multi)
-    labt1 <- paste(round(dat[1, "tavg"], 1), "°C", sep = "")
+    labt1 <- paste(round(dat[1, "tavg"], 1), "Â°C", sep = "")
     pointx1 <- dat[1, "date"]
     pointy1 <- (multi * dat[1, "tavg"])
     labpx <- (dat[which.max(dat$tavg), "date"] + x_dist)
     labpy <- (multi * dat[which.max(dat$tavg), "tavg"] + multi)
-    labt <- paste(round(dat[which.max(dat$tavg), "tavg"], 1), "°C", sep = "")
+    labt <- paste(round(dat[which.max(dat$tavg), "tavg"], 1), "Â°C", sep = "")
     pointx <- dat[which.max(dat$tavg), "date"]
     pointy <- (multi * dat[which.max(dat$tavg), "tavg"])
     labpxmin <- (dat[which.min(dat$tavg), "date"] + x_dist)
     labpymin <- (multi * dat[which.min(dat$tavg), "tavg"])
-    labtmin <- paste(round(dat[which.min(dat$tavg), "tavg"], 1), "°C", sep = "")
+    labtmin <- paste(round(dat[which.min(dat$tavg), "tavg"], 1), "Â°C", sep = "")
     pointxmin <- dat[which.min(dat$tavg), "date"]
     pointymin <- (multi * dat[which.min(dat$tavg), "tavg"])
     
@@ -138,8 +138,26 @@ exp_plot_add_fb_vacc <- function(plot, mc, dc, vacc, dat){
 exp_display_plot <- function(plot, rest, plotrest, plotdata, restlabels, mc, dc, temp, vacc){
   if(length(rest) > 0){
     # x axis for restriction labels
-    if(mc == FALSE & dc == FALSE & vacc == FALSE & temp == FALSE) {rest_x <- rep(max(plotdata$date) + 5, nrow(restlabels))}
-    else{rest_x <- rep(max(plotdata$date) + 70, nrow(restlabels))} 
+    x_length <- as.numeric(difftime(max(plotdata$date), min(plotdata$date), units = "days"))
+    x_to_add <- 0
+    if((mc == FALSE | all(is.na(plotdata$mc))) & (dc == FALSE | all(is.na(plotdata$dc))) & (vacc == FALSE | length(which(plotdata$vaccination == 0)) > 0)) {
+      if(x_length > 20){
+        x_to_add <- round(as.numeric(difftime(max(plotdata$date), min(plotdata$date), units = "days"))/15 + 1, 0)
+      }else if(x_length > 8){
+        x_to_add <- 1
+      }
+    }else{
+      if(x_length > 20){
+        x_to_add <- rest_x <- round(as.numeric(difftime(max(plotdata$date), min(plotdata$date), units = "days"))/8 + 1, 0)
+      }else if(x_length > 8){
+        x_to_add <- 2
+      }else if(x_length > 4){
+        x_to_add <- 1
+      }else{
+        x_to_add <- 0.3
+      }
+    } 
+    rest_x <- rep(max(plotdata$date) + x_to_add, nrow(restlabels))
     if(is.Date(plotrest$x_min) & is.Date(plotrest$x_max)){
       plotrest$x_max[which(plotrest$x_max > max(plotdata$date, na.rm = TRUE))] <- max(plotdata$date, na.rm = TRUE)
       plotrest$x_min[which(plotrest$x_min < min(plotdata$date, na.rm = TRUE))] <- min(plotdata$date, na.rm = TRUE)
@@ -156,4 +174,3 @@ exp_display_plot <- function(plot, rest, plotrest, plotdata, restlabels, mc, dc,
   }
   plot
 }
-
