@@ -2,6 +2,7 @@
 
 library(zoo)
 library(tidyverse)
+library(data.table)
 
 dir.create("shinydashboard", showWarnings = FALSE)
 dir.create("shinydashboard/dat", showWarnings = FALSE)
@@ -48,3 +49,55 @@ rest_list <- lapply(rest_list, function(x) x[-which(apply(x[, -which(colnames(x)
 rest_prev <- lapply(rest_list, function(x) cbind(x, rbind(rep(NA, ncol(x)), x[1:(nrow(x) - 1),])))
 saveRDS(rest_prev, "shinydashboard/dat/rest_prev.RDS")
 
+# Data preparetion for Bump Chart (https://www.r-bloggers.com/2018/04/bump-chart/)
+# country_res: result of random forest
+
+## Order of predictors and ranking of predictors within countries
+b_dat <- lapply(country_res, function(x){
+  x <- varImp(x)
+  x$predictor <- rownames(x)
+  x <- x[order(x$Overall, decreasing = TRUE),]
+  x$ranking <- c(1:nrow(x))
+  x$ranking[x$Overall == 0] <- NA
+  x <- x[order(x$Overall),]
+  x$pred_ranking <- c(1:nrow(x))
+  x$pred_ranking[x$Overall == 0] <- NA
+  x <- x[order(x$predictor),]
+  x <- data.frame("ranking" = x$ranking, "pred_ranking" = x$pred_ranking, row.names = x$predictor)
+  x
+})
+
+# Order of predictors
+b_pred <- lapply(b_dat, function(x){
+  r <- data.frame("pred_ranking" = x$pred_ranking, row.names = rownames(x))
+  r
+})
+b_pred <- do.call("cbind", b_pred)
+colnames(b_pred) <- names(b_dat)
+b_pred <- b_pred[rowSums(is.na(b_pred)) != ncol(b_pred), ]
+b_pred$pred_order <- rowSums(b_pred, na.rm = TRUE)
+b_pred <- b_pred[order(b_pred$pred_order, decreasing = TRUE),]
+pred_order <- row.names(b_pred)
+pred_ordernum <- c(1:length(pred_order))
+pred_order <- cbind("predictor" = pred_order, "order" = pred_ordernum)
+saveRDS(pred_order, "shinydashboard/dat/pred_order.RDS")
+
+# Ranking of predictors within countries
+b_vis <- lapply(b_dat, function(x){
+  r <- data.frame("ranking" = x$ranking, row.names = rownames(x))
+  r
+})
+b_vis <- do.call("cbind", b_vis)
+colnames(b_vis) <- names(b_dat)
+b_vis <- b_vis[rowSums(is.na(b_vis)) != ncol(b_vis), ]
+
+# Creating long data for bump chart
+b_vis$predictor <- rownames(b_vis)
+b_vis_long <- as.data.frame(melt(setDT(b_vis), id.vars = c("predictor"), variable.name = "country"))
+colnames(b_vis_long) <- c("predictor", "country", "ranking")
+
+# Merging with prediction order
+b_vis_long <- merge(b_vis_long, pred_order, by = "predictor", all.x = TRUE)
+b_vis_long$order <- as.numeric(b_vis_long$order)
+b_vis_long <- b_vis_long[order(b_vis_long$country, b_vis_long$order),]
+saveRDS(b_vis_long, "shinydashboard/dat/pred_imp_ranking.RDS")
