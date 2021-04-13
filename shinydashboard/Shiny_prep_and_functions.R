@@ -6,6 +6,8 @@ rest_names <- readRDS("dat/rest_names.RDS")
 y_limit_list <- readRDS("dat/y_limit_list.RDS")
 rest_prev <- readRDS("dat/rest_prev.RDS")
 sel_rest_country <- readRDS("dat/sel_rest_country.RDS")
+b_vis_long <- readRDS("dat/pred_imp_ranking.RDS")
+pred_order <- readRDS("dat/pred_order.RDS")
 
 # Functions
 smooth_or_not <- function(to_smooth, cvar, min_date, max_date){
