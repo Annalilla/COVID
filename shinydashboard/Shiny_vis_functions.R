@@ -174,3 +174,29 @@ exp_display_plot <- function(plot, rest, plotrest, plotdata, restlabels, mc, dc,
   }
   plot
 }
+  
+  
+bump_chart <- function(vis_dat){
+  ggplot(data = vis_dat, aes(x = country, y = ranking, group = predictor)) +
+    geom_line(aes(color = predictor, alpha = 0.5), size = 2) +
+    geom_point(aes(color = predictor, alpha = 0.5), size = 4) +
+    geom_point(color = "#FFFFFF", size = 1) +
+    scale_y_reverse(breaks = 1:max(vis_dat$ranking, na.rm = TRUE)) +
+    scale_x_discrete(breaks = unique(vis_dat$country)) +
+    geom_text(data = vis_dat %>% filter(country == "Austria"),
+              aes(label = predictor, x = 0) , hjust = 1, fontface = "bold", color = "#888888", size = 2) +
+    geom_text(data = vis_dat %>% filter(country == "Sweden"),
+              aes(label = predictor, x = (length(unique(vis_dat$country))) + 1), hjust = 0, fontface = "bold",
+              color = "#888888", size = 2) +
+    labs(x = "Countries",
+         y = "Rank",
+         title = "Variable Importance",
+         subtitle = "Ranking of predictors accross countries") +
+    theme_minimal() +
+    theme(axis.text.x=element_text(angle=60, hjust=1),
+          panel.grid.major.x = element_blank(),
+          legend.position = "none",
+          plot.margin = unit(c(1,10,1,5), "lines")) +
+    coord_cartesian(xlim = c(-5,length(unique(vis_dat$country))), clip = 'off')
+}
+
