@@ -73,7 +73,7 @@ rf_model <- function(country_dat){
                                round(log(ncol(rf_train)))))
   
   rf <- train(as.numeric(cases_new_cum) ~ .,
-              data = rf_train[,-which(colnames(rf_train) %in% c( "cases_new", "date", "last_day", "last_week"))],
+              data = rf_train[,-which(colnames(rf_train) %in% c("country", "cases_new", "date", "last_day", "last_week"))],
               method = "rf",
               trControl = ctrl,
               tuneGrid = grid)
