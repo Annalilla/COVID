@@ -21,6 +21,7 @@ ui <- dashboardPage(
     sidebarMenu(
       menuItem("Exploratory", tabName = "exploratory", icon = icon("object-align-bottom", lib = "glyphicon")),
       menuItem("Partial Dependence", tabName = "pdp", icon=icon("object-align-bottom", lib = "glyphicon")),
+      menuItem("Bump Chart", tabName = "bc", icon=icon("object-align-bottom", lib = "glyphicon")),
       menuItem("Datasource", tabName = "source", icon = icon("th"))
     )
   ), skin = "black",
@@ -74,7 +75,7 @@ ui <- dashboardPage(
               fluidRow(
                 box(
                   checkboxGroupInput("restriction", "Restriction Measures:",
-                                     choices = rest_names, selected = NULL, inline = TRUE), width = 12, status = "info"
+                                     choices = rest_names, selected = NULL, inline = TRUE), width = 12
                   #  prettyCheckboxGroup("restriction", "Restriction Measures:",
                   #                    choices = rest_names, inline = TRUE, shape = "curve"), width = 12
                 )
@@ -85,7 +86,16 @@ ui <- dashboardPage(
       tabItem(tabName = "pdp",
               h2("Partial Dependence Plots - ToDo")),
       
-      # Third tab content
+      # Content Bump Chart
+      tabItem(tabName = "bc",
+              box(plotOutput("plot_bc",  height = 350), width = 12, height = 480),
+              box(
+                checkboxGroupInput("bc_pred", "Predictors:",
+                                   choices = pred_order[,1], selected = NULL, inline = TRUE), width = 12
+              )
+      ),
+      
+      # Content Data Source
       tabItem(tabName = "source",
               h2("Datasource - ToDO")
       
@@ -181,12 +191,23 @@ server <- function(input, output, session) {
     rest_plot
   })
   
+  # Reactive input Bump Chart
+  bcData <- reactive({
+    pred <- input$bc_pred
+    bc_dat <- b_vis_long[which(b_vis_long$predictor %in% pred),]
+    bc_dat
+  })
+  
   output$plot1 <- renderPlot({
     p <- exp_plot_base(plotData(), yLimit()[1], yLimit()[2], input$mc, input$dc, input$vacc)
     p <- exp_plot_add_temp(p, input$tavg, plotData())
     p <- exp_plot_add_fb_vacc(p, input$mc, input$dc, input$vacc, plotData())
     exp_display_plot(p, input$restriction, plotRest(), plotData(), restrictionPlotLabels(), input$mc, input$dc, input$tavg, input$vacc)
   })
+  
+  output$plot_bc <- renderPlot({
+    bump_chart(bcData())
+    })
 }
 
 shinyApp(ui, server)
