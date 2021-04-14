@@ -88,10 +88,49 @@ ui <- dashboardPage(
       
       # Content Bump Chart
       tabItem(tabName = "bc",
-              box(plotOutput("plot_bc",  height = 350), width = 12, height = 480),
-              box(
-                checkboxGroupInput("bc_pred", "Predictors:",
-                                   choices = pred_order[,1], selected = NULL, inline = TRUE), width = 12
+              fluidRow(
+                column(7,
+                  box(title = "Variable Importance Plot", "Ranking of predictors accross countries",
+                      plotOutput("plot_bc", height = 360), width = 12, height = 450),
+                  box(title = "Countries:",
+                    column(2,
+                           checkboxGroupInput("bc_country", "",
+                                              choices = unique(b_vis_long$country)[c(TRUE, FALSE, FALSE, FALSE, FALSE, FALSE)], selected = NULL, inline = FALSE)
+                    ),
+                    column(2,
+                           checkboxGroupInput("bc_country2", "",
+                                              choices = unique(b_vis_long$country)[c(FALSE, TRUE, FALSE, FALSE, FALSE, FALSE)], selected = NULL, inline = FALSE)
+                    ),
+                    column(2,
+                           checkboxGroupInput("bc_country3", "",
+                                              choices = unique(b_vis_long$country)[c(FALSE, FALSE, TRUE, FALSE, FALSE, FALSE)], selected = NULL, inline = FALSE)
+                    ),
+                    column(2,
+                           checkboxGroupInput("bc_country4", "",
+                                              choices = unique(b_vis_long$country)[c(FALSE, FALSE, FALSE, TRUE, FALSE, FALSE)], selected = NULL, inline = FALSE)
+                           ),
+                   column(2,
+                          checkboxGroupInput("bc_country5", "",
+                                             choices = unique(b_vis_long$country)[c(FALSE, FALSE, FALSE, FALSE, TRUE, FALSE)], selected = NULL, inline = FALSE)
+                    ),
+                   column(2,
+                          checkboxGroupInput("bc_country6", "",
+                                             choices = unique(b_vis_long$country)[c(FALSE, FALSE, FALSE, FALSE, FALSE, TRUE)], selected = NULL, inline = FALSE)
+                   ), width = 12
+                  )
+                ),
+                column(5,
+                  box(
+                    column(6,
+                      checkboxGroupInput("bc_pred", "Predictors:",
+                                         choices = pred_order$predictor[1:30][c(TRUE, FALSE)], selected = NULL, inline = FALSE)
+                    ),
+                    column(6,
+                      checkboxGroupInput("bc_pred2", "",
+                                         choices = pred_order$predictor[1:30][c(FALSE, TRUE)], selected = NULL, inline = FALSE)
+                    ), width = 12
+                  )
+                )
               )
       ),
       
@@ -193,8 +232,18 @@ server <- function(input, output, session) {
   
   # Reactive input Bump Chart
   bcData <- reactive({
-    pred <- input$bc_pred
-    bc_dat <- b_vis_long[which(b_vis_long$predictor %in% pred),]
+    pred <- c(input$bc_pred, input$bc_pred2)
+    countr <- c(input$bc_country, input$bc_country2, input$bc_country3, input$bc_country4, input$bc_country5, input$bc_country6)
+    bc_dat <- NULL
+    if(length(pred) == 0){
+      bc_dat <- "no_pred"
+    }
+    if(length(countr) == 0){
+      bc_dat <- c(bc_dat, "no_countr")
+    }
+    if(length(pred) > 0 & length(countr) > 0){
+      bc_dat <- b_vis_long[which(b_vis_long$predictor %in% pred & b_vis_long$country %in% countr),]
+    }
     bc_dat
   })
   
@@ -206,7 +255,8 @@ server <- function(input, output, session) {
   })
   
   output$plot_bc <- renderPlot({
-    bump_chart(bcData())
+    x_coord <- bc_pred_label(bcData())
+    bump_chart(bcData(), x_coord)
     })
 }
 
