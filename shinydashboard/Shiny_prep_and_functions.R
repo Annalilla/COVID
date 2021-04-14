@@ -156,3 +156,30 @@ get_coord_for_country <- function(country, rest_list, max_y){
   
   rest_coord
 }
+
+## Bump Chart
+# Coordinates for labelling the predictors
+bc_pred_label <- function(vis_dat){
+  if(!is.vector(vis_dat))
+  {
+    x_coord <- list()
+    pred_list <- split(vis_dat, vis_dat$predictor)
+    x1 <- unlist(lapply(pred_list, function(x) {
+      y <- x[which(!is.na(x$ranking)),]
+      y$ranking[1]
+    }
+    ))
+    x1 <- as.data.frame(cbind("predictor" = names(x1), "ranking" = x1))
+    x1$ranking <- as.numeric(x1$ranking)
+    x_coord[[1]] <- x1
+    x2 <- unlist(lapply(pred_list, function(x){
+      y <- x[which(!is.na(x$ranking)),]
+      y$ranking[length(y$ranking)]
+    }
+    ))
+    x2 <- as.data.frame(cbind("predictor" = names(x2), "ranking" = x2))
+    x2$ranking <- as.numeric(x2$ranking)
+    x_coord[[2]] <- x2
+    return(x_coord)
+  }else return(NULL)
+}
