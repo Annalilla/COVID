@@ -49,7 +49,8 @@ rest_list <- lapply(rest_list, function(x) x[-which(apply(x[, -which(colnames(x)
 rest_prev <- lapply(rest_list, function(x) cbind(x, rbind(rep(NA, ncol(x)), x[1:(nrow(x) - 1),])))
 saveRDS(rest_prev, "shinydashboard/dat/rest_prev.RDS")
 
-# Data preparetion for Bump Chart (https://www.r-bloggers.com/2018/04/bump-chart/)
+# Data preparetion for Random Forest Visualization
+# Bump Chart: https://www.r-bloggers.com/2018/04/bump-chart/
 # country_res: result of random forest
 
 ## Order of predictors and ranking of predictors within countries
@@ -59,28 +60,11 @@ b_dat <- lapply(country_res, function(x){
   x <- x[order(x$Overall, decreasing = TRUE),]
   x$ranking <- c(1:nrow(x))
   x$ranking[x$Overall == 0] <- NA
-  x <- x[order(x$Overall),]
-  x$pred_ranking <- c(1:nrow(x))
-  x$pred_ranking[x$Overall == 0] <- NA
   x <- x[order(x$predictor),]
-  x <- data.frame("ranking" = x$ranking, "pred_ranking" = x$pred_ranking, row.names = x$predictor)
+  x <- data.frame("ranking" = x$ranking,  row.names = x$predictor)
   x
 })
 
-# Order of predictors
-b_pred <- lapply(b_dat, function(x){
-  r <- data.frame("pred_ranking" = x$pred_ranking, row.names = rownames(x))
-  r
-})
-b_pred <- do.call("cbind", b_pred)
-colnames(b_pred) <- names(b_dat)
-b_pred <- b_pred[rowSums(is.na(b_pred)) != ncol(b_pred), ]
-b_pred$pred_order <- rowSums(b_pred, na.rm = TRUE)
-b_pred <- b_pred[order(b_pred$pred_order, decreasing = TRUE),]
-pred_order <- row.names(b_pred)
-pred_ordernum <- c(1:length(pred_order))
-pred_order <- cbind("predictor" = pred_order, "order" = pred_ordernum)
-saveRDS(pred_order, "shinydashboard/dat/pred_order.RDS")
 
 # Ranking of predictors within countries
 b_vis <- lapply(b_dat, function(x){
@@ -90,6 +74,20 @@ b_vis <- lapply(b_dat, function(x){
 b_vis <- do.call("cbind", b_vis)
 colnames(b_vis) <- names(b_dat)
 b_vis <- b_vis[rowSums(is.na(b_vis)) != ncol(b_vis), ]
+
+# Order of predictors (sorting predictors according to number of countries, where predictor is 1. 2. or 3. most important)
+b_vis$no_1 <- apply(b_vis, 1, function(x) length(which(x == 1)))
+b_vis$no_2 <- apply(b_vis, 1, function(x) length(which(x == 2)))
+b_vis$no_3 <- apply(b_vis, 1, function(x) length(which(x == 3)))
+b_vis$no_4 <- apply(b_vis, 1, function(x) length(which(x == 4)))
+b_vis$no_5 <- apply(b_vis, 1, function(x) length(which(x == 5)))
+
+b_vis <- b_vis[order(b_vis$no_1, b_vis$no_2, b_vis$no_3, b_vis$no_4, b_vis$no_5, decreasing = TRUE),]
+
+pred_order <- as.data.frame(cbind("predictor" = rownames(b_vis), "order" = 1:nrow(b_vis)))
+saveRDS(pred_order, "shinydashboard/dat/pred_order.RDS")
+
+b_vis <- b_vis[,-which(grepl("no_", colnames(b_vis)))]
 
 # Creating long data for bump chart
 b_vis$predictor <- rownames(b_vis)
@@ -101,3 +99,11 @@ b_vis_long <- merge(b_vis_long, pred_order, by = "predictor", all.x = TRUE)
 b_vis_long$order <- as.numeric(b_vis_long$order)
 b_vis_long <- b_vis_long[order(b_vis_long$country, b_vis_long$order),]
 saveRDS(b_vis_long, "shinydashboard/dat/pred_imp_ranking.RDS")
+
+# Number of top predictors per countries (30 top predictors from pred_order)
+top_pred_c <- b_vis_long[-which(is.na(b_vis_long$ranking)),]
+n_top <- as.data.frame(top_pred_c[which(top_pred_c$predictor %in% pred_order$predictor[1:30]),] %>%
+  group_by(country) %>%
+  summarise(n = n()))
+summary(n_top)
+
