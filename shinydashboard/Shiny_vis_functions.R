@@ -72,17 +72,17 @@ exp_plot_add_temp <- function(plot, temp, dat){
     multi <- max(dat$cases, na.rm = TRUE)/max(dat$tavg, na.rm = TRUE)
     labpx1 <- (dat[which.max(dat$tavg), "date"] + x_dist)
     labpy1 <- (multi * dat[1, "tavg"] + multi)
-    labt1 <- paste(round(dat[1, "tavg"], 1), "Â°C", sep = "")
+    labt1 <- paste(round(dat[1, "tavg"], 1), "ÃÂ°C", sep = "")
     pointx1 <- dat[1, "date"]
     pointy1 <- (multi * dat[1, "tavg"])
     labpx <- (dat[which.max(dat$tavg), "date"] + x_dist)
     labpy <- (multi * dat[which.max(dat$tavg), "tavg"] + multi)
-    labt <- paste(round(dat[which.max(dat$tavg), "tavg"], 1), "Â°C", sep = "")
+    labt <- paste(round(dat[which.max(dat$tavg), "tavg"], 1), "ÃÂ°C", sep = "")
     pointx <- dat[which.max(dat$tavg), "date"]
     pointy <- (multi * dat[which.max(dat$tavg), "tavg"])
     labpxmin <- (dat[which.min(dat$tavg), "date"] + x_dist)
     labpymin <- (multi * dat[which.min(dat$tavg), "tavg"])
-    labtmin <- paste(round(dat[which.min(dat$tavg), "tavg"], 1), "Â°C", sep = "")
+    labtmin <- paste(round(dat[which.min(dat$tavg), "tavg"], 1), "ÃÂ°C", sep = "")
     pointxmin <- dat[which.min(dat$tavg), "date"]
     pointymin <- (multi * dat[which.min(dat$tavg), "tavg"])
     
@@ -176,27 +176,40 @@ exp_display_plot <- function(plot, rest, plotrest, plotdata, restlabels, mc, dc,
 }
   
   
-bump_chart <- function(vis_dat){
-  ggplot(data = vis_dat, aes(x = country, y = ranking, group = predictor)) +
-    geom_line(aes(color = predictor, alpha = 0.5), size = 2) +
-    geom_point(aes(color = predictor, alpha = 0.5), size = 4) +
-    geom_point(color = "#FFFFFF", size = 1) +
-    scale_y_reverse(breaks = 1:max(vis_dat$ranking, na.rm = TRUE)) +
-    scale_x_discrete(breaks = unique(vis_dat$country)) +
-    geom_text(data = vis_dat %>% filter(country == "Austria"),
-              aes(label = predictor, x = 0) , hjust = 1, fontface = "bold", color = "#888888", size = 2) +
-    geom_text(data = vis_dat %>% filter(country == "Sweden"),
-              aes(label = predictor, x = (length(unique(vis_dat$country))) + 1), hjust = 0, fontface = "bold",
-              color = "#888888", size = 2) +
-    labs(x = "Countries",
-         y = "Rank",
-         title = "Variable Importance",
-         subtitle = "Ranking of predictors accross countries") +
-    theme_minimal() +
-    theme(axis.text.x=element_text(angle=60, hjust=1),
-          panel.grid.major.x = element_blank(),
-          legend.position = "none",
-          plot.margin = unit(c(1,10,1,5), "lines")) +
-    coord_cartesian(xlim = c(-5,length(unique(vis_dat$country))), clip = 'off')
+bump_chart <- function(vis_dat, x_coord){
+  if(!is.vector(vis_dat)){
+    first_country <- unique(vis_dat$country)[1]
+    last_country <- unique(vis_dat$country)[length(unique(vis_dat$country))]
+    
+    ggplot(data = vis_dat, aes(x = country, y = ranking, group = predictor)) +
+      geom_line(aes(color = predictor, alpha = 0.5), size = 2) +
+      geom_point(aes(color = predictor, alpha = 0.5), size = 4) +
+      geom_point(color = "#FFFFFF", size = 1) +
+      scale_y_reverse() +
+      scale_x_discrete(breaks = unique(vis_dat$country)) +
+      geom_text(data = x_coord[[1]],
+                aes(label = predictor, x = 0) , hjust = 1, fontface = "bold", color = "#888888", size = 4) +
+      geom_text(data = x_coord[[2]],
+                aes(label = predictor, x = (length(unique(vis_dat$country))) + 1), hjust = 0, fontface = "bold",
+                color = "#888888", size = 4) +
+      labs(x = "Countries",
+           y = "Rank") +
+      theme_minimal() +
+      theme(axis.text.x = element_text(angle=60, hjust=1, size = 12),
+            axis.text.y = element_text(size = 12),
+            panel.grid.major.x = element_blank(),
+            legend.position = "none",
+            plot.margin = unit(c(1,10,1,1), "lines")) +
+      coord_cartesian(xlim = c(-5,length(unique(vis_dat$country))), clip = 'off')
+  }else{
+    mess <- NULL
+    if("no_pred" %in% vis_dat){
+      mess <- c(mess, "predictor")
+    }
+    if("no_countr" %in% vis_dat){
+      mess <- c(mess, "country")
+    }
+    mess <- paste(mess, collapse = " and a " )
+    paste("Please select a ", mess, sep = "")
+  }
 }
-
