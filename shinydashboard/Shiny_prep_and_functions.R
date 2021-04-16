@@ -183,3 +183,90 @@ bc_pred_label <- function(vis_dat){
     return(x_coord)
   }else return(NULL)
 }
+
+# Action Buttons
+reset_country <- function(session, sel_c){
+  col1 <- unique(b_vis_long$country)[c(TRUE, FALSE, FALSE, FALSE, FALSE, FALSE)]
+  col2 <- unique(b_vis_long$country)[c(FALSE, TRUE, FALSE, FALSE, FALSE, FALSE)]
+  col3 <- unique(b_vis_long$country)[c(FALSE, FALSE, TRUE, FALSE, FALSE, FALSE)]
+  col4 <- unique(b_vis_long$country)[c(FALSE, FALSE, FALSE, TRUE, FALSE, FALSE)]
+  col5 <- unique(b_vis_long$country)[c(FALSE, FALSE, FALSE, FALSE, TRUE, FALSE)]
+  col6 <- unique(b_vis_long$country)[c(FALSE, FALSE, FALSE, FALSE, FALSE, TRUE)]
+  
+  if(length(sel_c) > 0)
+  {
+    updateCheckboxGroupInput(session, inputId = "bc_country", choices = col1, selected = NULL, inline = FALSE)
+    updateCheckboxGroupInput(session, inputId = "bc_country2", choices = col2, selected = NULL, inline = FALSE)
+    updateCheckboxGroupInput(session, inputId = "bc_country3", choices = col3, selected = NULL, inline = FALSE)
+    updateCheckboxGroupInput(session, inputId = "bc_country4", choices = col4, selected = NULL, inline = FALSE)
+    updateCheckboxGroupInput(session, inputId = "bc_country5", choices = col5, selected = NULL, inline = FALSE)
+    updateCheckboxGroupInput(session, inputId = "bc_country6", choices = col6, selected = NULL, inline = FALSE)
+  }
+  if(length(sel_c) == 0)
+  {
+    updateCheckboxGroupInput(session, inputId = "bc_country", choices = col1, selected = col1, inline = FALSE)
+    updateCheckboxGroupInput(session, inputId = "bc_country2", choices = col2, selected = col2, inline = FALSE)
+    updateCheckboxGroupInput(session, inputId = "bc_country3", choices = col3, selected = col3, inline = FALSE)
+    updateCheckboxGroupInput(session, inputId = "bc_country4", choices = col4, selected = col4, inline = FALSE)
+    updateCheckboxGroupInput(session, inputId = "bc_country5", choices = col5, selected = col5, inline = FALSE)
+    updateCheckboxGroupInput(session, inputId = "bc_country6", choices = col6, selected = col6, inline = FALSE)
+  }
+}
+
+reset_predictor <- function(session, sel_p){
+  col1 <- pred_order$predictor[1:30][c(TRUE, FALSE)]
+  col2 <- pred_order$predictor[1:30][c(FALSE, TRUE)]
+  
+  if(length(sel_p) > 0)
+  {
+    updateCheckboxGroupInput(session, inputId = "bc_pred", choices = col1, selected = NULL, inline = FALSE)
+    updateCheckboxGroupInput(session, inputId = "bc_pred2", choices = col2, selected = NULL, inline = FALSE)
+  }
+  if(length(sel_p) == 0)
+  {
+    updateCheckboxGroupInput(session, inputId = "bc_pred", choices = col1, selected = col1, inline = FALSE)
+    updateCheckboxGroupInput(session, inputId = "bc_pred2", choices = col2, selected = col2, inline = FALSE)
+  }
+}
+
+bump_country_box <- function(){
+  col1 <- unique(b_vis_long$country)[c(TRUE, FALSE, FALSE, FALSE, FALSE, FALSE)]
+  col2 <- unique(b_vis_long$country)[c(FALSE, TRUE, FALSE, FALSE, FALSE, FALSE)]
+  col3 <- unique(b_vis_long$country)[c(FALSE, FALSE, TRUE, FALSE, FALSE, FALSE)]
+  col4 <- unique(b_vis_long$country)[c(FALSE, FALSE, FALSE, TRUE, FALSE, FALSE)]
+  col5 <- unique(b_vis_long$country)[c(FALSE, FALSE, FALSE, FALSE, TRUE, FALSE)]
+  col6 <- unique(b_vis_long$country)[c(FALSE, FALSE, FALSE, FALSE, FALSE, TRUE)]
+  box(title = "Countries:",
+      column(2,
+             checkboxGroupInput("bc_country", "", choices = col1, selected = col1, inline = FALSE)
+      ),
+      column(2,
+             checkboxGroupInput("bc_country2", "", choices = col2, selected = col2, inline = FALSE)
+      ),
+      column(2,
+             checkboxGroupInput("bc_country3", "", choices = col3, selected = col3, inline = FALSE)
+      ),
+      column(2,
+             checkboxGroupInput("bc_country4", "", choices = col4, selected = col4, inline = FALSE)
+      ),
+      column(2,
+             checkboxGroupInput("bc_country5", "", choices = col5, selected = col5, inline = FALSE)
+      ),
+      column(2,
+             checkboxGroupInput("bc_country6", "", choices = col6, selected = col6, inline = FALSE)
+      ), width = 12, height = 200
+  )
+}
+
+bump_predictor_box <- function(){
+  col1 <- pred_order$predictor[1:30][c(TRUE, FALSE)]
+  col2 <- pred_order$predictor[1:30][c(FALSE, TRUE)]
+  box(title = "Predictors:", style = "margin-bottom: 0px;",
+    column(6, style = "margin-top: 0px;",
+           checkboxGroupInput("bc_pred", "", choices = col1, selected = NULL, inline = FALSE)
+    ),
+    column(6, style = "margin-top: 0px;",
+           checkboxGroupInput("bc_pred2", "", choices = col2, selected = NULL, inline = FALSE)
+    ), width = 12, height = 460
+  )
+}
