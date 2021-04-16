@@ -178,29 +178,35 @@ exp_display_plot <- function(plot, rest, plotrest, plotdata, restlabels, mc, dc,
   
 bump_chart <- function(vis_dat, x_coord){
   if(!is.vector(vis_dat)){
-    first_country <- unique(vis_dat$country)[1]
-    last_country <- unique(vis_dat$country)[length(unique(vis_dat$country))]
-    
-    ggplot(data = vis_dat, aes(x = country, y = ranking, group = predictor)) +
-      geom_line(aes(color = predictor, alpha = 0.5), size = 2) +
-      geom_point(aes(color = predictor, alpha = 0.5), size = 4) +
-      geom_point(color = "#FFFFFF", size = 1) +
-      scale_y_reverse() +
-      scale_x_discrete(breaks = unique(vis_dat$country)) +
-      geom_text(data = x_coord[[1]],
-                aes(label = predictor, x = 0) , hjust = 1, fontface = "bold", color = "#888888", size = 4) +
-      geom_text(data = x_coord[[2]],
-                aes(label = predictor, x = (length(unique(vis_dat$country))) + 1), hjust = 0, fontface = "bold",
-                color = "#888888", size = 4) +
-      labs(x = "Countries",
-           y = "Rank") +
-      theme_minimal() +
-      theme(axis.text.x = element_text(angle=60, hjust=1, size = 12),
-            axis.text.y = element_text(size = 12),
-            panel.grid.major.x = element_blank(),
-            legend.position = "none",
-            plot.margin = unit(c(1,10,1,1), "lines")) +
-      coord_cartesian(xlim = c(-5,length(unique(vis_dat$country))), clip = 'off')
+    if(nrow(vis_dat) > 0 & !all(is.na(vis_dat$ranking))){
+      first_country <- unique(vis_dat$country)[1]
+      last_country <- unique(vis_dat$country)[length(unique(vis_dat$country))]
+      
+      ggplot(data = vis_dat, aes(x = country, y = ranking, group = predictor)) +
+        geom_line(aes(color = predictor, alpha = 0.5), size = 2) +
+        geom_point(aes(color = predictor, alpha = 0.5), size = 4) +
+        geom_point(color = "#FFFFFF", size = 1) +
+        scale_y_reverse() +
+        scale_x_discrete(breaks = unique(vis_dat$country)) +
+        geom_text(data = x_coord[[1]],
+                  aes(label = predictor, x = 0) , hjust = 1, fontface = "bold", color = "#888888", size = 4) +
+        geom_text(data = x_coord[[2]],
+                  aes(label = predictor, x = (length(unique(vis_dat$country))) + 1), hjust = 0, fontface = "bold",
+                  color = "#888888", size = 4) +
+        labs(x = "Countries",
+             y = "Rank") +
+        theme_minimal() +
+        theme(axis.text.x = element_text(angle=60, hjust=1, size = 12),
+              axis.text.y = element_text(size = 12),
+              panel.grid.major.x = element_blank(),
+              legend.position = "none",
+              plot.margin = unit(c(1,10,1,1), "lines")) +
+        coord_cartesian(xlim = c(-(round(length(unique(vis_dat$country))/2, 0)),length(unique(vis_dat$country))), clip = 'off')
+    }else{
+      mess <- "Not available for the selected country"
+      mess <- paste(paste('<p style="color:red">', mess, '</p>', sep = ""))
+      mess
+    }
   }else{
     mess <- NULL
     if("no_pred" %in% vis_dat){
@@ -210,6 +216,7 @@ bump_chart <- function(vis_dat, x_coord){
       mess <- c(mess, "country")
     }
     mess <- paste(mess, collapse = " and a " )
-    paste("Please select a ", mess, sep = "")
+    mess <- paste("Please select a ", mess, sep = "")
+    mess <- paste(paste('<p style="color:red">', mess, '</p>', sep = ""))
   }
 }
