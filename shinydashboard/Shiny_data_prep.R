@@ -54,7 +54,7 @@ saveRDS(rest_prev, "shinydashboard/dat/rest_prev.RDS")
 
 #Creates the RF train objects and inputs (x and y axis) for pdps per countries for one indicator (tavg)
 pdp_input <- lapply(c_rf_dat_fb, function(x) pdp_input(x))
-# : preprocessed data, countries removed without fb data, split by country ready for rf
+#c_rf_dat_fb : preprocessed data, countries removed without fb data, split by country ready for rf
 
 saveRDS(pdp_input, "shinydashboard/dat/pdp_input.RDS")
 
