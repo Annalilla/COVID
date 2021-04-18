@@ -31,7 +31,7 @@ ui <- dashboardPage(
       .main-header .logo {
         font-family: "Arial", Times, "Times New Roman", serif;
         font-weight: bold;
-        font-size: 25px;
+        font-size: 24px;
       }
     '))),
     tabItems(
@@ -76,31 +76,77 @@ ui <- dashboardPage(
                 box(
                   checkboxGroupInput("restriction", "Restriction Measures:",
                                      choices = rest_names, selected = NULL, inline = TRUE), width = 12
+                  #  prettyCheckboxGroup("restriction", "Restriction Measures:",
+                  #                    choices = rest_names, inline = TRUE, shape = "curve"), width = 12
                 )
               )
       ),
       
-      #Second tab content
+      #Pdp tab content
       tabItem(tabName = "pdp",
-              h2("Partial Dependence Plots - ToDo")),
+              #h2("Partial Dependence Plots - ToDo")),
+              fluidRow(
+                column(4,
+                       box(
+                         
+                         selectInput("country_pdp", "Country:",
+                                     choices = names(pdp_input)),
+                         bsTooltip(id = "country_pdp", title = "Select a country", 
+                                   placement = "left", trigger = "hover"),
+                       )
+                ),
+                
+                column(8,
+                       box(title = textOutput("charttitle_pdp"), htmlOutput("chartsubtitle_pdp"),
+                           plotOutput("plot_pdp",  height = 350), width = 12, height = 480)
+                )
+              )),
       
       # Content Bump Chart
       tabItem(tabName = "bc",
               fluidRow(
                 column(7,
-                  box(
-                    box(title = "Variable Importance Plot", "Ranking of predictors accross countries",
-                      htmlOutput("bump_message", height = 20), plotOutput("plot_bc", height = 520),
-                      height = 570, width = 12, solidHeader = TRUE),
-                    box(
-                      actionButton("reset_cy", "Check/Uncheck All Countries"),
-                      actionButton("reset_pr", "Check/Uncheck All Predictors"),
-                      height = 60, width = 12, solidHeader = TRUE), width = 12, height = 680),
+                  box(title = "Variable Importance Plot", "Ranking of predictors accross countries",
+                      plotOutput("plot_bc", height = 360), width = 12, height = 450),
+                  box(title = "Countries:",
+                    column(2,
+                           checkboxGroupInput("bc_country", "",
+                                              choices = unique(b_vis_long$country)[c(TRUE, FALSE, FALSE, FALSE, FALSE, FALSE)], selected = NULL, inline = FALSE)
+                    ),
+                    column(2,
+                           checkboxGroupInput("bc_country2", "",
+                                              choices = unique(b_vis_long$country)[c(FALSE, TRUE, FALSE, FALSE, FALSE, FALSE)], selected = NULL, inline = FALSE)
+                    ),
+                    column(2,
+                           checkboxGroupInput("bc_country3", "",
+                                              choices = unique(b_vis_long$country)[c(FALSE, FALSE, TRUE, FALSE, FALSE, FALSE)], selected = NULL, inline = FALSE)
+                    ),
+                    column(2,
+                           checkboxGroupInput("bc_country4", "",
+                                              choices = unique(b_vis_long$country)[c(FALSE, FALSE, FALSE, TRUE, FALSE, FALSE)], selected = NULL, inline = FALSE)
+                           ),
+                   column(2,
+                          checkboxGroupInput("bc_country5", "",
+                                             choices = unique(b_vis_long$country)[c(FALSE, FALSE, FALSE, FALSE, TRUE, FALSE)], selected = NULL, inline = FALSE)
+                    ),
+                   column(2,
+                          checkboxGroupInput("bc_country6", "",
+                                             choices = unique(b_vis_long$country)[c(FALSE, FALSE, FALSE, FALSE, FALSE, TRUE)], selected = NULL, inline = FALSE)
+                   ), width = 12
+                  )
                 ),
                 column(5,
-                    bump_predictor_box(),
-                    bump_country_box()
+                  box(
+                    column(6,
+                      checkboxGroupInput("bc_pred", "Predictors:",
+                                         choices = pred_order$predictor[1:30][c(TRUE, FALSE)], selected = NULL, inline = FALSE)
+                    ),
+                    column(6,
+                      checkboxGroupInput("bc_pred2", "",
+                                         choices = pred_order$predictor[1:30][c(FALSE, TRUE)], selected = NULL, inline = FALSE)
+                    ), width = 12
                   )
+                )
               )
       ),
       
@@ -200,19 +246,29 @@ server <- function(input, output, session) {
     rest_plot
   })
   
-  ## Reactive input Bump Chart
   
-  # Action Buttons
-  observeEvent(input$reset_cy,{
-    countr <- c(input$bc_country, input$bc_country2, input$bc_country3, input$bc_country4, input$bc_country5, input$bc_country6)
-    reset_country(session, countr)
+  # Pdp
+  selectedData <- reactive({
+    pdp_input[[input$country_pdp]]
   })
   
-  observeEvent(input$reset_pr,{
-    pred <- c(input$bc_pred, input$bc_pred2)
-    reset_predictor(session, pred)
+  output$plot_pdp <-renderPlot({
+    
+    ggplot(selectedData()) +
+      geom_line(aes(x = tavg, y = yhat), size = 0.8) +
+      xlab("Tavg") +
+      ylab("yhat") +
+      theme_minimal() +
+      theme(axis.text.x=element_text(angle=60, hjust=1),
+            panel.grid.major = element_blank(),
+            panel.grid.minor = element_blank(),
+            plot.margin = unit(c(1,1,0,1), "lines"))
   })
   
+  
+  
+  
+  # Reactive input Bump Chart
   bcData <- reactive({
     pred <- c(input$bc_pred, input$bc_pred2)
     countr <- c(input$bc_country, input$bc_country2, input$bc_country3, input$bc_country4, input$bc_country5, input$bc_country6)
@@ -229,9 +285,6 @@ server <- function(input, output, session) {
     bc_dat
   })
   
-  ## Plots
-  
-  # Exploratory
   output$plot1 <- renderPlot({
     p <- exp_plot_base(plotData(), yLimit()[1], yLimit()[2], input$mc, input$dc, input$vacc)
     p <- exp_plot_add_temp(p, input$tavg, plotData())
@@ -239,19 +292,10 @@ server <- function(input, output, session) {
     exp_display_plot(p, input$restriction, plotRest(), plotData(), restrictionPlotLabels(), input$mc, input$dc, input$tavg, input$vacc)
   })
   
-  # Bump Chart
-  bumpChart <- reactive({
+  output$plot_bc <- renderPlot({
     x_coord <- bc_pred_label(bcData())
     bump_chart(bcData(), x_coord)
-  })
-  output$plot_bc <- renderPlot({
-    p <- bumpChart()
-    if(is.ggplot(p)) p
     })
-  output$bump_message <- renderText({
-    p <- bumpChart()
-    if(!is.ggplot(p)) p
-  })
 }
 
 shinyApp(ui, server)
