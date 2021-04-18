@@ -49,6 +49,16 @@ rest_list <- lapply(rest_list, function(x) x[-which(apply(x[, -which(colnames(x)
 rest_prev <- lapply(rest_list, function(x) cbind(x, rbind(rep(NA, ncol(x)), x[1:(nrow(x) - 1),])))
 saveRDS(rest_prev, "shinydashboard/dat/rest_prev.RDS")
 
+
+##Pdp
+
+#Creates the RF train objects and inputs (x and y axis) for pdps per countries for one indicator (tavg)
+pdp_input <- lapply(c_rf_dat_fb, function(x) pdp_input(x))
+# : preprocessed data, countries removed without fb data, split by country ready for rf
+
+saveRDS(pdp_input, "shinydashboard/dat/pdp_input.RDS")
+
+
 # Data preparetion for Random Forest Visualization
 # Bump Chart: https://www.r-bloggers.com/2018/04/bump-chart/
 # country_res: result of random forest
