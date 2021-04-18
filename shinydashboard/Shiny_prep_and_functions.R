@@ -1,6 +1,5 @@
 # Reading the data prepared by Shiny_data_prep.R
 # Functions to process the data by the users queries
-
 country_list <- readRDS("dat/country_list.RDS")
 rest_names <- readRDS("dat/rest_names.RDS")
 y_limit_list <- readRDS("dat/y_limit_list.RDS")
@@ -8,8 +7,6 @@ rest_prev <- readRDS("dat/rest_prev.RDS")
 sel_rest_country <- readRDS("dat/sel_rest_country.RDS")
 b_vis_long <- readRDS("dat/pred_imp_ranking.RDS")
 pred_order <- readRDS("dat/pred_order.RDS")
-pdp_input <- readRDS("dat/pdp_input.RDS")
-
 # Functions
 smooth_or_not <- function(to_smooth, cvar, min_date, max_date){
   df <- country_list[[cvar]][which((country_list[[cvar]]$date >= min_date) & (country_list[[cvar]]$date <= max_date)),]
@@ -21,7 +18,6 @@ smooth_or_not <- function(to_smooth, cvar, min_date, max_date){
   colnames(df) <- c("date", "cases", "tavg")
   return(df)
 }
-
 y_limits <- function(lim_list, to_smooth, temp){
   # Maximum
   if(to_smooth == TRUE){
@@ -43,12 +39,10 @@ y_limits <- function(lim_list, to_smooth, temp){
   limits <- c(min_limit, max_limit)
   return(limits)
 }
-
 ci_from_se <- function(var, se){
   res <- cbind((var - (qnorm(0.995) * se)), (var + (qnorm(0.995) * se)))
   return(res)
 }
-
 fb_smooth_or_not <- function(to_smooth, cvar, min_date, max_date, max_y){
   df <- country_list[[cvar]][which((country_list[[cvar]]$date >= min_date) & (country_list[[cvar]]$date <= max_date)),]
   if(to_smooth == TRUE){
@@ -66,7 +60,6 @@ fb_smooth_or_not <- function(to_smooth, cvar, min_date, max_date, max_y){
   df <- apply(df, 2, function(x) x * max_y)
   return(df)
 }
-
 # Vaccination: people vaccinated or people fully vaccinated?
 vacc_smooth_or_not <- function(to_smooth, cvar, min_date, max_date, max_y){
   df <- country_list[[cvar]][which((country_list[[cvar]]$date >= min_date) & (country_list[[cvar]]$date <= max_date)),]
@@ -85,7 +78,6 @@ vacc_smooth_or_not <- function(to_smooth, cvar, min_date, max_date, max_y){
   }
   return(df)
 }
-
 number_of_cases <- function(cvar, min_date, max_date){
   tmp <- country_list[[cvar]][which((country_list[[cvar]]$date >= min_date) & (country_list[[cvar]]$date <= max_date)),]
   no_cases <- sum(tmp$cases_new, na.rm = TRUE)
@@ -94,13 +86,11 @@ number_of_cases <- function(cvar, min_date, max_date){
   no_vacc <- sum(tmp$new_vaccinations, na.rm = TRUE)
   number_of_cases <- c(no_cases, no_deaths, no_recovered, no_vacc)
 }
-
 add_lead <- function(dat, lead_to_add){
   dat$cases <- lead(dat$cases, lead_to_add)
   dat <- dat[1:(nrow(dat) - lead_to_add),]
   return(dat)
 }
-
 get_x_for_rest <- function(rest, data){
   k <- data
   if(rest %in% colnames(k)){
@@ -124,8 +114,6 @@ get_x_for_rest <- function(rest, data){
   }
   return(k_coord)
 }
-
-
 get_coord_for_country <- function(country, rest_list, max_y){
   dat <- rest_prev[[which(names(rest_prev) == country)]]
   # X coordinates
@@ -158,10 +146,9 @@ get_coord_for_country <- function(country, rest_list, max_y){
   rest_coord
 }
 
-
 ##Partial Dependence Plot
 
-## Creates the train object per countries, then gives x ans y axis for pdp plots for countries (only for one predictor)
+# Creates the train object per countries, then gives x ans y axis for pdp plots for countries (only for one predictor)
 
 pdp_input <- function(country_dat){
   country <- country_dat$country[1]
@@ -197,8 +184,6 @@ pdp_input <- function(country_dat){
   return(pdp_input)
 }
 
-
-
 ## Bump Chart
 # Coordinates for labelling the predictors
 bc_pred_label <- function(vis_dat){
@@ -224,4 +209,91 @@ bc_pred_label <- function(vis_dat){
     x_coord[[2]] <- x2
     return(x_coord)
   }else return(NULL)
+}
+
+# Action Buttons
+reset_country <- function(session, sel_c){
+  col1 <- unique(b_vis_long$country)[c(TRUE, FALSE, FALSE, FALSE, FALSE, FALSE)]
+  col2 <- unique(b_vis_long$country)[c(FALSE, TRUE, FALSE, FALSE, FALSE, FALSE)]
+  col3 <- unique(b_vis_long$country)[c(FALSE, FALSE, TRUE, FALSE, FALSE, FALSE)]
+  col4 <- unique(b_vis_long$country)[c(FALSE, FALSE, FALSE, TRUE, FALSE, FALSE)]
+  col5 <- unique(b_vis_long$country)[c(FALSE, FALSE, FALSE, FALSE, TRUE, FALSE)]
+  col6 <- unique(b_vis_long$country)[c(FALSE, FALSE, FALSE, FALSE, FALSE, TRUE)]
+  
+  if(length(sel_c) > 0)
+  {
+    updateCheckboxGroupInput(session, inputId = "bc_country", choices = col1, selected = NULL, inline = FALSE)
+    updateCheckboxGroupInput(session, inputId = "bc_country2", choices = col2, selected = NULL, inline = FALSE)
+    updateCheckboxGroupInput(session, inputId = "bc_country3", choices = col3, selected = NULL, inline = FALSE)
+    updateCheckboxGroupInput(session, inputId = "bc_country4", choices = col4, selected = NULL, inline = FALSE)
+    updateCheckboxGroupInput(session, inputId = "bc_country5", choices = col5, selected = NULL, inline = FALSE)
+    updateCheckboxGroupInput(session, inputId = "bc_country6", choices = col6, selected = NULL, inline = FALSE)
+  }
+  if(length(sel_c) == 0)
+  {
+    updateCheckboxGroupInput(session, inputId = "bc_country", choices = col1, selected = col1, inline = FALSE)
+    updateCheckboxGroupInput(session, inputId = "bc_country2", choices = col2, selected = col2, inline = FALSE)
+    updateCheckboxGroupInput(session, inputId = "bc_country3", choices = col3, selected = col3, inline = FALSE)
+    updateCheckboxGroupInput(session, inputId = "bc_country4", choices = col4, selected = col4, inline = FALSE)
+    updateCheckboxGroupInput(session, inputId = "bc_country5", choices = col5, selected = col5, inline = FALSE)
+    updateCheckboxGroupInput(session, inputId = "bc_country6", choices = col6, selected = col6, inline = FALSE)
+  }
+}
+
+reset_predictor <- function(session, sel_p){
+  col1 <- pred_order$predictor[1:30][c(TRUE, FALSE)]
+  col2 <- pred_order$predictor[1:30][c(FALSE, TRUE)]
+  
+  if(length(sel_p) > 0)
+  {
+    updateCheckboxGroupInput(session, inputId = "bc_pred", choices = col1, selected = NULL, inline = FALSE)
+    updateCheckboxGroupInput(session, inputId = "bc_pred2", choices = col2, selected = NULL, inline = FALSE)
+  }
+  if(length(sel_p) == 0)
+  {
+    updateCheckboxGroupInput(session, inputId = "bc_pred", choices = col1, selected = col1, inline = FALSE)
+    updateCheckboxGroupInput(session, inputId = "bc_pred2", choices = col2, selected = col2, inline = FALSE)
+  }
+}
+
+bump_country_box <- function(){
+  col1 <- unique(b_vis_long$country)[c(TRUE, FALSE, FALSE, FALSE, FALSE, FALSE)]
+  col2 <- unique(b_vis_long$country)[c(FALSE, TRUE, FALSE, FALSE, FALSE, FALSE)]
+  col3 <- unique(b_vis_long$country)[c(FALSE, FALSE, TRUE, FALSE, FALSE, FALSE)]
+  col4 <- unique(b_vis_long$country)[c(FALSE, FALSE, FALSE, TRUE, FALSE, FALSE)]
+  col5 <- unique(b_vis_long$country)[c(FALSE, FALSE, FALSE, FALSE, TRUE, FALSE)]
+  col6 <- unique(b_vis_long$country)[c(FALSE, FALSE, FALSE, FALSE, FALSE, TRUE)]
+  box(title = "Countries:",
+      column(2,
+             checkboxGroupInput("bc_country", "", choices = col1, selected = col1, inline = FALSE)
+      ),
+      column(2,
+             checkboxGroupInput("bc_country2", "", choices = col2, selected = col2, inline = FALSE)
+      ),
+      column(2,
+             checkboxGroupInput("bc_country3", "", choices = col3, selected = col3, inline = FALSE)
+      ),
+      column(2,
+             checkboxGroupInput("bc_country4", "", choices = col4, selected = col4, inline = FALSE)
+      ),
+      column(2,
+             checkboxGroupInput("bc_country5", "", choices = col5, selected = col5, inline = FALSE)
+      ),
+      column(2,
+             checkboxGroupInput("bc_country6", "", choices = col6, selected = col6, inline = FALSE)
+      ), width = 12, height = 200
+  )
+}
+
+bump_predictor_box <- function(){
+  col1 <- pred_order$predictor[1:30][c(TRUE, FALSE)]
+  col2 <- pred_order$predictor[1:30][c(FALSE, TRUE)]
+  box(title = "Predictors:", style = "margin-bottom: 0px;",
+      column(6, style = "margin-top: 0px;",
+             checkboxGroupInput("bc_pred", "", choices = col1, selected = NULL, inline = FALSE)
+      ),
+      column(6, style = "margin-top: 0px;",
+             checkboxGroupInput("bc_pred2", "", choices = col2, selected = NULL, inline = FALSE)
+      ), width = 12, height = 460
+  )
 }
