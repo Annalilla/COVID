@@ -7,6 +7,8 @@ rest_prev <- readRDS("dat/rest_prev.RDS")
 sel_rest_country <- readRDS("dat/sel_rest_country.RDS")
 b_vis_long <- readRDS("dat/pred_imp_ranking.RDS")
 pred_order <- readRDS("dat/pred_order.RDS")
+country_res <- readRDS("dat/country_res.RDS")
+
 # Functions
 smooth_or_not <- function(to_smooth, cvar, min_date, max_date){
   df <- country_list[[cvar]][which((country_list[[cvar]]$date >= min_date) & (country_list[[cvar]]$date <= max_date)),]
