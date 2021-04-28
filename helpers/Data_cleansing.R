@@ -45,8 +45,6 @@ summary(values[health_exp$geo %in% capitals$country_code_iso2, "values"])
 health_expenditures_eurostat$icha11_hc <-as.factor(health_expenditures_eurostat$icha11_hc)
 levels(health_expenditures_eurostat$icha11_hc)
 
-# Are levels additive, i.e. mutually exclusive? What is "Current health care expenditure (CHE)" ?
-
 # https://ec.europa.eu/eurostat/cache/metadata/en/hlth_sha11_esms.htm :
 #health care by function (ICHA-HC)
 #Health care functions
@@ -67,9 +65,6 @@ levels(health_expenditures_eurostat$icha11_hc)
 #   governance, and health system and financing administration, which means services that focus on the health system rather than direct healthcare, direct and support health system functioning, and are considered to be collective, as they are not allocated to specific individuals but benefit all health system users.
 
 # !Finally, current expenditure on healthcare means the final consumption expenditure of resident units on healthcare goods and services, including the healthcare goods and services provided directly to individual persons as well as collective healthcare services.
-
-# Eurostat answer is pending.
-
 
 str(health_exp)
 
