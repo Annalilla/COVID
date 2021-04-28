@@ -218,6 +218,7 @@ c_rf_dat_fb <- c_rf_dat <- split(rf_dat_fb, rf_dat_fb$country)
 
 country_res <- lapply(c_rf_dat_fb, function(x) rf_model(x))
 
+saveRDS(country_res, "shinydashboard/dat/country_res.RDS")
 
 p <- varImpPlot(country_res[[8]])
 p + title(names(country_res)[8])
