@@ -47,6 +47,11 @@ age <- age[,c("geo", "time", "values", "variable")]
 
 #
 # health_expenditures_eurostat
+# Categories which sums up the total health care expenditure
+tot_h_sum <- c("Curative care", "Rehabilitative care", "Long-term care (health)", "Ancillary services (non-specified by function)",
+               "Medical goods (non-specified by function)", "Preventive care", "Governance and health system and financing administration",
+               "Other health care services unknown")
+health_expenditures_eurostat <- health_expenditures_eurostat[which(health_expenditures_eurostat$icha11_hc %in% tot_h_sum),]
 health_exp <- health_expenditures_eurostat %>%
   group_by(geo, time) %>%
   summarise(values = sum(values))
