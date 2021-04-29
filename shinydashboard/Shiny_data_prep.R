@@ -86,18 +86,12 @@ colnames(b_vis) <- names(b_dat)
 b_vis <- b_vis[rowSums(is.na(b_vis)) != ncol(b_vis), ]
 
 # Order of predictors (sorting predictors according to number of countries, where predictor is 1. 2. or 3. most important)
-b_vis$no_1 <- apply(b_vis, 1, function(x) length(which(x == 1)))
-b_vis$no_2 <- apply(b_vis, 1, function(x) length(which(x == 2)))
-b_vis$no_3 <- apply(b_vis, 1, function(x) length(which(x == 3)))
-b_vis$no_4 <- apply(b_vis, 1, function(x) length(which(x == 4)))
-b_vis$no_5 <- apply(b_vis, 1, function(x) length(which(x == 5)))
-
-b_vis <- b_vis[order(b_vis$no_1, b_vis$no_2, b_vis$no_3, b_vis$no_4, b_vis$no_5, decreasing = TRUE),]
+b_vis_r <- 1/b_vis
+b_vis_r$ord <- rowSums(b_vis_r, na.rm = TRUE)
+b_vis <- b_vis[order(b_vis_r$ord, decreasing = TRUE),]
 
 pred_order <- as.data.frame(cbind("predictor" = rownames(b_vis), "order" = 1:nrow(b_vis)))
 saveRDS(pred_order, "shinydashboard/dat/pred_order.RDS")
-
-b_vis <- b_vis[,-which(grepl("no_", colnames(b_vis)))]
 
 # Creating long data for bump chart
 b_vis$predictor <- rownames(b_vis)
@@ -116,4 +110,3 @@ n_top <- as.data.frame(top_pred_c[which(top_pred_c$predictor %in% pred_order$pre
   group_by(country) %>%
   summarise(n = n()))
 summary(n_top)
-
