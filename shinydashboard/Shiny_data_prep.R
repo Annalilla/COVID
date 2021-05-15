@@ -3,6 +3,11 @@
 library(zoo)
 library(tidyverse)
 library(data.table)
+library(caret)
+library(pdp)
+library(readr)
+library(stringr)
+library(dplyr)
 
 dir.create("shinydashboard", showWarnings = FALSE)
 dir.create("shinydashboard/dat", showWarnings = FALSE)
@@ -50,13 +55,106 @@ rest_prev <- lapply(rest_list, function(x) cbind(x, rbind(rep(NA, ncol(x)), x[1:
 saveRDS(rest_prev, "shinydashboard/dat/rest_prev.RDS")
 
 
-##Pdp
+##Partial Dependece plots
 
-#Creates the RF train objects and inputs (x and y axis) for pdps per countries for one indicator (tavg)
-pdp_input <- lapply(c_rf_dat_fb, function(x) pdp_input(x))
-#c_rf_dat_fb : preprocessed data, countries removed without fb data, split by country ready for rf
+#Creates input for the Partial Dependence Plots of the Random Forest train object for all countries (with FB data)
 
-saveRDS(pdp_input, "shinydashboard/dat/pdp_input.RDS")
+
+c_rf_dat_fb <- readRDS("shinydashboard/dat/c_rf_dat_fb.RDS")
+
+##Functions for Shiny pdp data preparation
+
+#Creates the train object per countries, then the pdp input for one country, all predictors
+
+#Creates the train object
+
+rf_train <- function(country_dat){
+  country <- country_dat$country[1]
+  rf_dat_t <- country_dat[complete.cases(country_dat),]
+  
+  # Train and test set
+  set.seed(9985)
+  to_train <- createDataPartition(rf_dat_t$cases_new_cum,
+                                  p = .8,
+                                  list = FALSE,
+                                  times = 1)
+  
+  rf_train <- rf_dat_t[to_train,]
+  rf_test <- rf_dat_t[-to_train,]
+  
+  # RF
+  ctrl <- trainControl(method = "timeslice",
+                       initialWindow = 28,
+                       horizon = 5,
+                       fixedWindow = TRUE)
+  
+  grid <- expand.grid(mtry = c(round(sqrt(ncol(rf_train))),
+                               round(log(ncol(rf_train)))))
+  
+  rf <- train(as.numeric(cases_new_cum) ~ .,
+              data = rf_train[,-which(colnames(rf_train) %in% c( "cases_new", "date", "last_day", "last_week", "country"))],
+              method = "rf",
+              trControl = ctrl,
+              tuneGrid = grid)
+  
+  
+  return(rf)
+}
+
+
+#Function for Pdp input for one country, all of its predictors
+pdp_all_pred <- function(countr){
+  res_AUT <- list()
+  for (i in seq_along(preds[[countr]])){
+    res_AUT[[i]]<-  pdp::partial(rf_train[[countr]], pred.var = preds[[countr]][[i]])
+  }
+  return(res_AUT)
+}
+
+
+
+#Creates the RF train objects from the RF data
+rf_train <- lapply(c_rf_dat_fb, function(x) rf_train(x))
+
+#Get the predictors applied by countries
+preds <- lapply(rf_train, function(x){ x <- predictors(x)
+})
+
+countries <- names(rf_train)
+
+#Create Pdp input (yhats) for all countries, all of its predictors
+pdp_all_c_all_pred <- lapply(countries, function(x) pdp_all_pred(x))
+
+names(pdp_all_c_all_pred) <- countries
+
+
+#Name the predictors within countries
+
+preds[[1]] -> names(pdp_all_c_all_pred[[1]])
+preds[[2]] -> names(pdp_all_c_all_pred[[2]])
+preds[[3]] -> names(pdp_all_c_all_pred[[3]])
+preds[[4]] -> names(pdp_all_c_all_pred[[4]])
+preds[[5]] -> names(pdp_all_c_all_pred[[5]])
+preds[[6]] -> names(pdp_all_c_all_pred[[6]])
+preds[[7]] -> names(pdp_all_c_all_pred[[7]])
+preds[[8]] -> names(pdp_all_c_all_pred[[8]])
+preds[[9]] -> names(pdp_all_c_all_pred[[9]])
+preds[[10]] -> names(pdp_all_c_all_pred[[10]])
+preds[[11]] -> names(pdp_all_c_all_pred[[11]])
+preds[[12]] -> names(pdp_all_c_all_pred[[12]])
+preds[[13]] -> names(pdp_all_c_all_pred[[13]])
+preds[[14]] -> names(pdp_all_c_all_pred[[14]])
+preds[[15]] -> names(pdp_all_c_all_pred[[15]])
+preds[[16]] -> names(pdp_all_c_all_pred[[16]])
+preds[[17]] -> names(pdp_all_c_all_pred[[17]])
+preds[[18]] -> names(pdp_all_c_all_pred[[18]])
+preds[[19]] -> names(pdp_all_c_all_pred[[19]])
+preds[[20]] -> names(pdp_all_c_all_pred[[20]])
+preds[[21]] -> names(pdp_all_c_all_pred[[21]])
+
+saveRDS(pdp_all_c_all_pred, "shinydashboard/dat/pdp_all_c_all_pred.RDS")
+
+
 
 
 # Data preparetion for Random Forest Visualization
