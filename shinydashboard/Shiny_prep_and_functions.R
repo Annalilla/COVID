@@ -8,6 +8,7 @@ sel_rest_country <- readRDS("dat/sel_rest_country.RDS")
 b_vis_long <- readRDS("dat/pred_imp_ranking.RDS")
 pred_order <- readRDS("dat/pred_order.RDS")
 country_res <- readRDS("dat/country_res.RDS")
+pdp_all_c_all_pred <- readRDS("dat/pdp_all_c_all_pred.RDS")
 
 # Functions
 smooth_or_not <- function(to_smooth, cvar, min_date, max_date){
@@ -150,41 +151,6 @@ get_coord_for_country <- function(country, rest_list, max_y){
 
 ##Partial Dependence Plot
 
-# Creates the train object per countries, then gives x ans y axis for pdp plots for countries (only for one predictor)
-
-pdp_input <- function(country_dat){
-  country <- country_dat$country[1]
-  rf_dat_t <- country_dat[complete.cases(country_dat),]
-  
-  # Train and test set
-  set.seed(9985)
-  to_train <- createDataPartition(rf_dat_t$cases_new_cum,
-                                  p = .8,
-                                  list = FALSE,
-                                  times = 1)
-  
-  rf_train <- rf_dat_t[to_train,]
-  rf_test <- rf_dat_t[-to_train,]
-  
-  # RF
-  ctrl <- trainControl(method = "timeslice",
-                       initialWindow = 28,
-                       horizon = 5,
-                       fixedWindow = TRUE)
-  
-  grid <- expand.grid(mtry = c(round(sqrt(ncol(rf_train))),
-                               round(log(ncol(rf_train)))))
-  
-  rf <- train(as.numeric(cases_new_cum) ~ .,
-              data = rf_train[,-which(colnames(rf_train) %in% c("country", "cases_new", "date", "last_day", "last_week"))],
-              method = "rf",
-              trControl = ctrl,
-              tuneGrid = grid)
-  
-  pdp_input <- pdp::partial(rf, pred.var = "tavg")
-  
-  return(pdp_input)
-}
 
 ## Bump Chart
 # Coordinates for labelling the predictors
