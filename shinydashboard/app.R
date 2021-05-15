@@ -84,18 +84,24 @@ ui <- dashboardPage(
                        box(
                          
                          selectInput("country_pdp", "Country:",
-                                     choices = names(pdp_input)),
+                                     choices = names(pdp_all_c_all_pred)),
                          bsTooltip(id = "country_pdp", title = "Select a country", 
+                                   placement = "left", trigger = "hover"),
+                       ),
+                       box(
+                         
+                         selectInput("predictor_pdp", "Predictor:",
+                                     choices = NULL), #to be updated by each session based on values of the country_pdp
+                         bsTooltip(id = "predictor_pdp", title = "Select a predictor", 
                                    placement = "left", trigger = "hover"),
                        )
                 ),
                 
                 column(8,
-                       box(title = textOutput("charttitle_pdp"), htmlOutput("chartsubtitle_pdp"),
+                       box(title = textOutput("charttitle_pdp"), "Variable importance plot",
                            plotOutput("plot_pdp",  height = 350), width = 12, height = 480)
                 )
               )),
-      
       # Content Bump Chart
       tabItem(tabName = "bc",
               fluidRow(
@@ -115,15 +121,22 @@ ui <- dashboardPage(
                 )
               )
       ),
-      
       # Content Data Source
       tabItem(tabName = "source",
-              h2("Datasource - ToDO")
+              h1("Datasources- To link!"),
+              h2("Facebook COVID-19 Symptom Survey"),
+              h2("Temperature, National Centers for Environmental Information"),
+              h2("Vaccination, Our Word in Data"),
+              h2("COVID-19 Data Repository, Johns Hopkins University"),
+              h2("Eurostat databases"),
+              h2("Country response measures to COVID-19 by week and by country, European Centre for Disease Prevention and Control")
               
       )
     )
   )
 )
+
+
 server <- function(input, output, session) {
   
   # Dynamic name for the chart
@@ -212,21 +225,37 @@ server <- function(input, output, session) {
   
   
   ## Pdp
+  
+  observeEvent(input$country_pdp,{
+    updateSelectInput(session,'predictor_pdp',
+                      choices=names(pdp_all_c_all_pred[[input$country_pdp]]))
+  })
+  
+  # Dynamic name for the pdp chart
+  titleText_pdp <- reactive({
+    paste(input$country_pdp)
+  })
+  
+  output$charttitle_pdp <- renderText({
+    titleText_pdp()
+  })
+  
   selectedData <- reactive({
-    pdp_input[[input$country_pdp]]
+    pdp_all_c_all_pred[[input$country_pdp]][[input$predictor_pdp]]
   })
   
   output$plot_pdp <-renderPlot({
     
     ggplot(selectedData()) +
-      geom_line(aes(x = tavg, y = yhat), size = 0.8) +
-      xlab("Tavg") +
+      geom_line(aes(x = pdp_all_c_all_pred[[input$country_pdp]][[input$predictor_pdp]][,1],
+                    y = pdp_all_c_all_pred[[input$country_pdp]][[input$predictor_pdp]][,2]), size = 0.8) +
+      xlab(input$predictor_pdp) +
       ylab("yhat") +
       theme_minimal() +
       theme(axis.text.x=element_text(angle=60, hjust=1),
             panel.grid.major = element_blank(),
             panel.grid.minor = element_blank(),
-            plot.margin = unit(c(1,1,0,1), "lines"))
+            plot.margin = unit(c(1,1,0,1), "lines")) 
   })
   
   
