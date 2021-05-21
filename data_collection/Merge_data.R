@@ -51,7 +51,7 @@ age <- age[,c("geo", "time", "values", "variable")]
 tot_h_sum <- c("Curative care", "Rehabilitative care", "Long-term care (health)", "Ancillary services (non-specified by function)",
                "Medical goods (non-specified by function)", "Preventive care", "Governance and health system and financing administration",
                "Other health care services unknown")
-health_expenditures_eurostat <- health_expenditures_eurostat[wwhich((health_expenditures_eurostat$icha11_hc %in% tot_h_sum) &
+health_expenditures_eurostat <- health_expenditures_eurostat[which((health_expenditures_eurostat$icha11_hc %in% tot_h_sum) &
                                                                health_expenditures_eurostat$unit == "MIO_EUR"),]
 health_exp <- health_expenditures_eurostat %>%
   group_by(geo, time) %>%
