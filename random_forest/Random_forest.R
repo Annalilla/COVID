@@ -10,6 +10,7 @@ library(tidyverse)
 library(stringr)
 library(sjlabelled)
 
+setwd('c:/Users/balan/Documents/IPSDS/MDM/Master_Thesis/WScarping/COVID-main/')
 
 source("functions/Get_data.R")
 
@@ -159,7 +160,7 @@ summary(cm[upper.tri(cm)])
 # Merging partially and not partially applied restrictions
 
 dat <- rf_dat
-rf_dat_p <- merge_all_partial_rest(dat)
+#rf_dat_p <- merge_all_partial_rest(dat)
 
 
 
@@ -172,15 +173,8 @@ rf_dat_p <- merge_all_partial_rest(dat)
 #rf_dat_t <- rf_dat[which(rf_dat$country == "Hungary"), ]
 #rf_dat_t <- rf_dat_t[complete.cases(rf_dat_t),]
 
-# Train and test set
-#set.seed(9985)
-#to_train <- createDataPartition(rf_dat_t$cases_new_cum,
-#                                p = .8,
-#                                list = FALSE,
-#                                times = 1)
 
-#rf_train <- rf_dat_t[to_train,]
-#rf_test <- rf_dat_t[-to_train,]
+#set.seed(9985)
 
 # RF
 #ctrl <- trainControl(method = "timeslice",
@@ -188,17 +182,17 @@ rf_dat_p <- merge_all_partial_rest(dat)
 #                     horizon = 5,
 #                     fixedWindow = TRUE)
 
-#grid <- expand.grid(mtry = c(round(sqrt(ncol(rf_train))),
-#                             round(log(ncol(rf_train)))))
+#grid <- expand.grid(mtry = c(round(sqrt(ncol(rf_dat_t))),
+#                             round(log(ncol(rf_dat_t)))))
 
 #rf <- train(as.numeric(cases_new_cum) ~ .,
-#            data = rf_train[,-which(colnames(rf_train) %in% c("country", "cases_new", "date", "last_day", "last_week"))],
+#            data = rf_dat_t[,-which(colnames(rf_dat_t) %in% c("country", "cases_new", "date", "last_day", "last_week"))],
 #            method = "rf",
 #           trControl = ctrl,
 #            tuneGrid = grid)
 
-
 #rf1 <- rf$finalModel
+
 
 # Interpretation
 #varImpPlot(rf1)
@@ -218,8 +212,11 @@ c_rf_dat_fb <- c_rf_dat <- split(rf_dat_fb, rf_dat_fb$country)
 
 country_res <- lapply(c_rf_dat_fb, function(x) rf_model(x))
 
+#Save results and further input for the Shiny visualization
+
 dir.create("shinydashboard", showWarnings = FALSE)
 dir.create("shinydashboard/dat", showWarnings = FALSE)
+
 saveRDS(country_res, "shinydashboard/dat/country_res.RDS")
 saveRDS(c_rf_dat_fb, "shinydashboard/dat/c_rf_dat_fb.RDS")
 
