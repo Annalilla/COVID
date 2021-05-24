@@ -265,3 +265,32 @@ bump_predictor_box <- function(){
       ), width = 12, height = 460
   )
 }
+                       
+                       # Display Checkboxgroups with label
+checkboxgroup_with_label <- function(names, labels, tooltips){
+  cgroup <- list()
+  for(i in 1:length(names)){
+    cgroup[[i]] <- column(tags$div(title = tooltips[i],
+                                   checkboxInput(names[i], labels[i], FALSE)),
+                          width = 2, height = 1, background = NULL)
+  }
+  cgroup
+}
+
+get_input_checkboxgroup_with_label <- function(names, input){
+  sel_input <- c()
+  for(i in 1:length(names))
+  {
+    sel_input[i] <- input[[names[i]]]
+  }
+  
+  return(names[sel_input == TRUE])
+}
+
+update_checkboxgroup_with_label <- function(session, names, labels){
+  for(i in 1:length(names))
+  {
+    updateCheckboxInput(session = session, names[i], labels[i])
+  }
+}
+
