@@ -37,25 +37,32 @@ ui <- dashboardPage(
                 column(4,
                        box(
                          
-                         selectInput("country", "Country:",
-                                     choices = names(country_list)),
-                         bsTooltip(id = "country", title = "Select a country", 
-                                   placement = "left", trigger = "hover"),
+                         tags$div(title = "Select a country", selectInput("country", "Country:",
+                                     choices = names(country_list))),
+                         #bsTooltip(id = "country", title = "Select a country", 
+                        #           placement = "right", trigger = "hover"),
                          
-                         checkboxInput("smoothed", "Smoothed", TRUE),
+                         tags$div(title = "Display moving average of continuous variables",
+                                  checkboxInput("smoothed", "Smoothed", TRUE)),
                          
-                         textInput("lead", "Lead:", value = "0", width = NULL, placeholder = NULL),
+                        tags$div(title = "Add lead to the number of new cases",
+                                 textInput("lead", "Lead:", value = "0", width = NULL, placeholder = NULL)),
                          
-                         sliderInput("dateinterval", "Date Range",
+                        tags$div(title = "Set the date interval",
+                                 sliderInput("dateinterval", "Date Range",
                                      min = min(country_list[[1]]$date),
                                      max = max(country_list[[1]]$date),
-                                     value = c(min(country_list[[1]]$date), max(country_list[[1]]$date))
+                                     value = c(min(country_list[[1]]$date), max(country_list[[1]]$date)))
                          ),
                          
-                         checkboxInput("mc", "Mask Coverage", FALSE),
-                         checkboxInput("dc", "Direct Contact", FALSE),
-                         checkboxInput("vacc", "Vaccination", FALSE),
-                         checkboxInput("tavg", "Average daily temperature", FALSE), width = 12, height = 480
+                         tags$div(title = "Percentage of respondents that have reported use mask cover",
+                                  checkboxInput("mc", "Mask Coverage", FALSE)),
+                         tags$div(title = "Percentage of respondents that have reported had direct contact (longer than one minute) with people not staying with them in last 24 hours",
+                                  checkboxInput("dc", "Direct Contact", FALSE)),
+                         tags$div(title = "People vaccinated per 100 people in the total population of the country",
+                                  checkboxInput("vacc", "Vaccination", FALSE)),
+                         tags$div(title = "Average daily temperatures measured in the capital",
+                                  checkboxInput("tavg", "Average daily temperature", FALSE)), width = 12, height = 480
                        )
                 ),
                 
@@ -70,8 +77,9 @@ ui <- dashboardPage(
               ),
               fluidRow(
                 box(
-                  checkboxGroupInput("restriction", "Restriction Measures:",
-                                     choices = rest_names, selected = NULL, inline = TRUE), width = 12
+                  #checkboxGroupInput("restriction", "Restriction Measures:",
+                  #                   choices = rest_names, selected = NULL, inline = TRUE),
+                  uiOutput("checkbox_group"), width = 12
                 )
               )
       ),
@@ -148,6 +156,10 @@ server <- function(input, output, session) {
     titleText()
   })
   
+  output$checkbox_group <- renderUI({
+    checkboxgroup_with_label(sel_rest_country[[input$country]], res_label_country[[input$country]]$res_text, res_label_country[[input$country]]$res_label)
+  })
+  
   # Infoboxes: Dynamic number of cases/deaths/recovered/vaccinations
   numberCases <- reactive({
     number_of_cases(input$country, input$dateinterval[1], input$dateinterval[2])
@@ -168,8 +180,9 @@ server <- function(input, output, session) {
   
   # Applied restrictions per countries
   observeEvent(input$country,{
-    updateCheckboxGroupInput(session, inputId = "restriction", selected = NULL, inline = TRUE)
-    updateCheckboxGroupInput(session, inputId = "restriction", choices = sel_rest_country[[input$country]],  inline = TRUE)
+    #updateCheckboxGroupInput(session, inputId = "restriction", selected = NULL, inline = TRUE)
+    #updateCheckboxGroupInput(session, inputId = "restriction", choices = sel_rest_country[[input$country]],  inline = TRUE)
+    update_checkboxgroup_with_label(session, sel_rest_country[[input$country]], res_label_country[[input$country]]$res_text)
   })
   
   # Data preparing from input
@@ -205,7 +218,8 @@ server <- function(input, output, session) {
   })
   
   plotRest <- reactive({
-    rest <- input$restriction
+    #rest <- input$restriction
+    rest <- get_input_checkboxgroup_with_label(sel_rest_country[[input$country]], input)
     var <- input$country
     
     # Creating the coordinates for the rectangles displaying the restrictions
@@ -295,7 +309,7 @@ server <- function(input, output, session) {
     p <- exp_plot_base(plotData(), yLimit()[1], yLimit()[2], input$mc, input$dc, input$vacc)
     p <- exp_plot_add_temp(p, input$tavg, plotData())
     p <- exp_plot_add_fb_vacc(p, input$mc, input$dc, input$vacc, plotData())
-    exp_display_plot(p, input$restriction, plotRest(), plotData(), restrictionPlotLabels(), input$mc, input$dc, input$tavg, input$vacc)
+    exp_display_plot(p, get_input_checkboxgroup_with_label(sel_rest_country[[input$country]], input), plotRest(), plotData(), restrictionPlotLabels(), input$mc, input$dc, input$tavg, input$vacc)
   })
   
   # Bump Chart
