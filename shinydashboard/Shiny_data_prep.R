@@ -12,6 +12,8 @@ library(dplyr)
 dir.create("shinydashboard", showWarnings = FALSE)
 dir.create("shinydashboard/dat", showWarnings = FALSE)
 
+source("helpers/Restriction_labels.R")
+
 # Smooth variables as new variable in tdata: cases, tavg
 country_list <- split(tdata, tdata$country)
 country_list <- lapply(country_list, function(x) cbind(x, "smoothed_cases" = rollmean(x$cases_new, 7, fill = NA)))
@@ -46,6 +48,19 @@ rest_list <- lapply(rest_list, function(x) cbind("date" = x$date, as.data.frame(
 rest_list <- lapply(rest_list, function(x) cbind("date" = x$date, x[,-which(colnames(x) == "date")][, which(colSums(x[,-which(colnames(x) == "date")], na.rm = TRUE) > 0)]))
 sel_rest_country <- lapply(rest_list, function(x) colnames(x[,-which(colnames(x) == "date")]))
 saveRDS(sel_rest_country, "shinydashboard/dat/sel_rest_country.RDS")
+                           
+# Restriction measures and tooltips for countries
+# rest_table created by helpers/restriction_labels.R
+res_label_country <- lapply(sel_rest_country, function(x){
+  x <- as.data.frame(x)
+  colnames(x) <- "res_id"
+  y <- merge(x, rest_table, by = "res_id", all.x = TRUE)
+  # If label or tooltip is missing the id will be used
+  y$res_text[which(is.na(y$res_text))] <- y$res_id[which(is.na(y$res_text))]
+  y$res_label[which(is.na(y$res_label))] <- y$res_id[which(is.na(y$res_text))]
+  y
+})
+saveRDS(res_label_country, "shinydashboard/dat/res_label_country.RDS")
 
 #Deleting missing values from the beginning
 rest_list <- lapply(rest_list, function(x) x[-which(apply(x[, -which(colnames(x) == "date")], 1, function(y) all(is.na(y)))),])
