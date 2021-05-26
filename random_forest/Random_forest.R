@@ -10,6 +10,8 @@ library(tidyverse)
 library(stringr)
 library(sjlabelled)
 
+setwd('c:/Users/balan/Documents/IPSDS/MDM/Master_Thesis/WScarping/COVID-main/')
+
 source("functions/Get_data.R")
 
 tdata <- get_data("tdata", local = FALSE)
@@ -162,14 +164,15 @@ dat <- rf_dat
 
 
 
-#### RF with timeslice, cumulative smoothed outcome, partial restrictions not merged
+### RF with timeslice, cumulative smoothed outcome, partial restrictions not merged, with REPEATED variable importance
+#for more robust result.
 
 #data should be sorted by date (within country)!
 
 
 # Only for Hungary
-#rf_dat_t <- rf_dat[which(rf_dat$country == "Hungary"), ]
-#rf_dat_t <- rf_dat_t[complete.cases(rf_dat_t),]
+#rf_dat_r <- rf_dat[which(rf_dat$country == "Hungary"), ]
+#rf_dat_r <- rf_dat_r[complete.cases(rf_dat_r),]
 
 
 #set.seed(9985)
@@ -180,23 +183,37 @@ dat <- rf_dat
 #                     horizon = 5,
 #                     fixedWindow = TRUE)
 
-#grid <- expand.grid(mtry = c(round(sqrt(ncol(rf_dat_t))),
-#                             round(log(ncol(rf_dat_t)))))
+#grid <- expand.grid(mtry = c(round(sqrt(ncol(rf_dat_r))),
+#                             round(log(ncol(rf_dat_r)))))
 
-#rf <- train(as.numeric(cases_new_cum) ~ .,
-#            data = rf_dat_t[,-which(colnames(rf_dat_t) %in% c("country", "cases_new", "date", "last_day", "last_week"))],
+#rf_r <- train(as.numeric(cases_new_cum) ~ .,
+#            data = rf_dat_r[,-which(colnames(rf_dat_r) %in% c("country", "cases_new", "date", "last_day", "last_week"))],
 #            method = "rf",
 #           trControl = ctrl,
 #            tuneGrid = grid)
 
-#rf1 <- rf$finalModel
+## create iml predictor
+
+#create features data (without outcome cases_new_cum)
+#feat <- rf_dat_r[,-which(colnames(rf_dat_r) %in% c("cases_new_cum", "country", "cases_new", "date", "last_day", "last_week"))]
+#predictor <- Predictor$new(model = rf_r, data = feat, y = as.numeric(rf_dat_r$cases_new_cum))
+# calculate feature importance
+#permimp <- FeatureImp$new(predictor, loss = "mae", compare = "ratio", n.repetitions = 5)
+
+
+#plot(permimp)
+#permimp$results$
+#permimp$results$importance
+#permimp$results[, c("feature", "importance")]
+
+#rf2 <- rf_r$finalModel
 
 
 # Interpretation
-#varImpPlot(rf1)
-#varImp(rf1)
+#varImpPlot(rf2)
+#varImp(rf2)
 
-#rf1
+#rf2
 
 ## All countries (with fb data)
 
