@@ -64,7 +64,6 @@ rf_model <- function(country_dat){
   #rf_train <- rf_dat_t[to_train,]
   #rf_test <- rf_dat_t[-to_train,]
   
-  # RF
   ctrl <- trainControl(method = "timeslice",
                        initialWindow = 28,
                        horizon = 5,
@@ -73,12 +72,22 @@ rf_model <- function(country_dat){
   grid <- expand.grid(mtry = c(round(sqrt(ncol(rf_dat_t))),
                                round(log(ncol(rf_dat_t)))))
   
-  rf <- train(as.numeric(cases_new_cum) ~ .,
+  rf <- caret::train(as.numeric(cases_new_cum) ~ .,
               data = rf_dat_t[,-which(colnames(rf_dat_t) %in% c("country", "cases_new", "date", "last_day", "last_week"))],
               method = "rf",
               trControl = ctrl,
               tuneGrid = grid)
   
+  
+  ## create iml predictor fro repeated variable importance to get more robust results
+  
+  #create features data (without outcome cases_new_cum)
+  feat <- rf_dat_t[,-which(colnames(rf_dat_t) %in% c("cases_new_cum", "country", "cases_new", "date", "last_day", "last_week"))]
+  predictor <- iml::Predictor$new(model = rf, data = feat, y = as.numeric(rf_dat_t$cases_new_cum))
+  # calculate feature importance with repetitions
+  permimp <- iml::FeatureImp$new(predictor, loss = "mae", compare = "ratio", n.repetitions = 5)
+  
+  rep_res <- permimp$results[, c("feature", "importance")]
   
   rf1 <- rf$finalModel
   
