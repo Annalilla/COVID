@@ -10,8 +10,6 @@ library(tidyverse)
 library(stringr)
 library(sjlabelled)
 
-setwd('c:/Users/balan/Documents/IPSDS/MDM/Master_Thesis/WScarping/COVID-main/')
-
 source("functions/Get_data.R")
 
 tdata <- get_data("tdata", local = FALSE)
