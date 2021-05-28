@@ -38,21 +38,21 @@ ui <- dashboardPage(
                        box(
                          
                          tags$div(title = "Select a country", selectInput("country", "Country:",
-                                     choices = names(country_list))),
+                                                                          choices = names(country_list))),
                          #bsTooltip(id = "country", title = "Select a country", 
-                        #           placement = "right", trigger = "hover"),
+                         #           placement = "right", trigger = "hover"),
                          
                          tags$div(title = "Display moving average of continuous variables",
                                   checkboxInput("smoothed", "Smoothed", TRUE)),
                          
-                        tags$div(title = "Add lead to the number of new cases",
-                                 textInput("lead", "Lead:", value = "0", width = NULL, placeholder = NULL)),
+                         tags$div(title = "Add lead to the number of new cases",
+                                  textInput("lead", "Lead:", value = "0", width = NULL, placeholder = NULL)),
                          
-                        tags$div(title = "Set the date interval",
-                                 sliderInput("dateinterval", "Date Range",
-                                     min = min(country_list[[1]]$date),
-                                     max = max(country_list[[1]]$date),
-                                     value = c(min(country_list[[1]]$date), max(country_list[[1]]$date)))
+                         tags$div(title = "Set the date interval",
+                                  sliderInput("dateinterval", "Date Range",
+                                              min = min(country_list[[1]]$date),
+                                              max = max(country_list[[1]]$date),
+                                              value = c(min(country_list[[1]]$date), max(country_list[[1]]$date)))
                          ),
                          
                          tags$div(title = "Percentage of respondents that have reported use mask cover",
@@ -113,21 +113,23 @@ ui <- dashboardPage(
       # Content Bump Chart
       tabItem(tabName = "bc",
               fluidRow(
-                column(7,
+                column(9,
                        box(
                          box(title = "Variable Importance Plot", "Ranking of predictors accross countries",
-                             htmlOutput("bump_message", height = 20), plotOutput("plot_bc", height = 520),
-                             height = 570, width = 12, solidHeader = TRUE),
+                             htmlOutput("bump_message", height = 20), plotOutput("plot_bc", height = 310),
+                             width = 12, solidHeader = TRUE, height = 360),
                          box(
                            actionButton("reset_cy", "Check/Uncheck All Countries"),
                            actionButton("reset_pr", "Check/Uncheck All Predictors"),
-                           height = 60, width = 12, solidHeader = TRUE), width = 12, height = 680),
+                           height = 60, width = 12, solidHeader = TRUE), width = 12),
+                       box(title = "Countries", uiOutput("checkbox_group_bc_country"), width = 12)
                 ),
-                column(5,
-                       bump_predictor_box(),
-                       bump_country_box()
+                column(3,
+                       box(title = "Predictors", uiOutput("checkbox_group_bc"), width = 12, height = 750),
+                       #box(title = "Countries", uiOutput("checkbox_group_bc_country"), width = 12)
                 )
-              )
+              ),
+              #fluidRow(box(title = "Countries", uiOutput("checkbox_group_bc_country"), width = 12))
       ),
       # Content Data Source
       tabItem(tabName = "source",
@@ -157,7 +159,16 @@ server <- function(input, output, session) {
   })
   
   output$checkbox_group <- renderUI({
-    checkboxgroup_with_label(sel_rest_country[[input$country]], res_label_country[[input$country]]$res_text, res_label_country[[input$country]]$res_label)
+    checkboxgroup_with_label(sel_rest_country[[input$country]], res_label_country[[input$country]]$res_text,
+                             res_label_country[[input$country]]$res_label, width = 2, height = 1)
+  })
+  
+  output$checkbox_group_bc <- renderUI({
+    checkboxgroup_with_label(bc_labels$predictor, bc_labels$d_text, bc_labels$d_label, width = 12, height = 1)
+  })
+  
+  output$checkbox_group_bc_country <- renderUI({
+    checkboxgroup_with_label(bc_country, countries, "", width = 2, height = 1, selected = TRUE)
   })
   
   # Infoboxes: Dynamic number of cases/deaths/recovered/vaccinations
@@ -277,18 +288,20 @@ server <- function(input, output, session) {
   
   # Action Buttons
   observeEvent(input$reset_cy,{
-    countr <- c(input$bc_country, input$bc_country2, input$bc_country3, input$bc_country4, input$bc_country5, input$bc_country6)
-    reset_country(session, countr)
+    countr <- get_input_checkboxgroup_with_label(bc_country, input)
+    check_uncheck_checkboxgroup_with_label(session, bc_country, countries, countr)
   })
   
   observeEvent(input$reset_pr,{
-    pred <- c(input$bc_pred, input$bc_pred2)
-    reset_predictor(session, pred)
+    pred <- get_input_checkboxgroup_with_label(bc_labels$predictor, input)
+    check_uncheck_checkboxgroup_with_label(session, bc_labels$predictor, bc_labels$d_text, pred)
   })
   
   bcData <- reactive({
-    pred <- c(input$bc_pred, input$bc_pred2)
-    countr <- c(input$bc_country, input$bc_country2, input$bc_country3, input$bc_country4, input$bc_country5, input$bc_country6)
+    pred <- get_input_checkboxgroup_with_label(bc_labels$predictor, input)
+    pred <- str_remove_all(pred, "^bc_")
+    countr <- get_input_checkboxgroup_with_label(bc_country, input)
+    countr <- str_remove_all(countr, "^bc_")
     bc_dat <- NULL
     if(length(pred) == 0){
       bc_dat <- "no_pred"
