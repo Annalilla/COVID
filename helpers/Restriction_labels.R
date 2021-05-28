@@ -60,3 +60,24 @@ res_label <- c("Adaptation of workplaces", "Limit all indoor/outdoor mass/public
                "Closures of workplaces", "Closures of workplaces-partially relaxed measure", "Protective mask use in all public spaces on voluntary basis (general recommendation not enforced)-partially relaxed measure","Protective mask use in closed public spaces/transport on voluntary basis (general recommendation not enforced)",
                "Stay-at-home recommendations for risk groups or vulnerable populations (such as the elderly, people with underlying health conditions, physically disabled people, etc.) -partially relaxed measure", "Regional stay-at-home orders for the general population at least in one region (these are enforced and also referred to as 'lockdown')-partially relaxed measure", "Social circle/bubble to limit social contacts e.g. to limited number of households-partially relaxed measure")
 rest_table <- as.data.frame(cbind(res_id, res_text, res_label))
+
+# Labels for other predictors
+pred_id <- c("cases_new_lead", "deaths_new", "fb_data.percent_dc", "fb_data.percent_mc", "new_vaccinations",
+             "people_fully_vaccinated_per_hundred", "people_vaccinated_per_hundred", "recovered_new", "tavg",
+             "total_vaccinations_per_hundred", "fb_data.percent_cli", "fb_data.sample_size_smoothed_dc",
+             "fb_data.sample_size_smoothed_mc")
+pred_text <- c("New cases with lead", "Deaths", "Direct Contact", "Mask Coverage", "New Vaccinations", "People Fully Vaccinated Per Hundred",
+               "People Vaccinated Per Hundred", "Recovered", "Average Daily Temperature", "Total Vaccinations Per Hundred",
+               "COVID-like Illnes", "Sample Size Direct Contact", "Sample Size Mask Cover")
+pred_label <- c("Number of reported new cases with 14 days lead", "Number of reported new deaths", "Percentage of respondents that have reported had direct contact (longer than one minute) with people not staying with them in last 24 hours",
+                "Percentage of respondents that have reported use mask cover", "Number of new vaccinations",
+                "People fully vaccinated per hundred", "People vaccinated per hundred", "Number of recovered",
+                "Average daily temperatures measured in the capital", "Total vaccinations per hundred",
+                "Percentage of respondents that have reported COVID-like symptoms", "Sample size direct contact (smoothed)",
+                "Sample size mask cover (smoothed)")
+pred_table <- as.data.frame(cbind(pred_id, pred_text, pred_label))
+
+bc_country <- paste("bc", c("Austria", "Belgium", "Bulgaria", "Croatia", "Czechia", "Denmark", "Finland", "France", "Germany",
+                "Greece", "Hungary", "Ireland", "Italy", "Netherlands", "Poland", "Portugal", "Romania", "Slovakia",
+                "Slovenia", "Spain", "Sweden"), sep = "_")
+
