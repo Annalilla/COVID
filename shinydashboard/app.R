@@ -168,7 +168,7 @@ server <- function(input, output, session) {
   })
   
   output$checkbox_group_bc_country <- renderUI({
-    checkboxgroup_with_label(bc_country, countries, "", width = 2, height = 1, selected = TRUE)
+    checkboxgroup_with_label(bc_country, names(country_list), "", width = 2, height = 1, selected = TRUE)
   })
   
   # Infoboxes: Dynamic number of cases/deaths/recovered/vaccinations
