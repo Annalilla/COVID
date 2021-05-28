@@ -1,20 +1,26 @@
+# Assigning countries to clusters with hierarchical clustering
+
 library(stats)
 library(factoextra)
 library(tidyverse)
 library(cowplot)
 
+# Remove countries with no fb data
+c_remove <- c("CY", "EE", "LV", "LT", "LU", "MT")
+country_char_cl <- country_char[-which(country_char$geo %in% c_remove),]
+
 ## Selecting variables for clustering
 # Merging groups
-country_char$Y_LT20 <- country_char$`Y_LT5` + country_char$`Y5-9` + country_char$`Y10-14` + country_char$`Y15-19`
-country_char$`Y20-39` <- country_char$`Y20-24` + country_char$`Y25-29` + country_char$`Y30-34` + country_char$`Y35-39`
-country_char$`Y40-59` <- country_char$`Y40-44` + country_char$`Y45-49` + country_char$`Y50-54` + country_char$`Y55-59`
-country_char$`Y60-79` <- country_char$`Y60-64` + country_char$`Y65-69` + country_char$`Y70-74` + country_char$`Y75-79`
+country_char_cl$Y_LT20 <- country_char_cl$`Y_LT5` + country_char_cl$`Y5-9` + country_char_cl$`Y10-14` + country_char_cl$`Y15-19`
+country_char_cl$`Y20-39` <- country_char_cl$`Y20-24` + country_char_cl$`Y25-29` + country_char_cl$`Y30-34` + country_char_cl$`Y35-39`
+country_char_cl$`Y40-59` <- country_char_cl$`Y40-44` + country_char_cl$`Y45-49` + country_char_cl$`Y50-54` + country_char_cl$`Y55-59`
+country_char_cl$`Y60-79` <- country_char_cl$`Y60-64` + country_char_cl$`Y65-69` + country_char_cl$`Y70-74` + country_char_cl$`Y75-79`
 
 clust_vars <- c("Total", "M", "health_expenditures",
                 "cult_Y_GE16", 
                 "Y_LT20", "Y20-39", "Y40-59", "Y60-79", "Y_GE80")
 
-clust_dat <- as.data.frame(country_char[,clust_vars])
+clust_dat <- as.data.frame(country_char_cl[,clust_vars])
 
 # Size of population in subgroups males, age groups proportionate to population size (cult participation is already %)
 clust_dat[, which(colnames(clust_dat) %in% c("M", "Y_LT20", "Y20-39", "Y40-59", "Y60-79", "Y_GE80"))] <-
@@ -26,14 +32,16 @@ clust_dat$health_expenditures <- 1000*clust_dat$health_expenditures/clust_dat$To
 # Scaling variables
 country_char_num <- as.data.frame(scale(clust_dat))
 
-# Bigger weight for health expenditures and cultural participation
-country_char_num$Total <- 2 * country_char_num$Total
-country_char_num$M <- 2 * country_char_num$M
-country_char_num$health_expenditures <- 2.8 * country_char_num$health_expenditures
-country_char_num$cult_Y_GE16 <- 2.8 * country_char_num$cult_Y_GE16
+# Bigger weight for population size, percentage of males, health expenditures and cultural participation
+
+# 7
+country_char_num$Total <- 1.1 * country_char_num$Total
+country_char_num$M <- 1.1 * country_char_num$M
+country_char_num$health_expenditures <- 1.6 * country_char_num$health_expenditures
+country_char_num$cult_Y_GE16 <- 1.6 * country_char_num$cult_Y_GE16
 
 # Hierarchical clustering
-row.names(country_char_num) <- country_char$geo
+row.names(country_char_num) <- country_char_cl$geo
 
 # Distance object
 d <- dist(country_char_num, method = "euclidean")
@@ -43,15 +51,18 @@ clusters <- hclust(d, method = "ward.D2")
 fviz_dend(clusters, cex = .8, k = 1, k_colors = "black", lwd = 1.3, main = "Dendogram")
 
 # Ideal umber of clusters
-fviz_nbclust(country_char_num, FUN = hcut, method = "silhouette")
-#fviz_nbclust(country_char_num, FUN = hcut, method = "wss")
+n_clust <- fviz_nbclust(country_char_num, FUN = hcut, method = "silhouette")
+n_clust
+opt_n <- n_clust$data
+opt_n <- as.numeric(opt_n$clusters[which.max(opt_n$y)])
+opt_n
 
 # Cut the tree to 7 groups
-groups <- cutree(clusters, k = 6)
+groups <- cutree(clusters, k = 7)
 table(groups)
 
 plot(clusters, cex = 0.6)
-rect.hclust(clusters, k = 6, border = 2:7)
+rect.hclust(clusters, k = 7, border = 2:7)
 
 # Cophenetic distance
 cor(cophenetic(clusters), d)
@@ -76,7 +87,7 @@ write.csv2(res_to_write, "clusters.csv")
 
 # Rename variables
 colnames(clust_dat) <- c("Population size", "Males", "Health Expenditures", "Cultural participation",
-                         "Under 20", "20-39", "40-59", "60-79", "Above 80")
+                         "Under 20", "20-39", "40-59", "60-79", "Above 80", "groups")
 
 # Plot of variables Total, M, Healthcare exp and cult part in a table
 gr_vars <- c("Population size", "Males", "Health Expenditures", "Cultural participation")
@@ -140,7 +151,7 @@ cluster_grid <- plot_grid(plotlist = plot_list, ncol = ncol(plot_table), rel_hei
 ggsave("clusters.png", cluster_grid, width = 15, height = 12)
 
 #Age groups
-colnames(clust_res) <- c("cluster", colnames(clust_dat), "countries")
+colnames(clust_res) <- c("cluster", colnames(clust_dat)[-ncol(clust_dat)], "countries")
 agegr <- clust_res[, c("cluster", "Under 20", "20-39", "40-59", "60-79", "Above 80")]
 agegrl <- reshape2::melt(agegr, id.vars = "cluster")
 agegrl$cluster <- as.character(agegrl$cluster)
@@ -148,10 +159,8 @@ agegrl$cluster <- as.character(agegrl$cluster)
 age_groups <- ggplot(agegrl, aes(x = variable, y = value, group = cluster)) +
   geom_line(aes(color = cluster), lwd = 1) +
   geom_point(aes(color = cluster), lwd = 3) +
-  scale_color_manual(values=c("#F8766D", "#B79F00", "#00BA38", "#38CBCE", "#68A0FE", "#F564E3")) +
+  scale_color_manual(values=c("#F8766D", "#B79F00", "#00BA38", "#38CBCE", "#68A0FE", "#F564E3", "#fb61d7")) +
   ggtitle("Age groups") +
   theme_minimal()
 ggsave("age_groups.png", age_groups, width = 10, height = 6)
-
-
 
