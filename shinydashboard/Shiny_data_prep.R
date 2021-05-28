@@ -221,5 +221,5 @@ saveRDS(b_vis_long, "shinydashboard/dat/pred_imp_ranking.RDS")
 top_pred_c <- b_vis_long[-which(is.na(b_vis_long$ranking)),]
 n_top <- as.data.frame(top_pred_c[which(top_pred_c$predictor %in% pred_order$predictor[1:30]),] %>%
   group_by(country) %>%
-  summarise(n = n()))
+  dplyr::summarise(n = n()))
 summary(n_top)
