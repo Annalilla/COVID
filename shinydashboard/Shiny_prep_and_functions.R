@@ -8,7 +8,7 @@ sel_rest_country <- readRDS("dat/sel_rest_country.RDS")
 b_vis_long <- readRDS("dat/pred_imp_ranking.RDS")
 pred_order <- readRDS("dat/pred_order.RDS")
 country_res <- readRDS("dat/country_res.RDS")
-#pdp_all_c_all_pred <- readRDS("dat/pdp_all_c_all_pred.RDS")
+pdp_all_c_all_pred <- readRDS("dat/pdp_all_c_all_pred.RDS")
 
 # Functions
 smooth_or_not <- function(to_smooth, cvar, min_date, max_date){
