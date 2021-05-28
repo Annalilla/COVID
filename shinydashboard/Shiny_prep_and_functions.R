@@ -8,7 +8,7 @@ sel_rest_country <- readRDS("dat/sel_rest_country.RDS")
 b_vis_long <- readRDS("dat/pred_imp_ranking.RDS")
 pred_order <- readRDS("dat/pred_order.RDS")
 country_res <- readRDS("dat/country_res.RDS")
-pdp_all_c_all_pred <- readRDS("dat/pdp_all_c_all_pred.RDS")
+#pdp_all_c_all_pred <- readRDS("dat/pdp_all_c_all_pred.RDS")
 
 # Functions
 smooth_or_not <- function(to_smooth, cvar, min_date, max_date){
@@ -266,13 +266,13 @@ bump_predictor_box <- function(){
   )
 }
                        
-                       # Display Checkboxgroups with label
-checkboxgroup_with_label <- function(names, labels, tooltips){
+# Display Checkboxgroups with label
+checkboxgroup_with_label <- function(names, labels, tooltips, width, height, selected = FALSE){
   cgroup <- list()
   for(i in 1:length(names)){
     cgroup[[i]] <- column(tags$div(title = tooltips[i],
-                                   checkboxInput(names[i], labels[i], FALSE)),
-                          width = 2, height = 1, background = NULL)
+                                   checkboxInput(names[i], labels[i], selected)),
+                          width = width, height = height, background = NULL)
   }
   cgroup
 }
@@ -290,7 +290,19 @@ get_input_checkboxgroup_with_label <- function(names, input){
 update_checkboxgroup_with_label <- function(session, names, labels){
   for(i in 1:length(names))
   {
-    updateCheckboxInput(session = session, names[i], labels[i])
+    updateCheckboxInput(session = session, names[i], labels[i], FALSE)
+  }
+}
+
+check_uncheck_checkboxgroup_with_label <- function(session, names, labels, to_check){
+  for(i in 1:length(names))
+  {
+    if(length(to_check) > 0){
+      updateCheckboxInput(session = session, names[i], labels[i], FALSE)
+    }
+    else{
+      updateCheckboxInput(session = session, names[i], labels[i], TRUE)
+    }
   }
 }
 
