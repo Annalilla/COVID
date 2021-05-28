@@ -223,3 +223,15 @@ n_top <- as.data.frame(top_pred_c[which(top_pred_c$predictor %in% pred_order$pre
   group_by(country) %>%
   dplyr::summarise(n = n()))
 summary(n_top)
+                             
+                             # Tooltips and labels for Bump Chart
+bc_labels <- merge(pred_order[1:15,], rest_table, by.x = "predictor", by.y = "res_id", all.x = TRUE)
+bc_labels <- merge(bc_labels, pred_table, by.x = "predictor", by.y = "pred_id", all.x = TRUE)
+bc_labels <- bc_labels %>%
+  mutate(d_text = coalesce(res_text, pred_text)) %>%
+  mutate(d_label = coalesce(res_label, pred_label)) %>%
+  dplyr::select(predictor, d_text, d_label)
+bc_labels$d_label[which(is.na(bc_labels$d_label))] <- bc_labels$predictor[which(is.na(bc_labels$d_predictor))]
+bc_labels <- bc_labels[order(match(bc_labels$predictor, pred_order$predictor[1:20])),]
+bc_labels$predictor <-  paste("bc", bc_labels$predictor, sep = "_")
+
