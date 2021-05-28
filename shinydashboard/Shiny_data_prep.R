@@ -43,7 +43,7 @@ rest_names <- colnames(tdata[, unlist(lapply(tdata, function(x) all(na.omit(x) %
 saveRDS(rest_names, "shinydashboard/dat/rest_names.RDS")
 
 # Selecting applied restrictions in all countries
-rest_list <- lapply(country_list, function(x) select(x, c("date", rest_names)))
+rest_list <- lapply(country_list, function(x) x %>% dplyr::select("date", rest_names))
 rest_list <- lapply(rest_list, function(x) cbind("date" = x$date, as.data.frame(apply(x[,-which(colnames(x) == "date")], 2, as.numeric))))
 rest_list <- lapply(rest_list, function(x) cbind("date" = x$date, x[,-which(colnames(x) == "date")][, which(colSums(x[,-which(colnames(x) == "date")], na.rm = TRUE) > 0)]))
 sel_rest_country <- lapply(rest_list, function(x) colnames(x[,-which(colnames(x) == "date")]))
