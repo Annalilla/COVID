@@ -182,17 +182,17 @@ bump_chart <- function(vis_dat, x_coord){
       first_country <- unique(vis_dat$country)[1]
       last_country <- unique(vis_dat$country)[length(unique(vis_dat$country))]
       
-      ggplot(data = vis_dat, aes(x = country, y = ranking, group = predictor)) +
-        geom_line(aes(color = predictor, alpha = 0.5), size = 2) +
-        geom_point(aes(color = predictor, alpha = 0.5), size = 4) +
+      ggplot(data = vis_dat, aes(x = country, y = ranking, group = pred_text)) +
+        geom_line(aes(color = pred_text, alpha = 0.5), size = 2) +
+        geom_point(aes(color = pred_text, alpha = 0.5), size = 4) +
         geom_point(color = "#FFFFFF", size = 1) +
         scale_y_reverse() +
         scale_x_discrete(breaks = unique(vis_dat$country)) +
         geom_text(data = x_coord[[1]],
-                  aes(label = predictor, x = 0) , hjust = 1, fontface = "bold", color = "#888888", size = 4) +
-        geom_text(data = x_coord[[2]],
-                  aes(label = predictor, x = (length(unique(vis_dat$country))) + 1), hjust = 0, fontface = "bold",
-                  color = "#888888", size = 4) +
+                  aes(label = pred_text, x = 0) , hjust = 1, fontface = "bold", color = "#888888", size = 4) +
+        #geom_text(data = x_coord[[2]],
+        #          aes(label = pred_text, x = (length(unique(vis_dat$country))) + 1), hjust = 0, fontface = "bold",
+        #          color = "#888888", size = 4) +
         labs(x = "Countries",
              y = "Rank") +
         theme_minimal() +
@@ -200,8 +200,8 @@ bump_chart <- function(vis_dat, x_coord){
               axis.text.y = element_text(size = 12),
               panel.grid.major.x = element_blank(),
               legend.position = "none",
-              plot.margin = unit(c(1,10,1,1), "lines")) +
-        coord_cartesian(xlim = c(-(round(length(unique(vis_dat$country))/2, 0)),length(unique(vis_dat$country))), clip = 'off')
+              plot.margin = unit(c(1,3,1,1), "lines")) +
+        coord_cartesian(xlim = c(-(round(length(unique(vis_dat$country))/3, 0)),length(unique(vis_dat$country))), clip = 'off')
     }else{
       mess <- "Not available for the selected country"
       mess <- paste(paste('<p style="color:red">', mess, '</p>', sep = ""))
