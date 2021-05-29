@@ -77,6 +77,12 @@ pred_label <- c("Number of reported new cases with 14 days lead", "Number of rep
                 "Sample size mask cover (smoothed)")
 pred_table <- as.data.frame(cbind(pred_id, pred_text, pred_label))
 
+
+to_bind_rest_table <- rest_table
+colnames(to_bind_rest_table) <- c("pred_id", "pred_text", "pred_label")
+all_pred_table <- rbind(pred_table, to_bind_rest_table)
+
+
 bc_country <- paste("bc", c("Austria", "Belgium", "Bulgaria", "Croatia", "Czechia", "Denmark", "Finland", "France", "Germany",
                 "Greece", "Hungary", "Ireland", "Italy", "Netherlands", "Poland", "Portugal", "Romania", "Slovakia",
                 "Slovenia", "Spain", "Sweden"), sep = "_")
