@@ -215,6 +215,7 @@ colnames(b_vis_long) <- c("predictor", "country", "ranking")
 b_vis_long <- merge(b_vis_long, pred_order, by = "predictor", all.x = TRUE)
 b_vis_long$order <- as.numeric(b_vis_long$order)
 b_vis_long <- b_vis_long[order(b_vis_long$country, b_vis_long$order),]
+b_vis_long <- merge(b_vis_long, all_pred_table[,c("pred_id", "pred_text")], by.x = "predictor", by.y = "pred_id")
 saveRDS(b_vis_long, "shinydashboard/dat/pred_imp_ranking.RDS")
 
 # Number of top predictors per countries (30 top predictors from pred_order)
