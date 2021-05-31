@@ -6,6 +6,7 @@ library(gridExtra)
 library(lubridate)
 library(reshape2)
 library(shinyBS)
+library(maps)
 source("Shiny_prep_and_functions.R")
 source("Shiny_vis_functions.R")
 ##
@@ -18,6 +19,7 @@ ui <- dashboardPage(
       menuItem("Exploratory", tabName = "exploratory", icon = icon("object-align-bottom", lib = "glyphicon")),
       menuItem("Partial Dependence", tabName = "pdp", icon=icon("object-align-bottom", lib = "glyphicon")),
       menuItem("Bump Chart", tabName = "bc", icon=icon("object-align-bottom", lib = "glyphicon")),
+      menuItem("Rank Correlation", tabName = "rankcorr", icon=icon("object-align-bottom", lib = "glyphicon")),
       menuItem("Datasource", tabName = "source", icon = icon("th"))
     )
   ), skin = "black",
@@ -125,11 +127,26 @@ ui <- dashboardPage(
                        box(title = "Countries", uiOutput("checkbox_group_bc_country"), width = 12)
                 ),
                 column(3,
-                       box(title = "Predictors", uiOutput("checkbox_group_bc"), width = 12, height = 750),
+                       box(title = "Predictors", uiOutput("checkbox_group_bc"), width = 12, height = 750)
                        #box(title = "Countries", uiOutput("checkbox_group_bc_country"), width = 12)
                 )
               ),
               #fluidRow(box(title = "Countries", uiOutput("checkbox_group_bc_country"), width = 12))
+      ),
+      # Content Variable Importance Rank Correlation Within Clusters
+      tabItem(tabName = "rankcorr",
+              fluidRow(
+                column(6,
+                       box(
+                        tags$div(title = "Select a Predictor", selectInput("predic", "Predictors:",
+                                                                        choices = all_pred_table$pred_text)),
+                        plotOutput("rank_eu"), width = 11)),
+                column(6,
+                       box(
+                        tags$div(title = "Select a Cluster", selectInput("cluste", "Clusters:",
+                                                                          choices = c(1:7))),
+                        plotOutput("rank_cluster"), width = 11)),
+                )
       ),
       # Content Data Source
       tabItem(tabName = "source",
@@ -338,6 +355,20 @@ server <- function(input, output, session) {
     p <- bumpChart()
     if(!is.ggplot(p)) p
   })
+  
+  # Rank correlation
+  # eu map
+  output$rank_eu <- renderPlot({
+    p <- eu_cluster_varimp_vis(input$predic)
+    p
+  })
+  
+  # map of clusters
+  output$rank_cluster <- renderPlot({
+    p <- cluster_varimp_corr_vis(input$cluste, input$predic)
+    p
+  })
+  
 }
 
 shinyApp(ui, server)
