@@ -17,8 +17,6 @@ library(sjlabelled)
 
 ##Create a time-varying dbase with clusters
 
-setwd('c:/Users/balan/Documents/IPSDS/MDM/Master_Thesis/WScarping/COVID-main/')
-
 source("functions/Get_data.R")
 tdata <- get_data("tdata", local = FALSE)
 tdata$country_code<- as.factor(tdata$country_code)
