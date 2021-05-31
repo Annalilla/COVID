@@ -1,13 +1,6 @@
 # Computes correlation between the repeated varimp rank of the clusters and the repeated varimp rank of the countries, 
 # then creates an indicator of low/median/high corr.
 
-
-#?? országos varimpnál miért kisebb a range, mint a klaszterszintûnél?
-#?? miért van a klaszter predoctorok között 'groups' is, ország predictorok között pedig 'recovered_new'?
-#timeslice oszthatóság még hátravan
-
-
-
 country_res_varimp <- readRDS("shinydashboard/dat/country_res_varimp.RDS")
 cluster_res_varimp <- readRDS("shinydashboard/dat/cluster_res_varimp.RDS")
 
