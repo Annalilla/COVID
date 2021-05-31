@@ -75,16 +75,15 @@ source("functions/RF_functions.R")
 
 rf_dat <- tdata[(((tdata$date >= "2020-02-28") & (tdata$date <= "2021-03-28"))), 
                         -which(colnames(tdata) %in% c("year", "week", "country_code","testing_new_cases", "tests_done", "testing_population", 
-                                              "testing_rate", "testing_positivity_rate", "fb_data.iso_code","fb_data.country", "fb_status",
-                                               "fb_data.cli_se", "fb_data.percent_cli_unw","fb_data.cli_se_unw", "fb_data.sample_size_cli", 
-                                              "fb_data.smoothed_cli", "fb_data.smoothed_cli_se", "fb_data.sample_size_smoothed_cli",
-                                              "fb_data.mc_se", "fb_data.percent_mc_unw", "fb_data.mc_se_unw", "fb_data.sample_size_mc",
-                                              "fb_data.smoothed_mc", "fb_data.smoothed_mc_se", "fb_data.sample_size_mc_smoothed",
-                                              "fb_data.mc_se_dc", "fb_data.percent_dc_unw", "fb_data.dc_se_unw", "fb_data.sample_size_dc",               
-                                              "fb_data.smoothed_dc", "fb_data.smoothed_dc_se", "fb_data.sample_size_dc_smoothed",      
-                                              "new_vaccinations_smoothed", "iso_code", "people_vaccinated", "total_vaccinations", 
-                                              "new_vaccinations_smoothed", "people_fully_vaccinated", "new_vaccinations_smoothed_per_million"))]
-                
+                                                      "testing_rate", "testing_positivity_rate", "fb_data.iso_code","fb_data.country", "fb_status",
+                                                      "fb_data.cli_se", "fb_data.percent_cli_unw","fb_data.cli_se_unw", "fb_data.sample_size_cli", 
+                                                      "fb_data.smoothed_cli", "fb_data.smoothed_cli_se", "fb_data.sample_size_smoothed_cli",
+                                                      "fb_data.mc_se", "fb_data.percent_mc_unw", "fb_data.mc_se_unw", "fb_data.sample_size_mc",
+                                                      "fb_data.smoothed_mc", "fb_data.smoothed_mc_se", "fb_data.sample_size_smoothed_mc",
+                                                      "fb_data.mc_se_dc", "fb_data.percent_dc_unw", "fb_data.dc_se_unw", "fb_data.sample_size_dc",               
+                                                      "fb_data.smoothed_dc", "fb_data.smoothed_dc_se", "fb_data.sample_size_smoothed_dc",      
+                                                      "new_vaccinations_smoothed", "iso_code", "people_vaccinated", "total_vaccinations", 
+                                                      "new_vaccinations_smoothed", "people_fully_vaccinated", "new_vaccinations_smoothed_per_million"))]
 
 
 ##Outcome variable
@@ -223,7 +222,8 @@ rf_dat_fb$country <- as.factor(as.character(rf_dat_fb$country))
 # Split by countries
 c_rf_dat_fb <- c_rf_dat <- split(rf_dat_fb, rf_dat_fb$country)
 
-country_res <- lapply(c_rf_dat_fb, function(x) rf_model(x))
+# Create Random Forest input for PDP tab
+country_res <- lapply(c_rf_dat_fb, function(x) rf_model_pdp(x))
 
 #Save results and further input for the Shiny visualization
 
@@ -236,3 +236,14 @@ saveRDS(c_rf_dat_fb, "shinydashboard/dat/c_rf_dat_fb.RDS")
 
 #p <- varImpPlot(country_res[[8]])
 #p + title(names(country_res)[8])
+
+
+# Create Random Forest input (repeated varimp) for 'Bump Chart' and 'Country-char vs.varimp' tab
+country_res_varimp <- lapply(c_rf_dat_fb, function(x) rf_model_varimp(x))
+
+#Save results and further input for the Shiny visualization
+
+
+saveRDS(country_res_varimp, "shinydashboard/dat/country_res_varimp.RDS")
+
+
