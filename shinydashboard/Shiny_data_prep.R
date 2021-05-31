@@ -236,3 +236,14 @@ bc_labels$d_label[which(is.na(bc_labels$d_label))] <- bc_labels$predictor[which(
 bc_labels <- bc_labels[order(match(bc_labels$predictor, pred_order$predictor[1:20])),]
 bc_labels$predictor <-  paste("bc", bc_labels$predictor, sep = "_")
 
+# Test data for clusters
+varimps_country <- lapply(country_res, function(x){
+  x <- varImp(x)
+  x$predictor <- rownames(x)
+  return(x)
+})
+
+varimps_cluster <- merge(clust_res$cluster, all_pred_table$pred_id)
+set.seed(76767)
+varimps_cluster <- cbind(varimps_cluster, sample(varimps_country[[1]]$Overall, nrow(varimps_cluster), replace = TRUE))
+colnames(varimps_cluster) <- c("cluster", "predictor", "Overall")
