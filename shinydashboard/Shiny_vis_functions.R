@@ -237,6 +237,7 @@ eu_cluster_varimp_vis <- function(predi){
     ggtitle(paste("Variable importance of predictor ", predi, sep = "")) +
     geom_text(aes(label = region), data = region_lab_country,  size = 3, hjust = 0.5) +
     scale_color_manual() +
+    coord_fixed() +
     theme_void()
   return(p)
 }
@@ -266,6 +267,7 @@ cluster_varimp_corr_vis <- function(clus, predi){
                   predi, " in cluster ", clus, sep ="")) +
     geom_text(aes(label = region), data = region_lab_cluster,  size = 3, hjust = 0.5) +
     scale_color_manual() +
+    coord_fixed() +
     theme_void()
   return(p)
 }
