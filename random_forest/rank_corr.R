@@ -75,4 +75,23 @@ Finland <- cor(country_res_varimp[["Finland"]][["rank"]], cluster_res_varimp_lis
 Netherlands <- cor(country_res_varimp[["Netherlands"]][["rank"]], cluster_res_varimp_list[["1"]][["rank"]], method = c("spearman"))
 Sweden <- cor(country_res_varimp[["Sweden"]][["rank"]], cluster_res_varimp_list[["1"]][["rank"]], method = c("spearman"))
 
-> 
+# Corrletion between varimp rank of all clusters and their countries
+# Which country in which cluster
+clust_geo <- merge(clust_dat[,c("groups", "country_code")], capitals[,c("country", "country_code")], by = "country_code", all.x = TRUE)
+
+# function to calculate correlation between varimp rank of a cluster and of all countries within
+rc_cluster <- function(cluster){
+  act_clust <- clust_geo[clust_geo$groups == cluster,]
+  act_ct <- act_clust$country
+  
+  act_cor <- unlist(lapply(act_ct, function(x){
+    cor(country_res_varimp[[x]][["rank"]], cluster_res_varimp_list[[cl]][["rank"]], method = c("spearman"))
+  }))
+  act_res <- as.data.frame(cbind(act_ct, act_cor))
+  colnames(act_res) <- c("country", "correlation")
+  act_res$correlation <- as.numeric(act_res$correlation)
+  return(act_res)
+}
+
+rank_corr_res <- lapply(c(1:max(clust_dat$groups)), rc_cluster)
+
