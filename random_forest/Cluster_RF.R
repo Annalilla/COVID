@@ -107,7 +107,6 @@ source("functions/RF_cluster_functions.R")
 rf_max_date <- min(as.Date(unlist(lapply(unique(tdata$country), function(x){
   act_country <- tdata[tdata$country == x,]
   if(!all(is.na(act_country$fb_data.percent_mc)) & !all(is.na(act_country$fb_data.percent_dc))){
-    datevar <- act_country[!is.na(act_country$fb_data.percent_mc) & !is.na(act_country$fb_data.percent_dc), "date"]
     max(act_country[!is.na(act_country$fb_data.percent_mc) & !is.na(act_country$fb_data.percent_dc), "date"])
   }
 }))))
