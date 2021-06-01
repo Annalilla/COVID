@@ -106,7 +106,7 @@ rf_train <- function(country_dat){
   grid <- expand.grid(mtry = c(round(sqrt(ncol(rf_dat_t))),
                                round(log(ncol(rf_dat_t)))))
   
-  rf <- train(as.numeric(cases_new_cum) ~ .,
+  rf <- caret:: train(as.numeric(cases_new_cum) ~ .,
               data = rf_dat_t[,-which(colnames(rf_dat_t) %in% c( "cases_new", "date", "last_day", "last_week", "country"))],
               method = "rf",
               trControl = ctrl,
