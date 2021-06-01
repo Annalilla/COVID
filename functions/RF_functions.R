@@ -28,7 +28,7 @@ merge_all_partial_rest <- function(dat){
 replace_na_after_first_vacc <- function(dat){
   first_date <- dat %>%
     group_by(country) %>%
-    summarise(first = min(date))
+    dplyr::summarise(first = min(date))
   dat <- merge(dat, first_date, by = "country", all.x = TRUE)
   dat[which(dat$date > dat$first),which(colnames(dat)%in% vacc)] <- dat[which(dat$date > dat$first), which(colnames(dat)%in% vacc)] %>% 
     replace(is.na(.), 0)
