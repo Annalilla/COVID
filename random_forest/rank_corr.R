@@ -4,7 +4,6 @@
 country_res_varimp <- readRDS("shinydashboard/dat/country_res_varimp.RDS")
 cluster_res_varimp <- readRDS("shinydashboard/dat/cluster_res_varimp.RDS")
 
-cluster_res_varimp$feature
 
 ##Rank importance by country/cluster
 
@@ -45,11 +44,7 @@ country_res_varimp <- lapply(country_res_varimp, function(x){
 })
 
 
-#Corr Austria varimp rank vs. Cluster 1 varimp rank
-
-country_res_varimp[["Austria"]][["rank"]]
-
-cluster_res_varimp_list[["1"]][["rank"]]
+##Corr counry varimp rank vs. relevant cluster varimp rank
 
 #Sort data by feature
 
@@ -68,15 +63,17 @@ cluster_res_varimp_list <- lapply(cluster_res_varimp_list, function(x){
 
 
 #Corr between Cluster 1 varimp rank and its countries' varimp rank
-Austria <- cor(country_res_varimp[["Austria"]][["rank"]], cluster_res_varimp_list[["1"]][["rank"]], method = c("spearman"))
-Belgium <-  cor(country_res_varimp[["Belgium"]][["rank"]], cluster_res_varimp_list[["1"]][["rank"]], method = c("spearman"))
-Denmark <- cor(country_res_varimp[["Denmark"]][["rank"]], cluster_res_varimp_list[["1"]][["rank"]], method = c("spearman"))
-Finland <- cor(country_res_varimp[["Finland"]][["rank"]], cluster_res_varimp_list[["1"]][["rank"]], method = c("spearman"))
-Netherlands <- cor(country_res_varimp[["Netherlands"]][["rank"]], cluster_res_varimp_list[["1"]][["rank"]], method = c("spearman"))
-Sweden <- cor(country_res_varimp[["Sweden"]][["rank"]], cluster_res_varimp_list[["1"]][["rank"]], method = c("spearman"))
+#Austria <- cor(country_res_varimp[["Austria"]][["rank"]], cluster_res_varimp_list[["1"]][["rank"]], method = c("spearman"))
+#Belgium <-  cor(country_res_varimp[["Belgium"]][["rank"]], cluster_res_varimp_list[["1"]][["rank"]], method = c("spearman"))
+#Denmark <- cor(country_res_varimp[["Denmark"]][["rank"]], cluster_res_varimp_list[["1"]][["rank"]], method = c("spearman"))
+#Finland <- cor(country_res_varimp[["Finland"]][["rank"]], cluster_res_varimp_list[["1"]][["rank"]], method = c("spearman"))
+#Netherlands <- cor(country_res_varimp[["Netherlands"]][["rank"]], cluster_res_varimp_list[["1"]][["rank"]], method = c("spearman"))
+#Sweden <- cor(country_res_varimp[["Sweden"]][["rank"]], cluster_res_varimp_list[["1"]][["rank"]], method = c("spearman"))
 
-# Corrletion between varimp rank of all clusters and their countries
+
 # Which country in which cluster
+
+clust_dat$country_code <- rownames(clust_dat)
 clust_geo <- merge(clust_dat[,c("groups", "country_code")], capitals[,c("country", "country_code")], by = "country_code", all.x = TRUE)
 
 # function to calculate correlation between varimp rank of a cluster and of all countries within
