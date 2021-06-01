@@ -73,7 +73,17 @@ source("functions/RF_functions.R")
 
 ##Selecting the variables, defining the period with meaningful amount of data at the end of the period
 
-rf_dat <- tdata[(((tdata$date >= "2020-02-28") & (tdata$date <= "2021-03-28"))), 
+tdata <- as.data.frame(tdata)
+
+# Maximum date: fb direct contact and mask coverage available in all countries
+rf_max_date <- min(as.Date(unlist(lapply(unique(tdata$country), function(x){
+  act_country <- tdata[tdata$country == x,]
+  if(!all(is.na(act_country$fb_data.percent_mc)) & !all(is.na(act_country$fb_data.percent_dc))){
+    max(act_country[!is.na(act_country$fb_data.percent_mc) & !is.na(act_country$fb_data.percent_dc), "date"])
+  }
+}))))
+
+rf_dat <- tdata[(((tdata$date >= "2020-02-28") & (tdata$date <= rf_max_date))), 
                         -which(colnames(tdata) %in% c("year", "week", "country_code","testing_new_cases", "tests_done", "testing_population", 
                                                       "testing_rate", "testing_positivity_rate", "fb_data.iso_code","fb_data.country", "fb_status",
                                                       "fb_data.cli_se", "fb_data.percent_cli_unw","fb_data.cli_se_unw", "fb_data.sample_size_cli", 
