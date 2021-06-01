@@ -156,7 +156,7 @@ replace_na_before_first_vacc <- function(dat){
   nonmissing <- dat[which(rowSums(dat[, -c(1:3)], na.rm = TRUE) > 0),]
   first_date <- nonmissing %>%
     group_by(iso_code) %>%
-    summarise(first = min(date))
+    dplyr::summarise(first = min(date))
   dat <- merge(dat, first_date, by = "iso_code", all.x = TRUE)
   dat[which(dat$date < dat$first),] <- dat[which(dat$date < dat$first),] %>%
     replace(is.na(.), 0)
