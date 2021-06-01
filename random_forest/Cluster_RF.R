@@ -104,8 +104,15 @@ source("functions/RF_cluster_functions.R")
 ###preprocessing
 
 ##Selecting the variables, defining the period with meaningful amount of data at the end of the period
+rf_max_date <- min(as.Date(unlist(lapply(unique(tdata$country), function(x){
+  act_country <- tdata[tdata$country == x,]
+  if(!all(is.na(act_country$fb_data.percent_mc)) & !all(is.na(act_country$fb_data.percent_dc))){
+    datevar <- act_country[!is.na(act_country$fb_data.percent_mc) & !is.na(act_country$fb_data.percent_dc), "date"]
+    max(act_country[!is.na(act_country$fb_data.percent_mc) & !is.na(act_country$fb_data.percent_dc), "date"])
+  }
+}))))
 
-rf_dat_cl <- tdata_cl[(((tdata_cl$date >= "2020-02-28") & (tdata_cl$date <= "2021-03-28"))), 
+rf_dat_cl <- tdata_cl[(((tdata_cl$date >= "2020-02-28") & (tdata_cl$date <= rf_max_date))), 
                 -which(colnames(tdata) %in% c("year", "week", "country_code","testing_new_cases", "tests_done", "testing_population", 
                                               "testing_rate", "testing_positivity_rate", "fb_data.iso_code","fb_data.country", "fb_status",
                                               "fb_data.cli_se", "fb_data.percent_cli_unw","fb_data.cli_se_unw", "fb_data.sample_size_cli", 
@@ -156,16 +163,18 @@ vars_to_smooth <- c("deaths_new", "recovered_new", "tavg", "fb_data.percent_cli"
 rf_dat_cl[, which(colnames(rf_dat_cl) %in% vars_to_smooth)] <-
   lapply(rf_dat_cl[, which(colnames(rf_dat_cl) %in% vars_to_smooth)], rollmean, 7, fill = NA)
 
+rf_dat_cl$groups <- as.factor(rf_dat_cl$groups)
 
-#Standardize by clusters
-
-
-#Split by cluster 
+#
+# Split by cluster 
 cl_rf_dat <- split(rf_dat_cl, rf_dat_cl$groups)
 
-#Standardize
+#
+#Standardize by clusters
+
 rf_dat_cl <- lapply(cl_rf_dat, function(x) preproc_predict_cl(x))
-rf_dat_cl <- do.call(rbind, rf_dat_cl)
+
+#rf_dat_cl <- do.call(rbind, rf_dat_cl)
 
 #find and remove highly correlated predictors
 
@@ -187,7 +196,7 @@ rf_dat_cl <- do.call(rbind, rf_dat_cl)
 #dat <- rf_dat_cl
 #rf_dat_p <- merge_all_partial_rest(dat)
 
-rf_dat_cl$groups <- as.factor(rf_dat_cl$groups)
+#rf_dat_cl$groups <- as.factor(rf_dat_cl$groups)
 
 
 ## Random Forest for all countries (with fb data) with timeslice, cumulative smoothed outcome, partial restrictions not merged, 
@@ -199,9 +208,11 @@ rf_dat_cl$groups <- as.factor(rf_dat_cl$groups)
 #rf_dat_cl_fb$country <- as.factor(as.character(rf_dat_cl_fb$country))
 
 # Split by clusters
-cl_rf_dat_fb <-split(rf_dat_cl, rf_dat_cl$groups)
+# cl_rf_dat_fb <-split(rf_dat_cl, rf_dat_cl$groups)
 
-cluster_res_varimp <- lapply(cl_rf_dat_fb, function(x) rf_model_cl(x))
+cl_rf_dat_fb <- rf_dat_cl
+
+cluster_res_varimp <- lapply(cl_rf_dat_fb, function(x) rf_model_cl(x, iniwindow, hori))
 
 
 #Format data for the 'Country-char vs.varimp' tab input
@@ -219,6 +230,3 @@ dir.create("shinydashboard/dat", showWarnings = FALSE)
 
 saveRDS(cluster_res_varimp, "shinydashboard/dat/cluster_res_varimp.RDS")
 saveRDS(cl_rf_dat_fb, "shinydashboard/dat/cl_rf_dat_fb.RDS")
-
-
-
