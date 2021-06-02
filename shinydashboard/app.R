@@ -137,15 +137,13 @@ ui <- dashboardPage(
       tabItem(tabName = "rankcorr",
               fluidRow(
                 column(6,
-                       box(
-                        tags$div(title = "Select a Predictor", selectInput("predic", "Predictors:",
-                                                                        choices = all_pred_table$pred_text)),
-                        plotOutput("rank_eu"), width = 11)),
+                       box(title = "Clusters",
+                        plotOutput("rank_eu"), width = 11, height = 600)),
                 column(6,
                        box(
-                        tags$div(title = "Select a Cluster", selectInput("cluste", "Clusters:",
+                        tags$div(title = "Select a cluster to see how tipical the predictors for the number of new COVID are for the countries within", selectInput("cluste", "Select a cluster",
                                                                           choices = c(1:7))),
-                        plotOutput("rank_cluster"), width = 11)),
+                        plotOutput("rank_cluster"), width = 11, height = 600)),
                 )
       ),
       # Content Data Source
@@ -359,13 +357,13 @@ server <- function(input, output, session) {
   # Rank correlation
   # eu map
   output$rank_eu <- renderPlot({
-    p <- eu_cluster_varimp_vis(input$predic)
+    p <- eu_cluster_vis()
     p
   })
   
   # map of clusters
   output$rank_cluster <- renderPlot({
-    p <- cluster_varimp_corr_vis(input$cluste, input$predic)
+    p <- cluster_varimp_corr_vis(input$cluste)
     p
   })
   
