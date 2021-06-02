@@ -306,14 +306,12 @@ check_uncheck_checkboxgroup_with_label <- function(session, names, labels, to_ch
   }
 }
 
-###### Test
-
-# Preparing data and map for visualization on map
-map_cluster <- cbind(clust_dat, "country_code" = rownames(clust_dat))
+# Prepraing data for visualization of clusters
+map_cluster <- clust_dat
 map_cluster <- merge(map_cluster, capitals[, c("country", "country_code_iso2")], by.x = "country_code", by.y = "country_code_iso2")
 map_cluster <- map_cluster %>%
-  select(country, groups) %>%
-  rename(region = country, cluster = groups)
+  dplyr::select(country, groups) %>%
+  dplyr::rename(region = country, cluster = groups)
 map_cluster$cluster <- as.factor(map_cluster$cluster)
 # Replace "Czechia" with "Czech Republic" to match with the maps
 map_cluster[which(map_cluster$region == "Czechia"), "region"] <- "Czech Republic"
@@ -325,4 +323,4 @@ eu_map <- map_data("world", region = map_countries)
 
 region_lab_country <- eu_clusters_map %>%
   group_by(region) %>%
-  summarise(long = mean(long), lat = mean(lat))
+  dplyr::summarise(long = mean(long), lat = mean(lat))
