@@ -60,6 +60,7 @@ res_label <- c("Adaptation of workplaces", "Limit all indoor/outdoor mass/public
                "Closures of workplaces", "Closures of workplaces-partially relaxed measure", "Protective mask use in all public spaces on voluntary basis (general recommendation not enforced)-partially relaxed measure","Protective mask use in closed public spaces/transport on voluntary basis (general recommendation not enforced)",
                "Stay-at-home recommendations for risk groups or vulnerable populations (such as the elderly, people with underlying health conditions, physically disabled people, etc.) -partially relaxed measure", "Regional stay-at-home orders for the general population at least in one region (these are enforced and also referred to as 'lockdown')-partially relaxed measure", "Social circle/bubble to limit social contacts e.g. to limited number of households-partially relaxed measure")
 rest_table <- as.data.frame(cbind(res_id, res_text, res_label))
+saveRDS(rest_table, "shinydashboard/dat/rest_table.RDS")
 
 # Labels for other predictors
 pred_id <- c("cases_new_lead", "deaths_new", "fb_data.percent_dc", "fb_data.percent_mc", "new_vaccinations",
@@ -76,14 +77,15 @@ pred_label <- c("Number of reported new cases with 14 days lead", "Number of rep
                 "Percentage of respondents that have reported COVID-like symptoms", "Sample size direct contact (smoothed)",
                 "Sample size mask cover (smoothed)")
 pred_table <- as.data.frame(cbind(pred_id, pred_text, pred_label))
-
+saveRDS(pred_table, "shinydashboard/dat/pred_table.RDS")
 
 to_bind_rest_table <- rest_table
 colnames(to_bind_rest_table) <- c("pred_id", "pred_text", "pred_label")
 all_pred_table <- rbind(pred_table, to_bind_rest_table)
+saveRDS(all_pred_table, "shinydashboard/dat/all_pred_table.RDS")
 
 
 bc_country <- paste("bc", c("Austria", "Belgium", "Bulgaria", "Croatia", "Czechia", "Denmark", "Finland", "France", "Germany",
                 "Greece", "Hungary", "Ireland", "Italy", "Netherlands", "Poland", "Portugal", "Romania", "Slovakia",
                 "Slovenia", "Spain", "Sweden"), sep = "_")
-
+saveRDS(bc_country, "shinydashboard/dat/bc_country.RDS")
