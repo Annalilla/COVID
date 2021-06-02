@@ -7,8 +7,20 @@ rest_prev <- readRDS("dat/rest_prev.RDS")
 sel_rest_country <- readRDS("dat/sel_rest_country.RDS")
 b_vis_long <- readRDS("dat/pred_imp_ranking.RDS")
 pred_order <- readRDS("dat/pred_order.RDS")
-country_res <- readRDS("dat/country_res.RDS")
+#country_res <- readRDS("dat/country_res.RDS")
 pdp_all_c_all_pred <- readRDS("dat/pdp_all_c_all_pred.RDS")
+res_label_country <- readRDS("dat/res_label_country.RDS")
+rank_corr_res <- readRDS("dat/rank_corr_res.RDS")
+clust_dat <- readRDS("dat/clust_dat.RDS")
+c_rf_dat_fb <- readRDS("dat/c_rf_dat_fb.RDS")
+pdp_all_c_all_pred <- readRDS("dat/pdp_all_c_all_pred.RDS")
+bc_country <- readRDS("dat/bc_country.RDS")
+all_pred_table <- readRDS("dat/all_pred_table.RDS")
+pred_table <- readRDS("dat/pred_table.RDS")
+rest_table <- readRDS("dat/rest_table.RDS")
+eu_clusters_map <- readRDS("dat/eu_clusters_map.RDS")
+region_lab <- readRDS("dat/region_lab.RDS")
+eu_map <- readRDS("dat/eu_map.RDS")
 
 # Functions
 smooth_or_not <- function(to_smooth, cvar, min_date, max_date){
@@ -265,7 +277,19 @@ bump_predictor_box <- function(){
       ), width = 12, height = 460
   )
 }
-                       
+
+# Tooltips and labels for Bump Chart
+bc_labels <- merge(pred_order[1:15,], rest_table, by.x = "predictor", by.y = "res_id", all.x = TRUE)
+bc_labels <- merge(bc_labels, pred_table, by.x = "predictor", by.y = "pred_id", all.x = TRUE)
+bc_labels <- bc_labels %>%
+  mutate(d_text = coalesce(res_text, pred_text)) %>%
+  mutate(d_label = coalesce(res_label, pred_label)) %>%
+  dplyr::select(predictor, d_text, d_label)
+bc_labels$d_label[which(is.na(bc_labels$d_label))] <- bc_labels$predictor[which(is.na(bc_labels$d_predictor))]
+bc_labels <- bc_labels[order(match(bc_labels$predictor, pred_order$predictor[1:20])),]
+bc_labels$predictor <-  paste("bc", bc_labels$predictor, sep = "_")
+
+#                      
 # Display Checkboxgroups with label
 checkboxgroup_with_label <- function(names, labels, tooltips, width, height, selected = FALSE){
   cgroup <- list()
@@ -306,21 +330,3 @@ check_uncheck_checkboxgroup_with_label <- function(session, names, labels, to_ch
   }
 }
 
-# Prepraing data for visualization of clusters
-map_cluster <- clust_dat
-map_cluster <- merge(map_cluster, capitals[, c("country", "country_code_iso2")], by.x = "country_code", by.y = "country_code_iso2")
-map_cluster <- map_cluster %>%
-  dplyr::select(country, groups) %>%
-  dplyr::rename(region = country, cluster = groups)
-map_cluster$cluster <- as.factor(map_cluster$cluster)
-# Replace "Czechia" with "Czech Republic" to match with the maps
-map_cluster[which(map_cluster$region == "Czechia"), "region"] <- "Czech Republic"
-
-# Selecting countries to visualize
-map_countries <- c(unique(capitals$country), "Czech Republic")
-map <- map_data("world")
-eu_map <- map_data("world", region = map_countries)
-
-region_lab_country <- eu_clusters_map %>%
-  group_by(region) %>%
-  dplyr::summarise(long = mean(long), lat = mean(lat))
