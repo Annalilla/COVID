@@ -129,4 +129,3 @@ rf_model_cl <- function(cluster_dat, wind, hori){
   
   return(rep_res_cl)
 }
-
