@@ -9,7 +9,7 @@ library(zoo)
 library(randomForest)
 library(Hmisc)
 library(readr)
-library(dplyr)
+#library(dplyr)
 library(tidyverse)
 library(stringr)
 library(sjlabelled)
@@ -49,52 +49,52 @@ saveRDS(tdata_cl, 'shinydashboard/dat/tdata_cl.RDS')
 # Change variable types (to numerical, factor or date)
 
 # tdata_cl
-vars_to_numerical <- c("testing_rate", "testing_positivity_rate", "tavg", "total_vaccinations", "people_vaccinated",
-                       "people_fully_vaccinated", "new_vaccinations", "new_vaccinations_smoothed", "total_vaccinations_per_hundred",
-                       "people_vaccinated_per_hundred", "people_fully_vaccinated_per_hundred", "new_vaccinations_smoothed_per_million",
-                       "AdaptationOfWorkplace", "AdaptationOfWorkplacePartial", "BanOnAllEvents", "BanOnAllEventsPartial",
-                       "ClosDaycare", "ClosDaycarePartial", "ClosHigh", "ClosHighPartial", "ClosPrim", "ClosPrimPartial",
-                       "ClosPubAny", "ClosPubAnyPartial", "ClosSec", "ClosSecPartial", "ClosureOfPublicTransport",
-                       "ClosureOfPublicTransportPartial", "EntertainmentVenues", "EntertainmentVenuesPartial",
-                       "GymsSportsCentres", "GymsSportsCentresPartial", "HotelsAccommodation", "HotelsAccommodationPartial",
-                       "IndoorOver100", "IndoorOver1000", "IndoorOver1000Partial", "IndoorOver100Partial", "IndoorOver50",
-                       "IndoorOver500", "IndoorOver500Partial", "IndoorOver50Partial", "MasksMandatoryAllSpaces",
-                       "MasksMandatoryAllSpacesPartial", "MasksMandatoryClosedSpaces", "MasksMandatoryClosedSpacesPartial",
-                       "MasksVoluntaryAllSpaces", "MasksVoluntaryAllSpacesPartial", "MasksVoluntaryClosedSpaces",
-                       "MasksVoluntaryClosedSpacesPartial", "MassGatherAll", "MassGatherAllPartial", "NonEssentialShops",
-                       "NonEssentialShopsPartial", "OutdoorOver100", "OutdoorOver1000", "OutdoorOver1000Partial",
-                       "OutdoorOver100Partial", "OutdoorOver50", "OutdoorOver500", "OutdoorOver500Partial", "OutdoorOver50Partial",
-                       "PlaceOfWorship", "PlaceOfWorshipPartial", "PrivateGatheringRestrictions",
-                       "PrivateGatheringRestrictionsPartial", "RegionalStayHomeOrder", "RegionalStayHomeOrderPartial",
-                       "RestaurantsCafes", "RestaurantsCafesPartial", "SocialCircle", "SocialCirclePartial", "StayHomeGen",
-                       "StayHomeGenPartial", "StayHomeOrder", "StayHomeOrderPartial", "StayHomeRiskG", "StayHomeRiskGPartial",
-                       "Teleworking", "TeleworkingPartial", "WorkplaceClosures", "WorkplaceClosuresPartial",
-                       "cases_new", "deaths_new", "recovered_new",
-                       "fb_data.percent_cli", "fb_data.cli_se", "fb_data.percent_cli_unw", "fb_data.cli_se_unw", "fb_data.sample_size_cli",
-                       "fb_data.smoothed_cli", "fb_data.smoothed_cli_se", "fb_data.sample_size_smoothed_cli", "fb_data.percent_mc",
-                       "fb_data.mc_se", "fb_data.percent_mc_unw", "fb_data.mc_se_unw", "fb_data.sample_size_mc", "fb_data.smoothed_mc", 
-                       "fb_data.smoothed_mc_se", "fb_data.sample_size_mc_smoothed", "fb_data.percent_dc", "fb_data.mc_se_dc",
-                       "fb_data.percent_dc_unw", "fb_data.dc_se_unw", "fb_data.sample_size_dc", "fb_data.smoothed_dc", "fb_data.smoothed_dc_se",
-                       "fb_data.sample_size_dc_smoothed")
+#vars_to_numerical <- c("testing_rate", "testing_positivity_rate", "tavg", "total_vaccinations", "people_vaccinated",
+#                       "people_fully_vaccinated", "new_vaccinations", "new_vaccinations_smoothed", "total_vaccinations_per_hundred",
+#                       "people_vaccinated_per_hundred", "people_fully_vaccinated_per_hundred", "new_vaccinations_smoothed_per_million",
+#                       "AdaptationOfWorkplace", "AdaptationOfWorkplacePartial", "BanOnAllEvents", "BanOnAllEventsPartial",
+#                       "ClosDaycare", "ClosDaycarePartial", "ClosHigh", "ClosHighPartial", "ClosPrim", "ClosPrimPartial",
+#                       "ClosPubAny", "ClosPubAnyPartial", "ClosSec", "ClosSecPartial", "ClosureOfPublicTransport",
+#                       "ClosureOfPublicTransportPartial", "EntertainmentVenues", "EntertainmentVenuesPartial",
+#                       "GymsSportsCentres", "GymsSportsCentresPartial", "HotelsAccommodation", "HotelsAccommodationPartial",
+#                       "IndoorOver100", "IndoorOver1000", "IndoorOver1000Partial", "IndoorOver100Partial", "IndoorOver50",
+#                       "IndoorOver500", "IndoorOver500Partial", "IndoorOver50Partial", "MasksMandatoryAllSpaces",
+#                       "MasksMandatoryAllSpacesPartial", "MasksMandatoryClosedSpaces", "MasksMandatoryClosedSpacesPartial",
+#                       "MasksVoluntaryAllSpaces", "MasksVoluntaryAllSpacesPartial", "MasksVoluntaryClosedSpaces",
+#                       "MasksVoluntaryClosedSpacesPartial", "MassGatherAll", "MassGatherAllPartial", "NonEssentialShops",
+#                       "NonEssentialShopsPartial", "OutdoorOver100", "OutdoorOver1000", "OutdoorOver1000Partial",
+#                       "OutdoorOver100Partial", "OutdoorOver50", "OutdoorOver500", "OutdoorOver500Partial", "OutdoorOver50Partial",
+#                       "PlaceOfWorship", "PlaceOfWorshipPartial", "PrivateGatheringRestrictions",
+#                       "PrivateGatheringRestrictionsPartial", "RegionalStayHomeOrder", "RegionalStayHomeOrderPartial",
+#                       "RestaurantsCafes", "RestaurantsCafesPartial", "SocialCircle", "SocialCirclePartial", "StayHomeGen",
+#                       "StayHomeGenPartial", "StayHomeOrder", "StayHomeOrderPartial", "StayHomeRiskG", "StayHomeRiskGPartial",
+#                       "Teleworking", "TeleworkingPartial", "WorkplaceClosures", "WorkplaceClosuresPartial",
+#                       "cases_new", "deaths_new", "recovered_new",
+#                       "fb_data.percent_cli", "fb_data.cli_se", "fb_data.percent_cli_unw", "fb_data.cli_se_unw", "fb_data.sample_size_cli",
+#                       "fb_data.smoothed_cli", "fb_data.smoothed_cli_se", "fb_data.sample_size_smoothed_cli", "fb_data.percent_mc",
+#                       "fb_data.mc_se", "fb_data.percent_mc_unw", "fb_data.mc_se_unw", "fb_data.sample_size_mc", "fb_data.smoothed_mc", 
+#                       "fb_data.smoothed_mc_se", "fb_data.sample_size_mc_smoothed", "fb_data.percent_dc", "fb_data.mc_se_dc",
+#                       "fb_data.percent_dc_unw", "fb_data.dc_se_unw", "fb_data.sample_size_dc", "fb_data.smoothed_dc", "fb_data.smoothed_dc_se",
+#                       "fb_data.sample_size_dc_smoothed")
 
 
-vars_to_factor <- c("country", "country_code", "iso_code", "fb_data.iso_code", "fb_data.country")
+#vars_to_factor <- c("country", "country_code", "iso_code", "fb_data.iso_code", "fb_data.country")
 
-vars_to_date <- c("date")
+#vars_to_date <- c("date")
 
 # Convert variables to numerical
 # Handling decimals
-tdata_cl[, which(colnames(tdata_cl) %in% vars_to_numerical)] <-
-  lapply(tdata_cl[, which(colnames(tdata_cl) %in% vars_to_numerical)], function(x) gsub(",", "\\.", x))
-tdata_cl[, which(colnames(tdata_cl) %in% vars_to_numerical)] <-
-  lapply(tdata_cl[, which(colnames(tdata_cl) %in% vars_to_numerical)], as.numeric)
+#tdata_cl[, which(colnames(tdata_cl) %in% vars_to_numerical)] <-
+#  lapply(tdata_cl[, which(colnames(tdata_cl) %in% vars_to_numerical)], function(x) gsub(",", "\\.", x))
+#tdata_cl[, which(colnames(tdata_cl) %in% vars_to_numerical)] <-
+#  lapply(tdata_cl[, which(colnames(tdata_cl) %in% vars_to_numerical)], as.numeric)
 
 # Convert variables to factor
-tdata_cl[, which(colnames(tdata_cl) %in% vars_to_factor)] <-
-  lapply(tdata_cl[, which(colnames(tdata_cl) %in% vars_to_factor)], as.factor)
+#tdata_cl[, which(colnames(tdata_cl) %in% vars_to_factor)] <-
+#  lapply(tdata_cl[, which(colnames(tdata_cl) %in% vars_to_factor)], as.factor)
 
 # Convert variables to date
-tdata_cl$date <- as.Date(tdata_cl$date)
+#tdata_cl$date <- as.Date(tdata_cl$date)
 
 
 
@@ -104,7 +104,7 @@ source("functions/RF_cluster_functions.R")
 ###preprocessing
 
 ##Selecting the variables, defining the period with meaningful amount of data at the end of the period
-rf_max_date <- min(as.Date(unlist(lapply(unique(tdata$country), function(x){
+rf_max_date <- min(as.Date(do.call(c, lapply(unique(tdata$country), function(x){
   act_country <- tdata[tdata$country == x,]
   if(!all(is.na(act_country$fb_data.percent_mc)) & !all(is.na(act_country$fb_data.percent_dc))){
     max(act_country[!is.na(act_country$fb_data.percent_mc) & !is.na(act_country$fb_data.percent_dc), "date"])
@@ -211,7 +211,7 @@ rf_dat_cl <- lapply(cl_rf_dat, function(x) preproc_predict_cl(x))
 
 cl_rf_dat_fb <- rf_dat_cl
 
-cluster_res_varimp <- lapply(cl_rf_dat_fb, function(x) rf_model_cl(x, iniwindow, hori))
+cluster_res_varimp <- lapply(cl_rf_dat_fb, function(x) rf_model_cl(x, wind = 28, hori = 5))
 
 
 #Format data for the 'Country-char vs.varimp' tab input
