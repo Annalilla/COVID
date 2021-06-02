@@ -82,7 +82,7 @@ rc_cluster <- function(cluster){
   act_ct <- act_clust$country
   
   act_cor <- unlist(lapply(act_ct, function(x){
-    cor(country_res_varimp[[x]][["rank"]], cluster_res_varimp_list[[cl]][["rank"]], method = c("spearman"))
+    cor(country_res_varimp[[x]][["rank"]], cluster_res_varimp_list[[cluster]][["rank"]], method = c("spearman"))
   }))
   act_res <- as.data.frame(cbind(act_ct, act_cor))
   colnames(act_res) <- c("country", "correlation")
@@ -91,4 +91,3 @@ rc_cluster <- function(cluster){
 }
 
 rank_corr_res <- lapply(c(1:max(clust_dat$groups)), rc_cluster)
-
