@@ -91,3 +91,4 @@ rc_cluster <- function(cluster){
 }
 
 rank_corr_res <- lapply(c(1:max(clust_dat$groups)), rc_cluster)
+saveRDS(rank_corr_res, "shinydashboard/dat/rank_corr_res.RDS")
