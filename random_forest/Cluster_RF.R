@@ -17,8 +17,8 @@ library(sjlabelled)
 
 ##Create a time-varying dbase with clusters
 
-source("functions/Get_data.R")
-tdata <- get_data("tdata", local = FALSE)
+#source("functions/Get_data.R")
+#tdata <- get_data("tdata", local = FALSE)
 tdata$country_code<- as.factor(tdata$country_code)
 
 
