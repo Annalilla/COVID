@@ -7,8 +7,10 @@ library(lubridate)
 library(reshape2)
 library(shinyBS)
 library(maps)
+
 source("Shiny_prep_and_functions.R")
 source("Shiny_vis_functions.R")
+
 ##
 # Shiny
 ui <- dashboardPage(
@@ -355,7 +357,8 @@ server <- function(input, output, session) {
   })
   
   # Rank correlation
-  # eu map
+  # eu 
+  map
   output$rank_eu <- renderPlot({
     p <- eu_cluster_vis()
     p
