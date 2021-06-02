@@ -191,3 +191,6 @@ ggplot(eu_clusters_map, aes(long, lat)) +
   geom_text(aes(label = region), data = region_lab,  size = 3, hjust = 0.5) +
   scale_fill_manual(values=c("#F8766D", "#B79F00", "#00BA38", "#38CBCE", "#68A0FE", "#F564E3", "#fb61d7")) +
   theme_void()
+
+# Saving results
+saveRDS(clust_dat, 'shinydashboard/dat/clust_dat.rds')
