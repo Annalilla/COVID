@@ -72,17 +72,17 @@ exp_plot_add_temp <- function(plot, temp, dat){
     multi <- max(dat$cases, na.rm = TRUE)/max(dat$tavg, na.rm = TRUE)
     labpx1 <- (dat[which.max(dat$tavg), "date"] + x_dist)
     labpy1 <- (multi * dat[1, "tavg"] + multi)
-    labt1 <- paste(round(dat[1, "tavg"], 1), "ÃÂ°C", sep = "")
+    labt1 <- paste(round(dat[1, "tavg"], 1), "ÃÂÃÂ°C", sep = "")
     pointx1 <- dat[1, "date"]
     pointy1 <- (multi * dat[1, "tavg"])
     labpx <- (dat[which.max(dat$tavg), "date"] + x_dist)
     labpy <- (multi * dat[which.max(dat$tavg), "tavg"] + multi)
-    labt <- paste(round(dat[which.max(dat$tavg), "tavg"], 1), "ÃÂ°C", sep = "")
+    labt <- paste(round(dat[which.max(dat$tavg), "tavg"], 1), "ÃÂÃÂ°C", sep = "")
     pointx <- dat[which.max(dat$tavg), "date"]
     pointy <- (multi * dat[which.max(dat$tavg), "tavg"])
     labpxmin <- (dat[which.min(dat$tavg), "date"] + x_dist)
     labpymin <- (multi * dat[which.min(dat$tavg), "tavg"])
-    labtmin <- paste(round(dat[which.min(dat$tavg), "tavg"], 1), "ÃÂ°C", sep = "")
+    labtmin <- paste(round(dat[which.min(dat$tavg), "tavg"], 1), "ÃÂÃÂ°C", sep = "")
     pointxmin <- dat[which.min(dat$tavg), "date"]
     pointymin <- (multi * dat[which.min(dat$tavg), "tavg"])
     
@@ -223,52 +223,36 @@ bump_chart <- function(vis_dat, x_coord){
   
   
 ## Cluster Variable importance correlation
-# eu map with clusters colored by varimp
-eu_cluster_varimp_vis <- function(predi){
-  # Add varimp of selected predictor to map data
-  varimp_sel <- varimps_cluster %>%
-    filter(predictor == predi)
-  act_map <- merge(map_cluster, varimp_sel, by = "cluster", all.x =TRUE)
-  
-  act_eu_clusters_map <- left_join(act_map, eu_map, by = "region")
-  
-  p <- ggplot(act_eu_clusters_map, aes(long, lat)) +
-    geom_polygon(aes(group = group, fill = Overall), color = "white") +
-    ggtitle(paste("Variable importance of predictor ", predi, sep = "")) +
-    geom_text(aes(label = region), data = region_lab_country,  size = 3, hjust = 0.5) +
-    scale_color_manual() +
+# eu map with clusters colored by cluster
+eu_cluster_vis <- function(){
+  p <- ggplot(eu_clusters_map, aes(long, lat)) +
+    geom_polygon(aes(group = group, fill = cluster), color = "white") +
+    geom_text(aes(label = region), data = region_lab,  size = 3, hjust = 0.5) +
+    scale_fill_manual(values=c("#F8766D", "#B79F00", "#00BA38", "#38CBCE", "#68A0FE", "#F564E3", "#b87ba9")) +
     coord_fixed() +
     theme_void()
   return(p)
 }
 
 # Map of countries in the selected cluster *** In final version rank correlation instead of varimp
-cluster_varimp_corr_vis <- function(clus, predi){
+cluster_varimp_corr_vis <- function(clus){
   # Countries in the cluster
-  sel_country <- map_cluster %>%
-  filter(cluster == clus) %>%
-  select(region)
+  sel_country <- rank_corr_res[[as.numeric(clus)]]$country
   # Add varimp of selected predictor of countries in the selected cluster to map data
-  c_ind <- which(names(varimps_country) %in% sel_country[,1])
-  varimp_sel <- varimps_country[c_ind]
-  varimp_sel <- do.call(rbind, varimp_sel)
-  varimp_sel <- filter(varimp_sel, predictor == predi)
-  varimp_sel$region <- names(varimps_country[c_ind])
-
-  act_eu_clusters_map <- left_join(varimp_sel, eu_map, by = "region")
+  corr_sel <- rank_corr_res[[as.numeric(clus)]]
+  colnames(corr_sel)[which(colnames(corr_sel)  == "country")] <- "region"
+  
+  act_eu_clusters_map <- left_join(corr_sel, eu_map, by = "region")
   
   region_lab_cluster <- act_eu_clusters_map %>%
     group_by(region) %>%
-    summarise(long = mean(long), lat = mean(lat))
-
+    dplyr::summarise(long = mean(long), lat = mean(lat))
+  
   p <- ggplot(act_eu_clusters_map, aes(long, lat)) +
-    geom_polygon(aes(group = group, fill = Overall), color = "white") +
-    ggtitle(paste("Rank Correlation between country level and cluster level\nvariable importance of predictor ",
-                  predi, " in cluster ", clus, sep ="")) +
+    geom_polygon(aes(group = group, fill = correlation), color = "white") +
     geom_text(aes(label = region), data = region_lab_cluster,  size = 3, hjust = 0.5) +
     scale_color_manual() +
     coord_fixed() +
     theme_void()
   return(p)
 }
-
