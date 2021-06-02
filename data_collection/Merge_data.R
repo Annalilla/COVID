@@ -56,6 +56,7 @@ health_expenditures_eurostat <- health_expenditures_eurostat[which((health_expen
 health_exp <- health_expenditures_eurostat %>%
   group_by(geo, time) %>%
   summarise(values = sum(values))
+health_exp$values <- as.integer(health_exp$values)
 health_exp$variable <- "health_expenditures"
 
 #
