@@ -240,7 +240,7 @@ country_res <- lapply(c_rf_dat_fb, function(x) rf_model_pdp(x))
 dir.create("shinydashboard", showWarnings = FALSE)
 dir.create("shinydashboard/dat", showWarnings = FALSE)
 
-saveRDS(country_res, "shinydashboard/dat/country_res.RDS")
+#saveRDS(country_res, "shinydashboard/dat/country_res.RDS")
 saveRDS(c_rf_dat_fb, "shinydashboard/dat/c_rf_dat_fb.RDS")
 
 
