@@ -247,3 +247,4 @@ varimps_cluster <- merge(clust_res$cluster, all_pred_table$pred_id)
 set.seed(76767)
 varimps_cluster <- cbind(varimps_cluster, sample(varimps_country[[1]]$Overall, nrow(varimps_cluster), replace = TRUE))
 colnames(varimps_cluster) <- c("cluster", "predictor", "Overall")
+
