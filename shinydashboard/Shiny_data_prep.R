@@ -8,9 +8,7 @@ library(pdp)
 library(readr)
 library(stringr)
 library(dplyr)
-
-dir.create("shinydashboard", showWarnings = FALSE)
-dir.create("shinydashboard/dat", showWarnings = FALSE)
+library(caret)
 
 source("helpers/Restriction_labels.R")
 
@@ -224,27 +222,41 @@ n_top <- as.data.frame(top_pred_c[which(top_pred_c$predictor %in% pred_order$pre
   group_by(country) %>%
   dplyr::summarise(n = n()))
 summary(n_top)
-                             
-                             # Tooltips and labels for Bump Chart
-bc_labels <- merge(pred_order[1:15,], rest_table, by.x = "predictor", by.y = "res_id", all.x = TRUE)
-bc_labels <- merge(bc_labels, pred_table, by.x = "predictor", by.y = "pred_id", all.x = TRUE)
-bc_labels <- bc_labels %>%
-  mutate(d_text = coalesce(res_text, pred_text)) %>%
-  mutate(d_label = coalesce(res_label, pred_label)) %>%
-  dplyr::select(predictor, d_text, d_label)
-bc_labels$d_label[which(is.na(bc_labels$d_label))] <- bc_labels$predictor[which(is.na(bc_labels$d_predictor))]
-bc_labels <- bc_labels[order(match(bc_labels$predictor, pred_order$predictor[1:20])),]
-bc_labels$predictor <-  paste("bc", bc_labels$predictor, sep = "_")
 
 # Test data for clusters
-varimps_country <- lapply(country_res, function(x){
-  x <- varImp(x)
-  x$predictor <- rownames(x)
-  return(x)
-})
+#varimps_country <- lapply(country_res, function(x){
+#  x <- varImp(x)
+#  x$predictor <- rownames(x)
+#  return(x)
+#})
 
-varimps_cluster <- merge(clust_res$cluster, all_pred_table$pred_id)
-set.seed(76767)
-varimps_cluster <- cbind(varimps_cluster, sample(varimps_country[[1]]$Overall, nrow(varimps_cluster), replace = TRUE))
-colnames(varimps_cluster) <- c("cluster", "predictor", "Overall")
+#varimps_cluster <- merge(clust_res$cluster, all_pred_table$pred_id)
+#set.seed(76767)
+#varimps_cluster <- cbind(varimps_cluster, sample(varimps_country[[1]]$Overall, nrow(varimps_cluster), replace = TRUE))
+#colnames(varimps_cluster) <- c("cluster", "predictor", "Overall")
 
+
+
+# Prepraing data for visualization of clusters
+map_cluster <- clust_dat
+map_cluster$country_code <- rownames(map_cluster)
+map_cluster <- merge(map_cluster, capitals[, c("country", "country_code_iso2")], by.x = "country_code", by.y = "country_code_iso2")
+map_cluster <- map_cluster %>%
+  dplyr::select(country, groups) %>%
+  dplyr::rename(region = country, cluster = groups)
+map_cluster$cluster <- as.factor(map_cluster$cluster)
+# Replace "Czechia" with "Czech Republic" to match with the maps
+map_cluster[which(map_cluster$region == "Czechia"), "region"] <- "Czech Republic"
+
+# Selecting countries to visualize
+map_countries <- c(unique(capitals$country), "Czech Republic")
+map <- map_data("world")
+eu_map <- map_data("world", region = map_countries)
+saveRDS(eu_map, "shinydashboard/dat/eu_map.RDS")
+eu_clusters_map <- left_join(map_cluster, eu_map, by = "region")
+saveRDS(eu_clusters_map, "shinydashboard/dat/eu_clusters_map.RDS")
+
+region_lab <- eu_clusters_map %>%
+  group_by(region) %>%
+  summarise(long = mean(long), lat = mean(lat))
+saveRDS(region_lab, "shinydashboard/dat/region_lab.RDS")
