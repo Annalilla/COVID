@@ -77,12 +77,12 @@ exp_plot_add_temp <- function(plot, temp, dat){
     pointy1 <- (multi * dat[1, "tavg"])
     labpx <- (dat[which.max(dat$tavg), "date"] + x_dist)
     labpy <- (multi * dat[which.max(dat$tavg), "tavg"] + multi)
-    labt <- paste(round(dat[which.max(dat$tavg), "tavg"], 1), "ÃÂÃÂÃÂÃÂ°C", sep = "")
+    labt <- paste(round(dat[which.max(dat$tavg), "tavg"], 1), "°C", sep = "")
     pointx <- dat[which.max(dat$tavg), "date"]
     pointy <- (multi * dat[which.max(dat$tavg), "tavg"])
     labpxmin <- (dat[which.min(dat$tavg), "date"] + x_dist)
     labpymin <- (multi * dat[which.min(dat$tavg), "tavg"])
-    labtmin <- paste(round(dat[which.min(dat$tavg), "tavg"], 1), "ÃÂÃÂÃÂÃÂ°C", sep = "")
+    labtmin <- paste(round(dat[which.min(dat$tavg), "tavg"], 1), "°C", sep = "")
     pointxmin <- dat[which.min(dat$tavg), "date"]
     pointymin <- (multi * dat[which.min(dat$tavg), "tavg"])
     
@@ -241,6 +241,8 @@ cluster_varimp_corr_vis <- function(clus){
   # Add varimp of selected predictor of countries in the selected cluster to map data
   corr_sel <- rank_corr_res[[as.numeric(clus)]]
   colnames(corr_sel)[which(colnames(corr_sel)  == "country")] <- "region"
+  # Replace "Czechia" with "Czech Republic" to match with the maps
+  corr_sel[which(corr_sel$region == "Czechia"), "region"] <- "Czech Republic"
   
   act_eu_clusters_map <- left_join(corr_sel, eu_map, by = "region")
   
