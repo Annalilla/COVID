@@ -56,7 +56,6 @@ health_expenditures_eurostat <- health_expenditures_eurostat[which((health_expen
 health_exp <- health_expenditures_eurostat %>%
   group_by(geo, time) %>%
   summarise(values = sum(values))
-health_exp$values <- as.integer(health_exp$values)
 health_exp$variable <- "health_expenditures"
 
 #
@@ -74,6 +73,7 @@ pop <- subset(pop, select = -time)
 
 country_char <- spread(pop, key = variable, value = values)
 country_char <- country_char[country_char$geo %in% capitals$country_code_iso2,]
+country_char <- as.data.frame(apply(country_char, 2, as.character))
 
 ### Time vars
 
