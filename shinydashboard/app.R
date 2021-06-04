@@ -138,15 +138,24 @@ ui <- dashboardPage(
       # Content Variable Importance Rank Correlation Within Clusters
       tabItem(tabName = "rankcorr",
               fluidRow(
-                column(6,
-                       box(title = "Clusters",
-                        plotOutput("rank_eu"), width = 11, height = 600)),
-                column(6,
-                       box(
-                        tags$div(title = "Select a cluster to see how tipical the predictors for the number of new COVID are for the countries within", selectInput("cluste", "Select a cluster",
-                                                                          choices = c(1:7))),
-                        plotOutput("rank_cluster"), width = 11, height = 600)),
-                )
+                box(title = "To what extent are the importance of predictors for new COVID infections determined by country characteristics?",
+                    column(8,
+                           p("Please select a country to check if its predictors for the number of new COVID cases are typical for countries with similar characteristics. You can see the rank correlation of the variable importances of the selected country and its cluster based on country-level sociodemographic, medical factors and cultural participation below."),
+                           ),
+                    column(4,
+                           plotOutput("rank_eu", height = 200)
+                           ), width = 12, height = 270),
+                    box(
+                      column(
+                        tags$div(title = "Select a cluster to see how tipical the predictors for the number of new COVID cases are for the countries within", selectInput("cluste", "Select a cluster",
+                                                                                                                                                                    choices = c("All Clusters", 1:7))),
+                        tags$div(title = "Select the strength of rank correlation", selectInput("corr_strength", "Select the strength of the correlation",
+                                                                                                choices = c("All", "Low", "Middle", "High"))),
+                        width = 4),
+                      column(
+                        plotOutput("rank_cluster"), width = 8
+                      ), width = 12), width = 12
+                ),
       ),
       # Content Data Source
       tabItem(tabName = "source",
@@ -332,6 +341,9 @@ server <- function(input, output, session) {
     bc_dat
   })
   
+  # Downloadable manual
+  
+  
   ## Plots
   
   # Exploratory
@@ -362,11 +374,11 @@ server <- function(input, output, session) {
   output$rank_eu <- renderPlot({
     p <- eu_cluster_vis()
     p
-  })
+  }, height = 200)
   
   # map of clusters
   output$rank_cluster <- renderPlot({
-    p <- cluster_varimp_corr_vis(input$cluste)
+    p <- cluster_varimp_corr_vis(input$cluste, input$corr_strength)
     p
   })
   
