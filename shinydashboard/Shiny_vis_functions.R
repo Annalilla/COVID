@@ -72,7 +72,7 @@ exp_plot_add_temp <- function(plot, temp, dat){
     multi <- max(dat$cases, na.rm = TRUE)/max(dat$tavg, na.rm = TRUE)
     labpx1 <- (dat[which.max(dat$tavg), "date"] + x_dist)
     labpy1 <- (multi * dat[1, "tavg"] + multi)
-    labt1 <- paste(round(dat[1, "tavg"], 1), "°C", sep = "")
+    labt1 <- paste(round(dat[1, "tavg"], 1), "Â°C", sep = "")
     pointx1 <- dat[1, "date"]
     pointy1 <- (multi * dat[1, "tavg"])
     labpx <- (dat[which.max(dat$tavg), "date"] + x_dist)
@@ -230,19 +230,30 @@ eu_cluster_vis <- function(){
     geom_text(aes(label = region), data = region_lab,  size = 3, hjust = 0.5) +
     scale_fill_manual(values=c("#F8766D", "#B79F00", "#00BA38", "#38CBCE", "#68A0FE", "#F564E3", "#b87ba9")) +
     coord_fixed() +
+    theme(plot.margin = unit(c(1,1,0,1), "lines")) +
     theme_void()
   return(p)
 }
 
-# Map of countries in the selected cluster *** In final version rank correlation instead of varimp
-cluster_varimp_corr_vis <- function(clus){
-  # Countries in the cluster
-  sel_country <- rank_corr_res[[as.numeric(clus)]]$country
-  # Add varimp of selected predictor of countries in the selected cluster to map data
-  corr_sel <- rank_corr_res[[as.numeric(clus)]]
+# Map of countries in the selected cluster
+cluster_varimp_corr_vis <- function(clus, corr_strength){
+  # Countries and varimp in the selected cluster
+  if(clus == "All Clusters"){
+    corr_sel <- rank_corr_all
+    sel_country <- corr_sel$country
+  }else{
+    sel_country <- rank_corr_res[[as.numeric(clus)]]$country
+    corr_sel <- rank_corr_res[[as.numeric(clus)]]
+  }
   colnames(corr_sel)[which(colnames(corr_sel)  == "country")] <- "region"
   # Replace "Czechia" with "Czech Republic" to match with the maps
   corr_sel[which(corr_sel$region == "Czechia"), "region"] <- "Czech Republic"
+  
+  # Showing only countries with the selected correlation
+  if(corr_strength != "All"){
+    corr_strength <- tolower(corr_strength)
+    corr_sel[which(corr_sel$corr_cut != corr_strength), "correlation"] <- NA
+  }
   
   act_eu_clusters_map <- left_join(corr_sel, eu_map, by = "region")
   
@@ -253,7 +264,10 @@ cluster_varimp_corr_vis <- function(clus){
   p <- ggplot(act_eu_clusters_map, aes(long, lat)) +
     geom_polygon(aes(group = group, fill = correlation), color = "white") +
     geom_text(aes(label = region), data = region_lab_cluster,  size = 3, hjust = 0.5) +
-    scale_color_manual() +
+    scale_fill_gradient2(low = "white",
+                         mid = "green",
+                         high = "blue",
+                         na.value="#e0e0e0") +
     coord_fixed() +
     theme_void()
   return(p)
