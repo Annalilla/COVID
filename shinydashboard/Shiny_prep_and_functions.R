@@ -330,3 +330,10 @@ check_uncheck_checkboxgroup_with_label <- function(session, names, labels, to_ch
   }
 }
 
+
+# Cut rank correlation of variable importance into 3 categories
+names(rank_corr_res) <- c(1:7)
+rank_corr_all <- do.call(rbind, rank_corr_res)
+rank_corr_all$corr_cut <- cut(rank_corr_all$correlation, 3, labels = c("low", "middle", "high"))
+group_names <- str_replace_all(rownames(rank_corr_all), "\\.\\d$", "")
+rank_corr_res <- split(rank_corr_all, group_names)
