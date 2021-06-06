@@ -13,6 +13,10 @@ source("Shiny_vis_functions.R")
 
 ##
 # Shiny
+#Path to User's Manual for the Documentation Tab
+addResourcePath(prefix = 'pdfs', directoryPath = 'c:/Users/balan/Documents/IPSDS/MDM/Master_Thesis/WScarping/COVID-main/shinydashboard/www/')
+
+
 ui <- dashboardPage(
   dashboardHeader(title = "COVID-19"),
   dashboardSidebar(
@@ -21,8 +25,8 @@ ui <- dashboardPage(
       menuItem("Exploratory", tabName = "exploratory", icon = icon("object-align-bottom", lib = "glyphicon")),
       menuItem("Partial Dependence", tabName = "pdp", icon=icon("object-align-bottom", lib = "glyphicon")),
       menuItem("Bump Chart", tabName = "bc", icon=icon("object-align-bottom", lib = "glyphicon")),
-      menuItem("Rank Correlation", tabName = "rankcorr", icon=icon("object-align-bottom", lib = "glyphicon")),
-      menuItem("Datasource", tabName = "source", icon = icon("th"))
+      menuItem("Country Characteristics", tabName = "rankcorr", icon=icon("object-align-bottom", lib = "glyphicon")),
+      menuItem("Documentation", tabName = "source", icon = icon("th"))
     )
   ), skin = "black",
   
@@ -89,29 +93,41 @@ ui <- dashboardPage(
       ),
       
       #Pdp tab content
+     # tabItem(tabName = "pdp",
+     #         #h2("Partial Dependence Plots - ToDo")),
+     #          fluidRow(
+     #            column(4,
+     #                   box(
+     #                     
+     #                     selectInput("country_pdp", "Country:",
+     #                                 choices = names(pdp_all_c_all_pred)),
+     #                   bsTooltip(id = "country_pdp", title = "Select a country", 
+     #                             placement = "left", trigger = "hover"),
+     #                 ),
+     #                 box(
+     #                   
+     #                   selectInput("predictor_pdp", "Predictor:",
+     #                               choices = NULL), #to be updated by each session based on values of the country_pdp
+     #                   bsTooltip(id = "predictor_pdp", title = "Select a predictor", 
+     #                             placement = "left", trigger = "hover"),
+     #                 )
+     #          ),
+                
+                
       tabItem(tabName = "pdp",
-              #h2("Partial Dependence Plots - ToDo")),
               fluidRow(
                 column(4,
-                       box(
-                         
-                         selectInput("country_pdp", "Country:",
-                                     choices = names(pdp_all_c_all_pred)),
-                         bsTooltip(id = "country_pdp", title = "Select a country", 
-                                   placement = "left", trigger = "hover"),
-                       ),
-                       box(
-                         
-                         selectInput("predictor_pdp", "Predictor:",
-                                     choices = NULL), #to be updated by each session based on values of the country_pdp
-                         bsTooltip(id = "predictor_pdp", title = "Select a predictor", 
-                                   placement = "left", trigger = "hover"),
-                       )
+                      box(
+                         tags$div(title = "Select a country", selectInput("country_pdp", "Country:",
+                                                                                    choices = names(pdp_all_c_all_pred))),
+                         tags$div(title = "Select a predictor", selectInput("predictor_pdp", "Predictor:", choices = NULL)),
+                         width = 8, height = 200)
                 ),
+                     
                 
-                column(8,
-                       box(title = textOutput("charttitle_pdp"), "Variable importance plot",
-                           plotOutput("plot_pdp",  height = 350), width = 12, height = 480)
+                column(12,
+                       box(title = textOutput("charttitle_pdp"), "Partial Dependence Plot",
+                           plotOutput("plot_pdp",  height = 450), width = 12, height = 580)
                 )
               )),
       # Content Bump Chart
@@ -140,7 +156,11 @@ ui <- dashboardPage(
               fluidRow(
                 box(title = "To what extent are the importance of predictors for new COVID infections determined by country characteristics?",
                     column(8,
-                           p("Please select a country to check if its predictors for the number of new COVID cases are typical for countries with similar characteristics. You can see the rank correlation of the variable importances of the selected country and its cluster based on country-level sociodemographic, medical factors and cultural participation below."),
+                           p("Please select a cluster to check if its predictors for the number of new COVID cases are typical 
+                             for countries with similar characteristics. 
+                             You can see the strengths of the rank correlation of the variable importances of the countries and the selected cluster 
+                             based on country-level sociodemographic, medical factors and cultural participation below."),
+                            p("Please check the Documentation Tab for further details."),
                            ),
                     column(4,
                            plotOutput("rank_eu", height = 200)
@@ -157,17 +177,27 @@ ui <- dashboardPage(
                       ), width = 12), width = 12
                 ),
       ),
-      # Content Data Source
+      
+     
+      #Content Manual
       tabItem(tabName = "source",
-              h1("Datasources- To link!"),
-              h2("Facebook COVID-19 Symptom Survey"),
-              h2("Temperature, National Centers for Environmental Information"),
-              h2("Vaccination, Our Word in Data"),
-              h2("COVID-19 Data Repository, Johns Hopkins University"),
-              h2("Eurostat databases"),
-              h2("Country response measures to COVID-19 by week and by country, European Centre for Disease Prevention and Control")
+              h1("Datasources"),
+              tags$a(href = "https://covidmap.umd.edu/", "Facebook/UMD COVID-19 World Symptom Survey"),
+              tags$a(href ="https://github.com/RamiKrispin/coronavirus", "Johns Hopkins University CSSE COVID-19 Data Repository"),
+              tags$a(href ="https://ourworldindata.org/coronavirus", "Vaccination from Our World in Data"),
+              tags$a(href ="https://www.ecdc.europa.eu/en/publications-data/download-data-response-measures-covid-19", 
+                     "Country response measures to COVID-19 by week and by country, European Centre for Disease Prevention and Control"),
+              tags$a(href ="https://www.ncdc.noaa.gov/", "Temperature, National Centers for Environmental Information"), 
+              tags$a(href ="https://ec.europa.eu/eurostat", "Eurostat databases on Population, Health expenditures and Cultural participation"),
               
-      )
+              # Documentation tab with linked datasources and downloadable manual
+              h1("User's Manual"),
+              h3("Please consult the Manual for details on the usage of the COVID-19 app, the methodology behind, the R codes and literaure references."),
+              tags$iframe(style="height:400px; width:100%; scrolling=yes", 
+                                 src=" pdfs/MDM Master Project - COVID - Manual_v2_06_06.pdf")  ## use the prefix defined in addResourcePath
+              
+              
+                  )
     )
   )
 )
@@ -299,7 +329,8 @@ server <- function(input, output, session) {
     
     ggplot(selectedData()) +
       geom_line(aes(x = pdp_all_c_all_pred[[input$country_pdp]][[input$predictor_pdp]][,1],
-                    y = pdp_all_c_all_pred[[input$country_pdp]][[input$predictor_pdp]][,2]), size = 0.8) +
+                    y = pdp_all_c_all_pred[[input$country_pdp]][[input$predictor_pdp]][,2],
+                    color = "darkred") , size = 0.8) +
       xlab(input$predictor_pdp) +
       ylab("yhat") +
       theme_minimal() +
