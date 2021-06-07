@@ -182,17 +182,17 @@ ui <- dashboardPage(
       #Content Manual
       tabItem(tabName = "source",
               h1("Datasources"),
-              tags$a(href = "https://covidmap.umd.edu/", "Facebook/UMD COVID-19 World Symptom Survey"),
-              tags$a(href ="https://github.com/RamiKrispin/coronavirus", "Johns Hopkins University CSSE COVID-19 Data Repository"),
-              tags$a(href ="https://ourworldindata.org/coronavirus", "Vaccination from Our World in Data"),
-              tags$a(href ="https://www.ecdc.europa.eu/en/publications-data/download-data-response-measures-covid-19", 
-                     "Country response measures to COVID-19 by week and by country, European Centre for Disease Prevention and Control"),
-              tags$a(href ="https://www.ncdc.noaa.gov/", "Temperature, National Centers for Environmental Information"), 
-              tags$a(href ="https://ec.europa.eu/eurostat", "Eurostat databases on Population, Health expenditures and Cultural participation"),
+              h4(tags$div(tags$a(href = "https://covidmap.umd.edu/", "Facebook/UMD COVID-19 World Symptom Survey"))),
+              h4(tags$div(tags$a(href ="https://github.com/RamiKrispin/coronavirus", "Johns Hopkins University CSSE COVID-19 Data Repository"))),
+              h4(tags$div(tags$a(href ="https://ourworldindata.org/coronavirus", "Vaccination from Our World in Data"))),
+              h4(tags$div(tags$a(href ="https://www.ecdc.europa.eu/en/publications-data/download-data-response-measures-covid-19", 
+                     "Country response measures to COVID-19 by week and by country, European Centre for Disease Prevention and Control"))),
+              h4(tags$div(tags$a(href ="https://www.ncdc.noaa.gov/", "Temperature, National Centers for Environmental Information"))), 
+              h4(tags$div(tags$a(href ="https://ec.europa.eu/eurostat", "Eurostat databases on Population, Health expenditures and Cultural participation"))),
               
               # Documentation tab with linked datasources and downloadable manual
               h1("User's Manual"),
-              h3("Please consult the Manual for details on the usage of the COVID-19 app, the methodology behind, the R codes and literaure references."),
+              h4("Please consult the Manual for details on the usage of the COVID-19 app, the methodology behind, the R codes and literaure references."),
               tags$iframe(style="height:400px; width:100%; scrolling=yes", 
                                  src=" pdfs/MDM Master Project - COVID - Manual_v2_06_06.pdf")  ## use the prefix defined in addResourcePath
               
