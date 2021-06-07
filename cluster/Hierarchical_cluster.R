@@ -181,10 +181,12 @@ map_countries <- c(unique(capitals$country), "Czech Republic")
 map <- map_data("world")
 eu_map <- map_data("world", region = map_countries)
 eu_clusters_map <- left_join(map_cluster, eu_map, by = "region")
+saveRDS(eu_clusters_map, "shinydashboard/dat/eu_clusters_map.RDS")
 
 region_lab <- eu_clusters_map %>%
   group_by(region) %>%
-  summarise(long = mean(long), lat = mean(lat))
+  dplyr::summarise(long = mean(long), lat = mean(lat))
+saveRDS(region_lab, "shinydashboard/dat/region_lab.RDS")
 
 ggplot(eu_clusters_map, aes(long, lat)) +
   geom_polygon(aes(group = group, fill = cluster), color = "white") +
