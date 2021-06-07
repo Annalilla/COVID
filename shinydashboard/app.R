@@ -14,7 +14,7 @@ source("Shiny_vis_functions.R")
 ##
 # Shiny
 #Path to User's Manual for the Documentation Tab
-addResourcePath(prefix = 'pdfs', directoryPath = 'c:/Users/balan/Documents/IPSDS/MDM/Master_Thesis/WScarping/COVID-main/shinydashboard/www/')
+addResourcePath(prefix = 'pdfs', directoryPath = 'www/')
 
 
 ui <- dashboardPage(
