@@ -155,25 +155,25 @@ ui <- dashboardPage(
       tabItem(tabName = "rankcorr",
               fluidRow(
                 box(title = "To what extent are the importance of predictors for new COVID infections determined by country characteristics?",
-                    column(8,
+                    column(6,
                            p("Please select a cluster to check if its predictors for the number of new COVID cases are typical 
                              for countries with similar characteristics. 
                              You can see the strengths of the rank correlation of the variable importances of the countries and the selected cluster 
                              based on country-level sociodemographic, medical factors and cultural participation below."),
                             p("Please check the Documentation Tab for further details."),
                            ),
-                    column(4,
+                    column(6,
                            plotOutput("rank_eu", height = 200)
-                           ), width = 12, height = 270),
+                           ), width = 12, height = 310),
                     box(
                       column(
                         tags$div(title = "Select a cluster to see how tipical the predictors for the number of new COVID cases are for the countries within", selectInput("cluste", "Select a cluster",
                                                                                                                                                                     choices = c("All Clusters", 1:7))),
                         tags$div(title = "Select the strength of rank correlation", selectInput("corr_strength", "Select the strength of the correlation",
                                                                                                 choices = c("All", "Low", "Middle", "High"))),
-                        width = 4),
+                        width = 3),
                       column(
-                        plotOutput("rank_cluster"), width = 8
+                        plotOutput("rank_cluster"), width = 9
                       ), width = 12), width = 12
                 ),
       ),
@@ -405,13 +405,13 @@ server <- function(input, output, session) {
   output$rank_eu <- renderPlot({
     p <- eu_cluster_vis()
     p
-  }, height = 200)
+  }, height = 250)
   
   # map of clusters
   output$rank_cluster <- renderPlot({
     p <- cluster_varimp_corr_vis(input$cluste, input$corr_strength)
     p
-  })
+  }, height = 370)
   
 }
 
