@@ -238,25 +238,25 @@ summary(n_top)
 
 
 # Prepraing data for visualization of clusters
-map_cluster <- clust_dat
-map_cluster$country_code <- rownames(map_cluster)
-map_cluster <- merge(map_cluster, capitals[, c("country", "country_code_iso2")], by.x = "country_code", by.y = "country_code_iso2")
-map_cluster <- map_cluster %>%
-  dplyr::select(country, groups) %>%
-  dplyr::rename(region = country, cluster = groups)
-map_cluster$cluster <- as.factor(map_cluster$cluster)
+#map_cluster <- clust_dat
+#map_cluster$country_code <- rownames(map_cluster)
+#map_cluster <- merge(map_cluster, capitals[, c("country", "country_code_iso2")], by.x = "country_code", by.y = "country_code_iso2")
+#map_cluster <- map_cluster %>%
+#  dplyr::select(country, groups) %>%
+#  dplyr::rename(region = country, cluster = groups)
+#map_cluster$cluster <- as.factor(map_cluster$cluster)
 # Replace "Czechia" with "Czech Republic" to match with the maps
-map_cluster[which(map_cluster$region == "Czechia"), "region"] <- "Czech Republic"
+#map_cluster[which(map_cluster$region == "Czechia"), "region"] <- "Czech Republic"
 
 # Selecting countries to visualize
-map_countries <- c(unique(capitals$country), "Czech Republic")
-map <- map_data("world")
-eu_map <- map_data("world", region = map_countries)
-saveRDS(eu_map, "shinydashboard/dat/eu_map.RDS")
-eu_clusters_map <- left_join(map_cluster, eu_map, by = "region")
-saveRDS(eu_clusters_map, "shinydashboard/dat/eu_clusters_map.RDS")
+#map_countries <- c(unique(capitals$country), "Czech Republic")
+#map <- map_data("world")
+#eu_map <- map_data("world", region = map_countries)
+#saveRDS(eu_map, "shinydashboard/dat/eu_map.RDS")
+#eu_clusters_map <- left_join(map_cluster, eu_map, by = "region")
+#saveRDS(eu_clusters_map, "shinydashboard/dat/eu_clusters_map.RDS")
 
-region_lab <- eu_clusters_map %>%
-  group_by(region) %>%
-  summarise(long = mean(long), lat = mean(lat))
-saveRDS(region_lab, "shinydashboard/dat/region_lab.RDS")
+#region_lab <- eu_clusters_map %>%
+#  group_by(region) %>%
+#  summarise(long = mean(long), lat = mean(lat))
+#saveRDS(region_lab, "shinydashboard/dat/region_lab.RDS")
