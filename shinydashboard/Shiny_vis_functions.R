@@ -264,10 +264,13 @@ cluster_varimp_corr_vis <- function(clus, corr_strength){
   p <- ggplot(act_eu_clusters_map, aes(long, lat)) +
     geom_polygon(aes(group = group, fill = correlation), color = "white") +
     geom_text(aes(label = region), data = region_lab_cluster,  size = 3, hjust = 0.5) +
-    scale_fill_gradient2(low = "white",
-                         mid = "green",
-                         high = "blue",
-                         na.value="#e0e0e0") +
+    scale_fill_continuous(type = "viridis",
+                          na.value="#e0e0e0") +
+    #scale_fill_gradient2(low = muted("green"),
+    #                     mid = "white",
+    #                     high = muted("blue"),
+    #                     midpoint = 0.3455,
+    #                     na.value="#e0e0e0") +
     coord_fixed() +
     theme_void()
   return(p)
