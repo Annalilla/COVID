@@ -196,4 +196,4 @@ ggplot(eu_clusters_map, aes(long, lat)) +
   theme_void()
 
 # Saving results
-saveRDS(clust_dat, 'shinydashboard/dat/clust_dat.rds')
+saveRDS(clust_dat, 'shinydashboard/dat/clust_dat.RDS')
