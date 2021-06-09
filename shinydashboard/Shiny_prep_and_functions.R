@@ -166,7 +166,7 @@ get_coord_for_country <- function(country, rest_list, max_y){
       rest_coord
     }
   }
-  else(Sys.sleep(1))
+  else(return(NULL))
 }
 
 ##Partial Dependence Plot
