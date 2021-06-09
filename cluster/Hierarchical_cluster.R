@@ -160,7 +160,7 @@ agegrl$cluster <- as.character(agegrl$cluster)
 age_groups <- ggplot(agegrl, aes(x = variable, y = value, group = cluster)) +
   geom_line(aes(color = cluster), lwd = 1) +
   geom_point(aes(color = cluster), lwd = 3) +
-  scale_color_manual(values=c("#F8766D", "#B79F00", "#00BA38", "#38CBCE", "#68A0FE", "#F564E3", "#fb61d7")) +
+  scale_color_manual(values=c("#F8766D", "#B79F00", "#00BA38", "#38CBCE", "#68A0FE", "#F564E3", "#b87ba9")) +
   ggtitle("Age groups") +
   theme_minimal()
 ggsave("age_groups.png", age_groups, width = 10, height = 6)
@@ -192,7 +192,7 @@ saveRDS(region_lab, "shinydashboard/dat/region_lab.RDS")
 ggplot(eu_clusters_map, aes(long, lat)) +
   geom_polygon(aes(group = group, fill = cluster), color = "white") +
   geom_text(aes(label = region), data = region_lab,  size = 3, hjust = 0.5) +
-  scale_fill_manual(values=c("#F8766D", "#B79F00", "#00BA38", "#38CBCE", "#68A0FE", "#F564E3", "#fb61d7")) +
+  scale_fill_manual(values=c("#F8766D", "#B79F00", "#00BA38", "#38CBCE", "#68A0FE", "#F564E3", "#b87ba9")) +
   theme_void()
 
 # Saving results
