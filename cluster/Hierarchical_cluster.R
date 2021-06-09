@@ -193,6 +193,7 @@ ggplot(eu_clusters_map, aes(long, lat)) +
   geom_polygon(aes(group = group, fill = cluster), color = "white") +
   geom_text(aes(label = region), data = region_lab,  size = 3, hjust = 0.5) +
   scale_fill_manual(values=c("#F8766D", "#B79F00", "#00BA38", "#38CBCE", "#68A0FE", "#F564E3", "#b87ba9")) +
+  coord_fixed() +
   theme_void()
 
 # Saving results
