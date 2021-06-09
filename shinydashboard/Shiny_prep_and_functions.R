@@ -305,7 +305,9 @@ get_input_checkboxgroup_with_label <- function(names, input){
   sel_input <- c()
   for(i in 1:length(names))
   {
-    sel_input[i] <- input[[names[i]]]
+      if(length(input[[names[i]]] > 0)){
+        sel_input[i] <- input[[names[i]]]
+      }
   }
   
   return(names[sel_input == TRUE])
