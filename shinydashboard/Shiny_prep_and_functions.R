@@ -129,36 +129,44 @@ get_x_for_rest <- function(rest, data){
   }
   return(k_coord)
 }
+
 get_coord_for_country <- function(country, rest_list, max_y){
-  dat <- rest_prev[[which(names(rest_prev) == country)]]
-  # X coordinates
-  act_x <- lapply(rest_list, function(x) get_x_for_rest(x, dat))
-  names(act_x) <- rest_list
-  
-  # Y coordinates
-  coord <- seq(0, max_y, len = length(rest_list) + 1)
-  if(length(rest_list) == 1){
-    coord <- as.data.frame(cbind(rest_list, t(coord)))
-  }else{
-    coord <- c(coord[1], rep(coord[2:(length(coord) - 1)], each = 2), coord[length(coord)])
-    coord <- t(do.call(rbind, (split(coord, c(1,length(rest_list))))))
-    coord <- as.data.frame(cbind(rest_list, coord))
+  if(all(!is.na(unlist(rest_list)))){
+    dat <- rest_prev[[which(names(rest_prev) == country)]]
+    # X coordinates
+    act_x <- lapply(rest_list, function(x) get_x_for_rest(x, dat))
+    rownums <- lapply(act_x, function(x) nrow(x))
+    if(all(!is.null(unlist(rownums)))){
+      cat(unlist(rest_list))
+      names(act_x) <- rest_list
+      
+      # Y coordinates
+      coord <- seq(0, max_y, len = length(rest_list) + 1)
+      if(length(rest_list) == 1){
+        coord <- as.data.frame(cbind(rest_list, t(coord)))
+      }else{
+        coord <- c(coord[1], rep(coord[2:(length(coord) - 1)], each = 2), coord[length(coord)])
+        coord <- t(do.call(rbind, (split(coord, c(1,length(rest_list))))))
+        coord <- as.data.frame(cbind(rest_list, coord))
+      }
+      colnames(coord) <- c("restriction", "y_min", "y_max")
+      coord[, c("y_min", "y_max")] <- lapply(coord[, c("y_min", "y_max")], as.numeric)
+      
+      # All coordinates into a dataframe
+      rest_coord <- lapply(rest_list, function(x) act_x[[x]] <- cbind(act_x[[x]], coord[coord$restriction == x, c("y_min", "y_max")], row.names = NULL))
+      names(rest_coord) <- rest_list
+      rest_coord <- do.call(rbind, rest_coord)
+      
+      # Colorlist
+      colors <- brewer.pal(n = 8, name = 'Pastel2')
+      col_list <- cbind(rest_list, colors[1:length(rest_list)])
+      colnames(col_list) <- c("restriction", "color")
+      rest_coord <- merge(rest_coord, col_list, by = "restriction", all.x = TRUE)
+      
+      rest_coord
+    }
   }
-  colnames(coord) <- c("restriction", "y_min", "y_max")
-  coord[, c("y_min", "y_max")] <- lapply(coord[, c("y_min", "y_max")], as.numeric)
-  
-  # All coordinates into a dataframe
-  rest_coord <- lapply(rest_list, function(x) act_x[[x]] <- cbind(act_x[[x]], coord[coord$restriction == x, c("y_min", "y_max")], row.names = NULL))
-  names(rest_coord) <- rest_list
-  rest_coord <- do.call(rbind, rest_coord)
-  
-  # Colorlist
-  colors <- brewer.pal(n = 8, name = 'Pastel2')
-  col_list <- cbind(rest_list, colors[1:length(rest_list)])
-  colnames(col_list) <- c("restriction", "color")
-  rest_coord <- merge(rest_coord, col_list, by = "restriction", all.x = TRUE)
-  
-  rest_coord
+  else(Sys.sleep(1))
 }
 
 ##Partial Dependence Plot
