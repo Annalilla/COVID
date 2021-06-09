@@ -157,7 +157,9 @@ exp_display_plot <- function(plot, rest, plotrest, plotdata, restlabels, mc, dc,
         x_to_add <- 0.3
       }
     } 
-    rest_x <- rep(max(plotdata$date) + x_to_add, nrow(restlabels))
+    if(!is.null(nrow(restlabels))){
+      rest_x <- rep(max(plotdata$date) + x_to_add, nrow(restlabels))
+    }
     if(is.Date(plotrest$x_min) & is.Date(plotrest$x_max)){
       plotrest$x_max[which(plotrest$x_max > max(plotdata$date, na.rm = TRUE))] <- max(plotdata$date, na.rm = TRUE)
       plotrest$x_min[which(plotrest$x_min < min(plotdata$date, na.rm = TRUE))] <- min(plotdata$date, na.rm = TRUE)
