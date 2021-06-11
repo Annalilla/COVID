@@ -1,3 +1,5 @@
+# Contains the restriction labels and their descriptions to be displayed in the dashboard instead of their abbreviation.
+
 res_id <- c("AdaptationOfWorkplace", "BanOnAllEvents", "ClosDaycare", 
            "ClosDaycarePartial", "ClosHigh", "ClosHighPartial", 
            "ClosPrim", "ClosPrimPartial", "ClosPubAny", 
