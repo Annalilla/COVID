@@ -116,19 +116,17 @@ ui <- dashboardPage(
                 
       tabItem(tabName = "pdp",
               fluidRow(
-                column(4,
-                      box(
-                         tags$div(title = "Select a country", selectInput("country_pdp", "Country:",
-                                                                                    choices = names(pdp_all_c_all_pred))),
-                         tags$div(title = "Select a predictor", selectInput("predictor_pdp", "Predictor:", choices = NULL)),
-                         width = 8, height = 200)
-                ),
-                     
+                 box(
+                   column(6,
+                     tags$div(title = "Select a country", selectInput("country_pdp", "Country:",
+                                                                      choices = names(pdp_all_c_all_pred)))),
+                   column(6,
+                     tags$div(title = "Select a predictor", selectInput("predictor_pdp", "Predictor:", choices = NULL))),
+                     width = 12),
                 
-                column(12,
-                       box(title = textOutput("charttitle_pdp"), "Partial Dependence Plot",
+                
+                box(title = textOutput("charttitle_pdp"), "Partial Dependence Plot",
                            plotOutput("plot_pdp",  height = 450), width = 12, height = 580)
-                )
               )),
       # Content Bump Chart
       tabItem(tabName = "bc",
@@ -337,6 +335,7 @@ server <- function(input, output, session) {
       theme(axis.text.x=element_text(angle=60, hjust=1),
             panel.grid.major = element_blank(),
             panel.grid.minor = element_blank(),
+            legend.position = "none",
             plot.margin = unit(c(1,1,0,1), "lines")) 
   })
   
