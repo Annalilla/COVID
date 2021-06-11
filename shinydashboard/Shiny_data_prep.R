@@ -45,6 +45,7 @@ rest_list <- lapply(country_list, function(x) x %>% dplyr::select("date", rest_n
 rest_list <- lapply(rest_list, function(x) cbind("date" = x$date, as.data.frame(apply(x[,-which(colnames(x) == "date")], 2, as.numeric))))
 rest_list <- lapply(rest_list, function(x) cbind("date" = x$date, x[,-which(colnames(x) == "date")][, which(colSums(x[,-which(colnames(x) == "date")], na.rm = TRUE) > 0)]))
 sel_rest_country <- lapply(rest_list, function(x) colnames(x[,-which(colnames(x) == "date")]))
+sel_rest_country <- lapply(sel_rest_country, function(x) x[order(x)])
 saveRDS(sel_rest_country, "shinydashboard/dat/sel_rest_country.RDS")
                            
 # Restriction measures and tooltips for countries
