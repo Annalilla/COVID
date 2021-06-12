@@ -1,5 +1,5 @@
 ## Create a time-varying dbase including clusters, then computes repeated variable importance for each cluster. 
-#The result is the input for the rank correlation of the 'Country-char vs.varimp' tab.
+#The result is the input for the rank correlation of the 'Country characteristics' tab.
 
 
 library(caret)
