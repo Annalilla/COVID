@@ -1,5 +1,4 @@
-# Computes correlation between the repeated varimp rank of the clusters and the repeated varimp rank of the countries, 
-# then creates an indicator of low/median/high corr.
+# Computes correlation between the repeated varimp rank of the clusters and the repeated varimp rank of the countries
 
 country_res_varimp <- readRDS("shinydashboard/dat/country_res_varimp.RDS")
 cluster_res_varimp <- readRDS("shinydashboard/dat/cluster_res_varimp.RDS")
@@ -91,4 +90,6 @@ rc_cluster <- function(cluster){
 }
 
 rank_corr_res <- lapply(c(1:max(clust_dat$groups)), rc_cluster)
+
+# Save results for the visualization 'Country characteristics tab'
 saveRDS(rank_corr_res, "shinydashboard/dat/rank_corr_res.RDS")
