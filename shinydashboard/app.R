@@ -299,7 +299,12 @@ server <- function(input, output, session) {
     # Restrictions
     rest_plot <- unique(plotRest()[,c("restriction", "y_min", "y_max")])
     rest_plot$y <- rest_plot$y_min + ((rest_plot$y_max - rest_plot$y_min)/2)
-    rest_plot
+    if("restriction" %in% colnames(rest_plot) & "res_id" %in% colnames(res_label_country[[input$country]])){
+      rest_plot <- merge(rest_plot, res_label_country[[input$country]][,c("res_id", "res_text")], by.x = "restriction", by.y = "res_id", all.x = TRUE)
+      rest_plot <- rest_plot[,-1]
+      colnames(rest_plot)[4] <- "restriction"
+      rest_plot
+    }
   })
   
   
