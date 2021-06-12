@@ -158,12 +158,12 @@ get_coord_for_country <- function(country, rest_list, max_y){
       rest_coord <- do.call(rbind, rest_coord)
       
       # Colorlist
-      colors <- brewer.pal(n = 8, name = 'Pastel2')
+      colors <- rep(brewer.pal(n = 8, name = 'Pastel2'), ceiling(length(rest_list)/8))
       col_list <- cbind(rest_list, colors[1:length(rest_list)])
       colnames(col_list) <- c("restriction", "color")
       rest_coord <- merge(rest_coord, col_list, by = "restriction", all.x = TRUE)
       
-      rest_coord
+      return(rest_coord)
     }
   }
   else(return(NULL))
