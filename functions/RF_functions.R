@@ -1,4 +1,5 @@
-# Functions to edit and process the data during the analysis and visualization
+# Functions to edit and process the data for RF modelling within clusters, gives RF estaimates for Partial Dependence Plots and calculates repeated feature importance for countries
+
 
 ## Merging restrictions (partials with not partials)
 # Function to change value of selected restriction to 1, is the same restriction but as partial was applied
@@ -79,7 +80,7 @@ rf_model_pdp <- function(country_dat){
               tuneGrid = grid)
   
   
-  ## create iml predictor fro repeated variable importance to get more robust results
+  ## create iml predictor for repeated variable importance to get more robust results
   
   #create features data (without outcome cases_new_cum)
   #feat <- rf_dat_t[,-which(colnames(rf_dat_t) %in% c("cases_new_cum", "country", "country_code", "cases_new", "date", "last_day", "last_week"))]
@@ -126,7 +127,7 @@ rf_model_varimp <- function(country_dat){
                      tuneGrid = grid)
   
   
-  ## create iml predictor fro repeated variable importance to get more robust results
+  ## create iml predictor for repeated variable importance to get more robust results
   
   #create features data (without outcome cases_new_cum)
   feat <- rf_dat_t[,-which(colnames(rf_dat_t) %in% c("cases_new_cum", "country", "country_code", "cases_new", "date", "last_day", "last_week"))]
