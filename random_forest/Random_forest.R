@@ -248,7 +248,7 @@ saveRDS(c_rf_dat_fb, "shinydashboard/dat/c_rf_dat_fb.RDS")
 #p + title(names(country_res)[8])
 
 
-# Create Random Forest input (repeated varimp) for 'Bump Chart' and 'Country-char vs.varimp' tab
+# Create Random Forest input (repeated varimp) for 'Bump Chart' and 'Country characteristics' tab
 country_res_varimp <- lapply(c_rf_dat_fb, function(x) rf_model_varimp(x))
 
 #Save results and further input for the Shiny visualization
