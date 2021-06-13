@@ -47,8 +47,6 @@ ui <- dashboardPage(
                          
                          tags$div(title = "Select a country", selectInput("country", "Country:",
                                                                           choices = names(country_list))),
-                         #bsTooltip(id = "country", title = "Select a country", 
-                         #           placement = "right", trigger = "hover"),
                          
                          tags$div(title = "Display moving average of continuous variables",
                                   checkboxInput("smoothed", "Smoothed", TRUE)),
@@ -75,10 +73,6 @@ ui <- dashboardPage(
                 ),
                 
                 column(8,
-                       #     valueBoxOutput("casesBox", width = 3),
-                       #     valueBoxOutput("deathBox", width = 3),
-                       #     valueBoxOutput("recovBox", width = 3),
-                       #     valueBoxOutput("vaccinBox", width = 3),
                        box(title = textOutput("charttitle"), htmlOutput("chartsubtitle"),
                            plotOutput("plot1",  height = 350), width = 12, height = 480)
                 )
@@ -228,12 +222,7 @@ server <- function(input, output, session) {
   # Infoboxes: Dynamic number of cases/deaths/recovered/vaccinations
   numberCases <- reactive({
     number_of_cases(input$country, input$dateinterval[1], input$dateinterval[2])
-  })
-  output$casesBox <- renderValueBox({ valueBox(tags$p(numberCases()[1], style = "font-size: 60%;"), tags$p("Infections", style = "font-size: 90%;")) })
-  output$deathBox <- renderValueBox({ valueBox(tags$p(numberCases()[2], style = "font-size: 60%;"), tags$p("Deaths", style = "font-size: 90%;")) })
-  output$recovBox <- renderValueBox({ valueBox(tags$p(numberCases()[3], style = "font-size: 60%;"), tags$p("Recovered", style = "font-size: 90%;")) })
-  output$vaccinBox <- renderValueBox({ valueBox(tags$p(numberCases()[4], style = "font-size: 60%;"), tags$p("Vaccinations", style = "font-size: 90%;")) })
-  
+  })  
   
   # Subtitle
   subtitleText <- reactive({ 
@@ -245,8 +234,6 @@ server <- function(input, output, session) {
   
   # Applied restrictions per countries
   observeEvent(input$country,{
-    #updateCheckboxGroupInput(session, inputId = "restriction", selected = NULL, inline = TRUE)
-    #updateCheckboxGroupInput(session, inputId = "restriction", choices = sel_rest_country[[input$country]],  inline = TRUE)
     update_checkboxgroup_with_label(session, sel_rest_country[[input$country]], res_label_country[[input$country]]$res_text)
   })
   
@@ -283,7 +270,6 @@ server <- function(input, output, session) {
   })
   
   plotRest <- reactive({
-    #rest <- input$restriction
     rest <- get_input_checkboxgroup_with_label(sel_rest_country[[input$country]], input)
     var <- input$country
     
