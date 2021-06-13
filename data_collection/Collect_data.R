@@ -137,25 +137,14 @@ for(i in unique(capitals$country_fb)){
   }
 }
 
-####*****##########* fb variable test
-
-path <- "https://covidmap.umd.edu/api/resources?indicator=contact&type=daily&country=Austria&daterange=20200227-20210120"
-request <- GET(url = path)
-fb_response <- content(request, as = "text", encoding = "UTF-8")
-fb_content <- jsonlite::fromJSON(fb_response, flatten = TRUE)
-colnames(fb_content$data)
-# colnames with data.
-#colnames(data.frame(fb_content))
-
-####*####*****######
-
 # Some countries are missing:
 #capitals$country_fb[which(!(str_replace_all(capitals$country_fb, "_", " ") %in% unique(fb$data.country)))]
 
 # MIT
+## We don't use it, because it is only available in waves and not for all countries
 # Available only for countries:
-available <- c("US", "BR", "MX", "IN", "GB", "JP", "DE", "IT", "AR", "ID", "CO", "TR", "FR", "EG", "VN", "PH", "PK", "BD", "RO", "PL", "TH", "MY", "NG")
-capitals$country_code_iso2[which(capitals$country_code_iso2 %in% available)]
+# available <- c("US", "BR", "MX", "IN", "GB", "JP", "DE", "IT", "AR", "ID", "CO", "TR", "FR", "EG", "VN", "PH", "PK", "BD", "RO", "PL", "TH", "MY", "NG")
+# capitals$country_code_iso2[which(capitals$country_code_iso2 %in% available)]
 
 # Vaccination
 # https://github.com/owid/covid-19-data/tree/master/public/data
