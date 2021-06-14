@@ -5,8 +5,7 @@ setwd("C:/Stuff/MDM/Master/R")
 
 dir.create("data", showWarnings = FALSE)
 
-#maxdate <- Sys.Date() - 1
-maxdate <- "2021-05-19"
+maxdate <- Sys.Date() - 1
 
 capitals <- data.frame("country" = c("Austria", "Belgium", "Bulgaria", "Croatia", "Cyprus", "Czechia", "Denmark", "Estonia", "Finland", "France",
                                      "Germany", "Greece", "Hungary", "Ireland", "Italy", "Latvia", "Lithuania", "Luxembourg", "Malta", "Netherlands",
