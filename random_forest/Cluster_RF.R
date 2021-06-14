@@ -75,7 +75,7 @@ rf_dat_cl <- tdata_cl[(((tdata_cl$date >= "2020-02-28") & (tdata_cl$date <= rf_m
 ##Outcome variable
 
 # Number of cases proportionate to population size
-rf_dat$cases_new <- 100 * rf_dat$cases_new/rf_dat$`Population size`
+rf_dat_cl$cases_new <- 100 * rf_dat_cl$cases_new/rf_dat_cl$`Population size`
 
 #cumulative cases_new
 rf_dat_cl$cases_new_cum <- cumsum(rf_dat_cl$cases_new)
