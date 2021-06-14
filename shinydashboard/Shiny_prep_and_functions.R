@@ -296,6 +296,9 @@ bc_labels <- bc_labels %>%
 bc_labels$d_label[which(is.na(bc_labels$d_label))] <- bc_labels$predictor[which(is.na(bc_labels$d_predictor))]
 bc_labels <- bc_labels[order(match(bc_labels$predictor, pred_order$predictor[1:20])),]
 bc_labels$predictor <-  paste("bc", bc_labels$predictor, sep = "_")
+                           
+# countries to display on bump chart
+countries <- unique(b_vis_long$country)[order(unique(b_vis_long$country))]
 
 #                      
 # Display Checkboxgroups with label
