@@ -36,10 +36,14 @@ rf_dat <- tdata[(((tdata$date >= "2020-02-28") & (tdata$date <= rf_max_date))),
                                                       "fb_data.mc_se_dc", "fb_data.percent_dc_unw", "fb_data.dc_se_unw", "fb_data.sample_size_dc",               
                                                       "fb_data.smoothed_dc", "fb_data.smoothed_dc_se", "fb_data.sample_size_smoothed_dc",      
                                                       "new_vaccinations_smoothed", "iso_code", "people_vaccinated", "total_vaccinations", 
-                                                      "new_vaccinations_smoothed", "people_fully_vaccinated", "new_vaccinations_smoothed_per_million"))]
+                                                      "new_vaccinations_smoothed", "people_fully_vaccinated", "new_vaccinations_smoothed_per_million",
+                                                      "deaths_new", "recovered_new"))]
 
 
 ##Outcome variable
+
+# Number of cases proportionate to population size
+rf_dat$cases_new <- 100 * rf_dat$cases_new/rf_dat$`Population size`
 
 #cumulative cases_new
 rf_dat$cases_new_cum <- cumsum(rf_dat$cases_new)
