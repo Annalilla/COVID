@@ -96,7 +96,7 @@ rf_dat_cl <- replace_na_after_first_vacc(rf_dat_cl)
 
 
 # Lead for new cases
-rf_dat_cl$cases_new_lead <- lead(rf_dat_cl$cases_new, 14)
+#rf_dat_cl$cases_new_lead <- lead(rf_dat_cl$cases_new, 14)
 
 # Variable for number of cases on previous day and week
 rf_dat_cl$last_day <- lag(rf_dat_cl$cases_new, 1)
