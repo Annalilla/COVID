@@ -150,7 +150,7 @@ ui <- dashboardPage(
                     column(6,
                            p("Please select a cluster to check if its predictors for the number of new COVID cases are typical 
                              for countries with similar characteristics. 
-                             You can see the strengths of the rank correlation of the variable importances of the countries and the selected cluster 
+                             You can see the strength of the rank correlation of the variable importances of the countries and the selected cluster 
                              based on country-level sociodemographic, medical factors and cultural participation below."),
                             p("Please check the Documentation Tab for further details."),
                            ),
