@@ -20,7 +20,7 @@ addResourcePath(prefix = 'pdfs', directoryPath = 'www/')
 ui <- dashboardPage(
   dashboardHeader(title = "COVID-19"),
   dashboardSidebar(
-    collapsed = TRUE,
+    collapsed = FALSE,
     sidebarMenu(
       menuItem("Exploratory", tabName = "exploratory", icon = icon("object-align-bottom", lib = "glyphicon")),
       menuItem("Partial Dependence", tabName = "pdp", icon=icon("object-align-bottom", lib = "glyphicon")),
