@@ -37,7 +37,8 @@ rf_dat <- tdata[(((tdata$date >= "2020-02-28") & (tdata$date <= rf_max_date))),
                                                       "fb_data.smoothed_dc", "fb_data.smoothed_dc_se", "fb_data.sample_size_smoothed_dc",      
                                                       "new_vaccinations_smoothed", "iso_code", "people_vaccinated", "total_vaccinations", 
                                                       "new_vaccinations_smoothed", "people_fully_vaccinated", "new_vaccinations_smoothed_per_million",
-                                                      "deaths_new", "recovered_new"))]
+                                                      "deaths_new", "recovered_new","new_vaccinations", "total_vaccinations_per_hundred", 
+                                                      "people_vaccinated_per_hundred", "people_fully_vaccinated_per_hundred" ))]
 
 
 ##Outcome variable
@@ -54,9 +55,9 @@ rf_dat$cases_new<- rollmean(rf_dat$cases_new, 7, fill = NA)
 
 #vaccination data: change NAs to 0 after vaccination started
 
-vacc <-c("new_vaccinations", "total_vaccinations_per_hundred", "people_vaccinated_per_hundred", "people_fully_vaccinated_per_hundred")
+#vacc <-c("new_vaccinations", "total_vaccinations_per_hundred", "people_vaccinated_per_hundred", "people_fully_vaccinated_per_hundred")
 
-rf_dat <- replace_na_after_first_vacc(rf_dat) 
+#rf_dat <- replace_na_after_first_vacc(rf_dat) 
 
 
 
@@ -69,9 +70,9 @@ rf_dat$last_week <- lag(rf_dat$cases_new, 7)
 
 # Smooth deaths, recovered, temperature, fb and vaccination variables with rolling average window = 7 days
 
-vars_to_smooth <- c("deaths_new", "recovered_new", "tavg", "fb_data.percent_cli", "fb_data.percent_mc", "fb_data.percent_dc", 
-                    "new_vaccinations", "total_vaccinations_per_hundred", "people_vaccinated_per_hundred", 
-                    "people_fully_vaccinated_per_hundred")
+vars_to_smooth <- c("deaths_new", "recovered_new", "tavg", "fb_data.percent_cli", "fb_data.percent_mc", "fb_data.percent_dc") 
+#                    "new_vaccinations", "total_vaccinations_per_hundred", "people_vaccinated_per_hundred", 
+#                    "people_fully_vaccinated_per_hundred")
 
 
 rf_dat[, which(colnames(rf_dat) %in% vars_to_smooth)] <-
