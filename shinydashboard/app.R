@@ -297,8 +297,10 @@ server <- function(input, output, session) {
   ## Pdp
   
   observeEvent(input$country_pdp,{
+    act_choices <- all_pred_table[which(all_pred_table$pred_id %in% names(pdp_all_c_all_pred[[input$country_pdp]])), "pred_text"]
+    act_choices <- act_choices[order(act_choices)]
     updateSelectInput(session,'predictor_pdp',
-                      choices=names(pdp_all_c_all_pred[[input$country_pdp]]))
+                      choices=act_choices)
   })
   
   # Dynamic name for the pdp chart
@@ -310,18 +312,22 @@ server <- function(input, output, session) {
     titleText_pdp()
   })
   
+  selectedPredictorpdp <- reactive({
+    all_pred_table[all_pred_table$pred_text == input$predictor_pdp, "pred_id"]
+  })
+  
   selectedData <- reactive({
-    pdp_all_c_all_pred[[input$country_pdp]][[input$predictor_pdp]]
+    pdp_all_c_all_pred[[input$country_pdp]][[selectedPredictorpdp()]]
   })
   
   output$plot_pdp <-renderPlot({
     
     ggplot(selectedData()) +
-      geom_line(aes(x = pdp_all_c_all_pred[[input$country_pdp]][[input$predictor_pdp]][,1],
-                    y = pdp_all_c_all_pred[[input$country_pdp]][[input$predictor_pdp]][,2],
+      geom_line(aes(x = selectedData()[,1],
+                    y = selectedData()[,2],
                     color = "darkred") , size = 0.8) +
       xlab(input$predictor_pdp) +
-      ylab("yhat") +
+      ylab("Number of new cases") +
       theme_minimal() +
       theme(axis.text.x=element_text(angle=60, hjust=1),
             panel.grid.major = element_blank(),
