@@ -1,7 +1,7 @@
 # Prepares the data collection and analysis
 # Must be run before any other codes
 
-setwd("C:/Stuff/MDM/Master/R")
+setwd("your_working_directory")
 
 dir.create("data", showWarnings = FALSE)
 
