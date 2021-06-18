@@ -297,8 +297,11 @@ server <- function(input, output, session) {
   ## Pdp
   
   observeEvent(input$country_pdp,{
-    act_choices <- all_pred_table[which(all_pred_table$pred_id %in% names(pdp_all_c_all_pred[[input$country_pdp]])), "pred_text"]
-    act_choices <- act_choices[order(act_choices)]
+  act_choices <- all_pred_table[which(all_pred_table$pred_id %in% names(pdp_all_c_all_pred[[input$country_pdp]])), "pred_text"]
+    # Ordering predictors: average daily temperatura, fb variables, restriction measures
+    first_vars <- c("Average Daily Temperature", "COVID-like Illnes", "Direct Contact", "Mask Coverage")
+    rest_choices <- act_choices[-which(act_choices %in% first_vars)]
+    act_choices <- c(first_vars, rest_choices[order(rest_choices)])
     updateSelectInput(session,'predictor_pdp',
                       choices=act_choices)
   })
