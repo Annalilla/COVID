@@ -147,7 +147,7 @@ As one of our main data sources, the UMD/Facebook World Symptom Survey is discon
 1)	Prerequisites:
 >> - helpers/Prepare_run.R
 2)	Script: data_collection/Create_database.R
-3)	Run the first 3 rows of the script. Itt will collect data from different sources and creates two databases (tdata and country_char).
+3)	Run the first 3 rows of the script. It will collect data from different sources and creates two databases (tdata and country_char).
 4)	If you want to save the data local, run the functions save_data().
 5)	If you want to save data to Google Sheets, run the functions save_data_online(). In this case you need to have an authentication file in a directory called “.secrets” within the working directory.
 6)	If you want to set the type of the variables and add variable labels, run the scripts “helpers/Change_variable_types.R” and  “helpers/Add_variable_labels.R”.
@@ -236,6 +236,7 @@ As one of our main data sources, the UMD/Facebook World Symptom Survey is discon
 3)	Start the application.
 
 <br>
+
 ## 3. Data sources
 <br>
 
@@ -264,6 +265,7 @@ Sources and variables:
 >- https://covidmap.umd.edu/api/
 
 <br>
+
 ## 4. R packages
 <br>
 
