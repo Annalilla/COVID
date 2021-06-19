@@ -239,11 +239,12 @@ As one of our main data sources, the UMD/Facebook World Symptom Survey is discon
 
 ## R packages
 <br>
+
 - caret, Max Kuhn et al (2020).
  caret: Classification and Regression Training. R package version 6.0-86.
 - compare, Paul Murrell (2015). compare: Comparing Objects for Differences. R package version 0.2-6. https://CRAN.R-project.org/package=compare
 - coronavirus, Rami Krispin and Jarrett Byrnes (2021). coronavirus: The 2019 Novel Coronavirus COVID-19 (2019-nCoV) Dataset. R package version 0.3.1. https://CRAN.R-project.org/package=coronavirus
-_ Cowplot, Claus O. Wilke (2020). cowplot: Streamlined Plot Theme and Plot Annotations for 'ggplot2'. R package version 1.1.1.  https://CRAN.R-project.org/package=cowplot
+- Cowplot, Claus O. Wilke (2020). cowplot: Streamlined Plot Theme and Plot Annotations for 'ggplot2'. R package version 1.1.1.  https://CRAN.R-project.org/package=cowplot
 - data.table, Matt Dowle and Arun Srinivasan (2020). data.table: Extension of `data.frame`. R package version 1.13.6. https://CRAN.R-project.org/package=data.table
 - dplyr, Hadley Wickham, Romain François, Lionel Henry and Kirill Müller (2020). dplyr: A Grammar of Data Manipulation. R package version 1.0.2. https://CRAN.R-project.org/package=dplyr,
 - eurostat, (C) Leo Lahti, Janne Huovari, Markus Kainu, Przemyslaw Biecek. Retrieval and analysis of Eurostat open data with the eurostat package. R Journal 9(1):385-392, 2017. Version 3.6.84 Package URL: http://ropengov.github.io/eurostat Manuscript URL: https://journal.r-project.org/archive/2017/RJ-2017-019/index.html
