@@ -236,8 +236,35 @@ As one of our main data sources, the UMD/Facebook World Symptom Survey is discon
 3)	Start the application.
 
 <br>
+## 3. Data sources
+<br>
 
-## R packages
+### 1.1. Time-constant country characteristics from Eurostat sources
+Sources and variables:
+- Data source: eurostat, https://ec.europa.eu/eurostat
+- Population: population of 1. January 2019 by age group and sex
+- Health expenditures: Total health care expenditure amount in millions of euro, 2018
+- Cultural participation: Frequency of participation in cultural activities in the last 12 months by age, 2015. Percentage of those  who did not attend any cultural event (cinema, live performances or cultural sites) in the last 12 months by age groups
+### 1.2. Time-varying COVID-19 related variables from various sources
+Sources and variables:
+- Testing:
+>- Data source: European Centre for Disease Prevention and Control, Data on testing for COVID-19 by week and country, https://www.ecdc.europa.eu/en/publications-data/covid-19-testing
+- Response measures:
+>- Data source: European Centre for Disease Prevention and Control, Data on country response measures to COVID-19 by week and country, https://www.ecdc.europa.eu/en/publications-data/download-data-response-measures-covid-19
+>- Non-pharmaceutical interventions taken by countries in response to the pandemics
+- Weather:
+>- Data source: National Centers for Environmental Information, https://www.ncdc.noaa.gov/
+>- Daily average temperatures measured in the capitals of the countries involved in the analysis
+- Vaccination:
+>- Our World in Data, https://ourworldindata.org/coronavirus
+- Covid cases:
+>- https://github.com/RamiKrispin/coronavirus
+>- The coronavirus package provides a tidy format dataset of the 2019 Novel Coronavirus COVID-19 (2019-nCoV) epidemic. The raw data is pulled from the Johns Hopkins University Center for Systems Science and Engineering (JHU CCSE) Coronavirus repository.
+- UMD/Facebook World Symptom survey: 
+>- https://covidmap.umd.edu/api/
+
+<br>
+## 4. R packages
 <br>
 
 - caret, Max Kuhn et al (2020).
