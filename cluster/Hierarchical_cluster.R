@@ -6,6 +6,9 @@ library(tidyverse)
 library(cowplot)
 library(maps)
 
+dir.create("shinydashboard", showWarnings = FALSE)
+dir.create("shinydashboard/dat", showWarnings = FALSE)
+
 # Remove countries with no fb data
 c_remove <- c("CY", "EE", "LV", "LT", "LU", "MT")
 country_char_cl <- country_char[-which(country_char$geo %in% c_remove),]
