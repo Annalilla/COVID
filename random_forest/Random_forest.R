@@ -187,7 +187,7 @@ dir.create("shinydashboard/dat", showWarnings = FALSE)
 
 #saveRDS(country_res, "shinydashboard/dat/country_res.RDS")
 saveRDS(c_rf_dat_fb, "shinydashboard/dat/c_rf_dat_fb.RDS")
-
+saveRDS(rf_dat_fb, "shinydashboard/dat/rf_dat_fb.RDS")
 
 #p <- varImpPlot(country_res[[8]])
 #p + title(names(country_res)[8])
