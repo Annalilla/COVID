@@ -134,7 +134,7 @@ Anikó Balogh, Anna Harman
 >> - having an authentication file in a directory called “.secrets” within the working directory
 >> - the authentication file is uploaded to Canvas
 2)	Script: shinydashboard/Call_shiny.R
-3)	Run the whole script. The application starts. You do not have to run the steps described below. The authentication file is produced automatically but in sake of reproductibility you have to overwrite the authentication file provided here with the file provided on Canvas (starting with dbea...).
+3)	Run the whole script. The application starts. You do not have to run the steps described below. The authentication file may be produced automatically, in this case in sake of reproductibility you have to overwrite the authentication file provided here with the file provided on Canvas (starting with dbea...).
 
 
 ## If you would like to run the analysis step by step, instead of step 2.2. perform the steps below (from 2.3. to 2.9.).
@@ -157,7 +157,7 @@ As one of our main data sources, the UMD/Facebook World Symptom Survey is discon
 1)	Prerequisites:
 >> - helpers/Prepare_run.R
 >> - having an authentication file in a directory called “.secrets” within the working directory
-2)	Script: helpers/Get_and_prepare_data.R The authentication file is produced automatically but in sake of reproductibility you have to overwrite the authentication file provided here with the file provided on Canvas (starting with dbea...).
+2)	Script: helpers/Get_and_prepare_data.R The authentication file may be produced automatically, in this case in sake of reproductibility you have to overwrite the authentication file provided here with the file provided on Canvas (starting with dbea...).
 3)	Run the whole script.
 
 ### 2.3.3. Update data (no longer available)
