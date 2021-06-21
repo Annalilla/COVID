@@ -45,7 +45,7 @@ Anikó Balogh, Anna Harman
 > - Contains functions used during the data revision.
 > - Updates database.
 - Get_data.R
-> - If the database should be loaded from Google Sheets, an authentication file is necessary to reach the appropriate Google Sheets account. This file has to be located under a directory called “.secrets” in the working directory.
+> - If the database should be loaded from Google Sheets, an authentication file is necessary to reach the appropriate Google Sheets account. This file has to be located under a directory called “.secrets” in the working directory. The authentication file is uploaded to Canvas.
 - RF_cluster_functions.R
 > - Contains functions to prepare data for RF modelling at cluster level
 - RF_functions.R
@@ -132,8 +132,9 @@ Anikó Balogh, Anna Harman
 1)	Prerequisites:
 >> - helpers/Prepare_run.R
 >> - having an authentication file in a directory called “.secrets” within the working directory
+>> - the authentication file is uploaded to Canvas
 2)	Script: shinydashboard/Call_shiny.R
-3)	Run the whole script. The application starts. You do not have to run the steps described below
+3)	Run the whole script. The application starts. You do not have to run the steps described below. The authentication file is produced automatically but in sake of reproductibility you have to overwrite the authentication file provided here with the file provided on Canvas (starting with dbea...).
 
 
 ## If you would like to run the analysis step by step, instead of step 2.2. perform the steps below (from 2.3. to 2.9.).
@@ -149,14 +150,14 @@ As one of our main data sources, the UMD/Facebook World Symptom Survey is discon
 2)	Script: data_collection/Create_database.R
 3)	Run the first 3 rows of the script. It will collect data from different sources and creates two databases (tdata and country_char).
 4)	If you want to save the data local, run the functions save_data().
-5)	If you want to save data to Google Sheets, run the functions save_data_online(). In this case you need to have an authentication file in a directory called “.secrets” within the working directory.
+5)	If you want to save data to Google Sheets, run the functions save_data_online(). In this case you need to have an authentication file in a directory called “.secrets” within the working directory. The authentication file is uploaded to Canvas.
 6)	If you want to set the type of the variables and add variable labels, run the scripts “helpers/Change_variable_types.R” and  “helpers/Add_variable_labels.R”.
 
 ### 2.3.2. Read data from Google Sheets
 1)	Prerequisites:
 >> - helpers/Prepare_run.R
 >> - having an authentication file in a directory called “.secrets” within the working directory
-2)	Script: helpers/Get_and_prepare_data.R
+2)	Script: helpers/Get_and_prepare_data.R The authentication file is produced automatically but in sake of reproductibility you have to overwrite the authentication file provided here with the file provided on Canvas (starting with dbea...).
 3)	Run the whole script.
 
 ### 2.3.3. Update data (no longer available)
@@ -166,17 +167,17 @@ As one of our main data sources, the UMD/Facebook World Symptom Survey is discon
 2)	Script: data_collection/Update_data.R
 3)	Run the whole script except the last two rows.
 4)	If you want to save the data local, run the functions save_data() at the end of the code.
-5)	If you want to save the data to Google Sheets, run the functions save_data_online at the end of the code. In this case you need to have an authentication file in a directory called “.secrets” within the working directory.
+5)	If you want to save the data to Google Sheets, run the functions save_data_online at the end of the code. In this case you need to have an authentication file in a directory called “.secrets” within the working directory. The authentication file is uploaded to Canvas.
 
 ### 2.3.4. Data revision (no longer available)
 1)	Prerequisites:
 >> - helpers/Prepare_run.R
->> - Authentication file in a directory called “.secrets” within the working directory is available
+>> - Authentication file in a directory called “.secrets” within the working directory is available. 
 2)	Script: data_collection/Revise_data.R
 3)	Run the part of the script that is not commented out. The number of differences, first and last differences per variables, new variables and variables no more available will be listed in the output. In the function show_all_differences_in_one_var() you can set a variable name to get all differences for.
 4)	In the commented out section you can update variables with all new or with selected records and add new variables.
 5)	If you want to save the updated data local, run the functions save_data() at the end of the code.
-6)	If you want to save the updated data to Google Sheets, run the functions save_data_online at the end of the code. In this case you need to have an authentication file in a directory called “.secrets” within the working directory.
+6)	If you want to save the updated data to Google Sheets, run the functions save_data_online at the end of the code. In this case you need to have an authentication file in a directory called “.secrets” within the working directory. The authentication file is uploaded to Canvas.
 
 ## 2.4.	Random Forest Modelling and Hierarchical Clustering
 
