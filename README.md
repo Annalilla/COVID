@@ -99,8 +99,8 @@ Anikó Balogh, Anna Harman
 > - Starts the application.
 > - Uses the following scripts:
 >> - helpers/Get_and_prepare_data.R
->> - random_forest/Random_forest.R
->> - cluster/Hierarchical_cluster.R
+>> - random_forest/Hierarchical_cluster.R
+>> - cluster/Random_forest.R
 >> - random_forest/Cluster_RF.R
 >> - random_forest/rank_corr.R
 >> - shinydashboard/Shiny_data_prep.R
