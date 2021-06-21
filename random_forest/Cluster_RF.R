@@ -9,37 +9,9 @@ library(zoo)
 library(randomForest)
 library(Hmisc)
 library(readr)
-#library(dplyr)
 library(tidyverse)
 library(stringr)
 library(sjlabelled)
-
-
-##Create a time-varying dbase with clusters
-
-tdata$country_code<- as.factor(tdata$country_code)
-
-
-clust_dat <- readRDS('shinydashboard/dat/clust_dat.rds')
-
-
-row.names(clust_dat) <- c("AT", "BE", "BG", "CZ", "DE", "DK", "GR", "ES", "FI", "FR", "HR", "HU", "IE", "IT", "NL", "POL", "PT" ,
-                          "RO", "SE", "SI", "SK")  
-clust_dat$country_code <- rownames(clust_dat)
-
-tdata <- as.data.frame(tdata)
-
-
-#merge cluster membership and tdata
-
-tdata_cl <- merge(tdata, clust_dat, by.x="country_code", by.y="country_code")
-
-tdata_cl <- tdata_cl[order(tdata_cl$country, tdata_cl$date),]
-
-#save for cluster_based_RF
-
-saveRDS(tdata_cl, 'shinydashboard/dat/tdata_cl.RDS')
-
 
 
 ##Run RF on clusters
@@ -163,7 +135,6 @@ rf_dat_cl <- lapply(cl_rf_dat, function(x) preproc_predict_cl(x))
 cl_rf_dat_fb <- rf_dat_cl
 
 cluster_res_varimp <- lapply(cl_rf_dat_fb, function(x) rf_model_cl(x, wind = 28, hori = 5))
-
 
 #Format data for the 'Country-char vs.varimp' tab input
 cluster_res_varimp <- do.call(rbind, cluster_res_varimp)
