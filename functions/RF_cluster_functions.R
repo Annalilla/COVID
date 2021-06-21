@@ -90,7 +90,6 @@ rf_model_cl <- function(cluster_dat, wind, hori){
   cluster <- cluster_dat$groups[1]
   cluster_dat <- cluster_dat[complete.cases(cluster_dat),]
   rf_dat_t <- cut_time_interval(cluster_dat, wind, hori)
-  }
   # Train and test set
   set.seed(9985)
   ctrl <- trainControl(method = "timeslice",
