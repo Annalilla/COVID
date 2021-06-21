@@ -181,19 +181,19 @@ As one of our main data sources, the UMD/Facebook World Symptom Survey is discon
 
 ## 2.4.	Random Forest Modelling and Hierarchical Clustering
 
-### 2.4.1. Random Forest modelling for countries
-1)	Prerequisites:
->> - helpers/Prepare_run.R
->> - Time-varying database is loaded (tdata)
-2)	Script: random_forest/Random_forest.R
-3)	Run the whole script. Returns RF timeslice models by countries.
-
-### 2.4.2. Hierarchical clustering
+### 2.4.1. Hierarchical clustering
 1)	Prerequisites:
 >> - helpers/Prepare_run.R
 >> - Time-constant database is loaded (country_char)
 2)	Script: cluster/Hierarchical_cluster.R
 3)	Run the whole script. Returns with clusters to which the countries are assigned.
+
+### 2.4.2. Random Forest modelling for countries
+1)	Prerequisites:
+>> - helpers/Prepare_run.R
+>> - Time-varying database is loaded (tdata)
+2)	Script: random_forest/Random_forest.R
+3)	Run the whole script. Returns RF timeslice models by countries.
 
 ### 2.4.3. Random Forest modelling for clusters
 1)	Prerequisites:
