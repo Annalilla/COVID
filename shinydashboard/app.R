@@ -342,7 +342,7 @@ server <- function(input, output, session) {
                     color = "darkred") , size = 0.8) +
       xlab(input$predictor_pdp) +
       ylab("Number of new cases") +
-      geom_rug(data=selectedRug(), aes(x = selectedRug()[,selectedPredictorpdp()], inherit.aes = F, alpha = 0.3, size=1, color="darkred")) + 
+      geom_rug(data=selectedRug(), aes(x = selectedRug()[,selectedPredictorpdp()], inherit.aes = F, alpha = 0.3, color="darkred")) + 
       theme_minimal() +
       theme(axis.text.x=element_text(angle=60, hjust=1),
             panel.grid.major = element_blank(),
