@@ -47,12 +47,24 @@ preproc_predict <- function(rf_country_dat){
   act_rf_dat <- predict(preProcValues, newdata = rf_country_dat)
   return(act_rf_dat)
 }
+
+# Function to cut interval for countries to be dividable with horizon+window
+cut_time_interval_country <- function(country_dat, wind, hori){
+  # Cut interval to be dividable with horizon+window
+  interv <- wind + hori
+  int_l <- nrow(country_dat)
+  to_cut <- int_l %% interv
+  country_dat <- country_dat[-c(1:to_cut),]
+
+  return(country_dat)
+}
                                              
 ## Random Forest for PDP input
 
 rf_model_pdp <- function(country_dat){
   country <- country_dat$country[1]
   rf_dat_t <- country_dat[complete.cases(country_dat),]
+  rf_dat_t <- cut_time_interval_country(rf_dat_t, 28, 5)
   
   # Train and test set
   set.seed(9985)
@@ -100,6 +112,7 @@ rf_model_pdp <- function(country_dat){
 rf_model_varimp <- function(country_dat){
   country <- country_dat$country[1]
   rf_dat_t <- country_dat[complete.cases(country_dat),]
+  rf_dat_t <- cut_time_interval_country(rf_dat_t, 28, 5)
   
   # Train and test set
   set.seed(9985)
