@@ -26,22 +26,30 @@ rf_max_date <- min(do.call(c, lapply(unique(tdata$country), function(x){
   }
 })))
 
-rf_dat <- tdata[(((tdata$date >= "2020-02-28") & (tdata$date <= rf_max_date))), 
-                        -which(colnames(tdata) %in% c("year", "week", "country_code","testing_new_cases", "tests_done", "testing_population", 
-                                                      "testing_rate", "testing_positivity_rate", "fb_data.iso_code","fb_data.country", "fb_status",
-                                                      "fb_data.cli_se", "fb_data.percent_cli_unw","fb_data.cli_se_unw", "fb_data.sample_size_cli", 
-                                                      "fb_data.smoothed_cli", "fb_data.smoothed_cli_se", "fb_data.sample_size_smoothed_cli",
-                                                      "fb_data.mc_se", "fb_data.percent_mc_unw", "fb_data.mc_se_unw", "fb_data.sample_size_mc",
-                                                      "fb_data.smoothed_mc", "fb_data.smoothed_mc_se", "fb_data.sample_size_smoothed_mc",
-                                                      "fb_data.mc_se_dc", "fb_data.percent_dc_unw", "fb_data.dc_se_unw", "fb_data.sample_size_dc",               
-                                                      "fb_data.smoothed_dc", "fb_data.smoothed_dc_se", "fb_data.sample_size_smoothed_dc",      
-                                                      "new_vaccinations_smoothed", "iso_code", "people_vaccinated", "total_vaccinations", 
-                                                      "new_vaccinations_smoothed", "people_fully_vaccinated", "new_vaccinations_smoothed_per_million",
-                                                      "deaths_new", "recovered_new","new_vaccinations", "total_vaccinations_per_hundred", 
-                                                      "people_vaccinated_per_hundred", "people_fully_vaccinated_per_hundred" ))]
+rf_dat <- tdata_cl[(((tdata_cl$date >= "2020-02-28") & (tdata_cl$date <= rf_max_date))), 
+                      -which(colnames(tdata_cl) %in% c("year", "week", "country_code","testing_new_cases", "tests_done", "testing_population", 
+                                                       "testing_rate", "testing_positivity_rate", "fb_data.iso_code","fb_data.country", "fb_status",
+                                                       "fb_data.cli_se", "fb_data.percent_cli_unw","fb_data.cli_se_unw", "fb_data.sample_size_cli", 
+                                                       "fb_data.smoothed_cli", "fb_data.smoothed_cli_se", "fb_data.sample_size_smoothed_cli",
+                                                       "fb_data.mc_se", "fb_data.percent_mc_unw", "fb_data.mc_se_unw", "fb_data.sample_size_mc",
+                                                       "fb_data.smoothed_mc", "fb_data.smoothed_mc_se", "fb_data.sample_size_smoothed_mc",
+                                                       "fb_data.mc_se_dc", "fb_data.percent_dc_unw", "fb_data.dc_se_unw", "fb_data.sample_size_dc",               
+                                                       "fb_data.smoothed_dc", "fb_data.smoothed_dc_se", "fb_data.sample_size_smoothed_dc",      
+                                                       "new_vaccinations_smoothed", "iso_code", "people_vaccinated", "total_vaccinations", 
+                                                       "new_vaccinations_smoothed", "people_fully_vaccinated", "new_vaccinations_smoothed_per_million",
+                                                       "deaths_new", "recovered_new", "new_vaccinations", "total_vaccinations_per_hundred", 
+                                                       "people_vaccinated_per_hundred", "people_fully_vaccinated_per_hundred"))]
 
 
 ##Outcome variable
+
+# Number of cases proportionate to population size
+rf_dat$cases_new <- 100 * rf_dat$cases_new/rf_dat$`Population size`
+
+# Removing group and country characteristics
+rf_dat <- rf_dat[, -which(colnames(rf_dat) %in% c("groups", "Population size", "Males", "Health Expenditures", "Cultural participation", "Under 20",
+                                                           "20-39" , "40-59", "60-79", "Above 80"))]
+
 
 #cumulative cases_new
 rf_dat$cases_new_cum <- cumsum(rf_dat$cases_new)
@@ -103,7 +111,7 @@ cm <- cor(as.matrix(rf_dat[, -which(colnames(rf_dat) %in% c("cases_new", "cases_
 summary(cm[upper.tri(cm)])
 
 #Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
-#-0.6416 -0.0562  0.0000  0.0217  0.0769  0.8517    3135 
+#-0.6884 -0.0602  0.0000  0.0185  0.0800  0.9056     399  
 
 #highlyCorPred <-findCorrelation(cm, cutoff = 0.70)
 
@@ -170,8 +178,9 @@ summary(cm[upper.tri(cm)])
 ## All countries (with fb data)
 
 # Removing countries without fb data
-rf_dat_fb <- rf_dat[-which(rf_dat$country %in% c("Cyprus", "Estonia", "Latvia", "Lithuania", "Luxembourg", "Malta")),]
+# rf_dat_fb <- rf_dat[-which(rf_dat$country %in% c("Cyprus", "Estonia", "Latvia", "Lithuania", "Luxembourg", "Malta")),]
 # Refactor country
+rf_dat_fb <- rf_dat
 rf_dat_fb$country <- as.factor(as.character(rf_dat_fb$country))
 
 # Split by countries
@@ -197,6 +206,4 @@ saveRDS(rf_dat_fb, "shinydashboard/dat/rf_dat_fb.RDS")
 country_res_varimp <- lapply(c_rf_dat_fb, function(x) rf_model_varimp(x))
 
 #Save results and further input for the Shiny visualization
-
-
 saveRDS(country_res_varimp, "shinydashboard/dat/country_res_varimp.RDS")
