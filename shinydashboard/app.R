@@ -8,6 +8,9 @@ library(reshape2)
 library(shinyBS)
 library(maps)
 
+library(shiny)
+
+
 source("Shiny_prep_and_functions.R")
 source("Shiny_vis_functions.R")
 
@@ -298,7 +301,7 @@ server <- function(input, output, session) {
   
   observeEvent(input$country_pdp,{
   act_choices <- all_pred_table[which(all_pred_table$pred_id %in% names(pdp_all_c_all_pred[[input$country_pdp]])), "pred_text"]
-    # Ordering predictors: average daily temperatura, fb variables, restriction measures
+    # Ordering predictors: average daily temperature, fb variables, restriction measures
     first_vars <- c("Average Daily Temperature", "COVID-like Illnes", "Direct Contact", "Mask Coverage")
     rest_choices <- act_choices[-which(act_choices %in% first_vars)]
     act_choices <- c(first_vars, rest_choices[order(rest_choices)])
@@ -323,6 +326,14 @@ server <- function(input, output, session) {
     pdp_all_c_all_pred[[input$country_pdp]][[selectedPredictorpdp()]]
   })
   
+  #get standardised predictor distribution for the rug
+  rf_dat_rug <- rf_dat_fb[complete.cases(rf_dat_fb),]
+  c_rf_dat_rug <- split(rf_dat_rug, rf_dat_rug$country)
+  
+  selectedRug <- reactive({
+    c_rf_dat_rug[[input$country_pdp]]
+  })
+  
   output$plot_pdp <-renderPlot({
     
     ggplot(selectedData()) +
@@ -331,6 +342,7 @@ server <- function(input, output, session) {
                     color = "darkred") , size = 0.8) +
       xlab(input$predictor_pdp) +
       ylab("Number of new cases") +
+      geom_rug(data=selectedRug(), aes(x = selectedRug()[,selectedPredictorpdp()], inherit.aes = F, alpha = 0.3, size=1, color="darkred")) + 
       theme_minimal() +
       theme(axis.text.x=element_text(angle=60, hjust=1),
             panel.grid.major = element_blank(),
@@ -338,7 +350,7 @@ server <- function(input, output, session) {
             legend.position = "none",
             plot.margin = unit(c(1,1,0,1), "lines")) 
   })
-  
+
   
   ## Reactive input Bump Chart
   
