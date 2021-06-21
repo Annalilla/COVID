@@ -70,10 +70,9 @@ rf_model_cl <- function(cluster_dat){
 ## Random Forest
 # Function to cut interval for countries to be dividable with horizon+window
 cut_time_interval <- function(cluster_dat, wind, hori){
-  cluster_dat <- cl_rf_dat_fb[[1]]
-  cluster_dat <- cluster_dat[complete.cases(cluster_dat),]
+  #cluster_dat <- cl_rf_dat_fb[[1]]
   # Length of intervals for countries within cluster
-  cluster_dat <- split(cluster_dat, cluster_dat$country)
+  cluster_dat <- split(cluster_dat, as.character(cluster_dat$country))
   #
   # Cut interval to be dividable with horizon+window
   interv <- wind + hori
@@ -88,9 +87,10 @@ cut_time_interval <- function(cluster_dat, wind, hori){
 }
 
 rf_model_cl <- function(cluster_dat, wind, hori){
-  cluster <- cluster_dat$cluster[1]
+  cluster <- cluster_dat$groups[1]
+  cluster_dat <- cluster_dat[complete.cases(cluster_dat),]
   rf_dat_t <- cut_time_interval(cluster_dat, wind, hori)
-  
+  }
   # Train and test set
   set.seed(9985)
   ctrl <- trainControl(method = "timeslice",
