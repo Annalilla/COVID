@@ -198,3 +198,28 @@ ggplot(eu_clusters_map, aes(long, lat)) +
 
 # Saving results
 saveRDS(clust_dat, 'shinydashboard/dat/clust_dat.RDS')
+
+# Create a time-varying dbase with clusters for random forest
+
+tdata$country_code<- as.factor(tdata$country_code)
+
+
+clust_dat <- readRDS('shinydashboard/dat/clust_dat.rds')
+
+
+row.names(clust_dat) <- c("AT", "BE", "BG", "CZ", "DE", "DK", "GR", "ES", "FI", "FR", "HR", "HU", "IE", "IT", "NL", "POL", "PT" ,
+                          "RO", "SE", "SI", "SK")  
+clust_dat$country_code <- rownames(clust_dat)
+
+tdata <- as.data.frame(tdata)
+
+
+#merge cluster membership and tdata
+
+tdata_cl <- merge(tdata, clust_dat, by.x="country_code", by.y="country_code")
+
+tdata_cl <- tdata_cl[order(tdata_cl$country, tdata_cl$date),]
+
+#save for cluster_based_RF
+
+saveRDS(tdata_cl, 'shinydashboard/dat/tdata_cl.RDS')
