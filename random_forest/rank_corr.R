@@ -73,7 +73,7 @@ cluster_res_varimp_list <- lapply(cluster_res_varimp_list, function(x){
 # Which country in which cluster
 
 clust_dat$country_code <- rownames(clust_dat)
-clust_geo <- merge(clust_dat[,c("groups", "country_code")], capitals[,c("country", "country_code")], by = "country_code", all.x = TRUE)
+clust_geo <- merge(clust_dat[,c("groups", "country_code")], capitals[,c("country", "country_code_iso2")], by.x = "country_code", by.y = "country_code_iso2", all.x = TRUE)
 
 # function to calculate correlation between varimp rank of a cluster and of all countries within
 rc_cluster <- function(cluster){
