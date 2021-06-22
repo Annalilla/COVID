@@ -53,40 +53,35 @@ rf_dat <- rf_dat[, -which(colnames(rf_dat) %in% c("groups", "Population size", "
                                                            "20-39" , "40-59", "60-79", "Above 80"))]
 
 
-#cumulative cases_new
-rf_dat$cases_new_cum <- cumsum(rf_dat$cases_new)
-
-# Smooth cases_new and cumulative cases_new with rolling average window = 7 days
-rf_dat$cases_new_cum <- rollmean(rf_dat$cases_new_cum, 7, fill = NA)
-rf_dat$cases_new<- rollmean(rf_dat$cases_new, 7, fill = NA)
-
-
-##Predictors
-
-#vaccination data: change NAs to 0 after vaccination started
-
-#vacc <-c("new_vaccinations", "total_vaccinations_per_hundred", "people_vaccinated_per_hundred", "people_fully_vaccinated_per_hundred")
-
-#rf_dat <- replace_na_after_first_vacc(rf_dat) 
-
-
-
-# Lead for new cases
-#rf_dat$cases_new_lead <- lead(rf_dat$cases_new, 14)
-
-# Variable for number of cases on previous day and week
-rf_dat$last_day <- lag(rf_dat$cases_new, 1)
-rf_dat$last_week <- lag(rf_dat$cases_new, 7)
-
-# Smooth deaths, recovered, temperature, fb and vaccination variables with rolling average window = 7 days
-
-vars_to_smooth <- c("deaths_new", "recovered_new", "tavg", "fb_data.percent_cli", "fb_data.percent_mc", "fb_data.percent_dc") 
-#                    "new_vaccinations", "total_vaccinations_per_hundred", "people_vaccinated_per_hundred", 
-#                    "people_fully_vaccinated_per_hundred")
-
-
-rf_dat[, which(colnames(rf_dat) %in% vars_to_smooth)] <-
-  lapply(rf_dat[, which(colnames(rf_dat) %in% vars_to_smooth)], rollmean, 7, fill = NA)
+# Preprocess per country
+# Split by country
+rf_dat_splitted <- split(rf_dat, rf_dat$country)
+rf_dat_splitted <- lapply(rf_dat_splitted, function(x){
+  # cumulative cases_new
+  x$cases_new[which(is.na(x$cases_new))] <- 0
+  x$cases_new_cum <- cumsum(x$cases_new)
+  
+  # smooth cases_new and cumulative cases_new with rolling average window = 7 days
+  
+  x$cases_new_cum <- rollmean(x$cases_new_cum, 7, fill = NA)
+  x$cases_new<- rollmean(x$cases_new, 7, fill = NA)
+  
+  # Variable for number of cases on previous day and week
+  x$last_day <- lag(x$cases_new, 1)
+  x$last_week <- lag(x$cases_new, 7)
+  
+  # Smooth deaths, recovered, temperature, fb and vaccination variables with rolling average window = 7 days
+  vars_to_smooth <- c("deaths_new", "recovered_new", "tavg", "fb_data.percent_cli", "fb_data.percent_mc", "fb_data.percent_dc") 
+  
+  x[, which(colnames(x) %in% vars_to_smooth)] <-
+    lapply(x[, which(colnames(x) %in% vars_to_smooth)], rollmean, 7, fill = NA)
+  
+  # Standardize
+  x <- preproc_predict(x)
+  
+  x
+})
+rf_dat <- do.call("rbind", rf_dat_splitted)
 
 
 #Standardize by countries
@@ -98,11 +93,11 @@ rf_dat[, which(colnames(rf_dat) %in% vars_to_smooth)] <-
 #rf_dat$date <-as.Date(rf_dat$date)
 
 #Split by countries
-c_rf_dat <- split(rf_dat, rf_dat$country)
+#c_rf_dat <- split(rf_dat, rf_dat$country)
 
 #Standardize
-rf_dat <- lapply(c_rf_dat, function(x) preproc_predict(x))
-rf_dat <- do.call(rbind, rf_dat)
+#rf_dat <- lapply(c_rf_dat, function(x) preproc_predict(x))
+#rf_dat <- do.call(rbind, rf_dat)
 
 #find and remove highly correlated predictors
 
