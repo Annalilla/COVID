@@ -50,89 +50,39 @@ rf_dat_cl <- tdata_cl[(((tdata_cl$date >= "2020-02-28") & (tdata_cl$date <= rf_m
 # Number of cases proportionate to population size
 rf_dat_cl$cases_new <- 100 * rf_dat_cl$cases_new/rf_dat_cl$`Population size`
 
-#cumulative cases_new
-rf_dat_cl$cases_new_cum <- cumsum(rf_dat_cl$cases_new)
-
-# Smooth cases_new and cumulative cases_new with rolling average window = 7 days
-rf_dat_cl$cases_new_cum <- rollmean(rf_dat_cl$cases_new_cum, 7, fill = NA)
-rf_dat_cl$cases_new<- rollmean(rf_dat_cl$cases_new, 7, fill = NA)
-
-
-##Predictors
-
-#vaccination data: change NAs to 0 after vaccination started
-
-#vacc <-c("new_vaccinations", "total_vaccinations_per_hundred", "people_vaccinated_per_hundred", "people_fully_vaccinated_per_hundred")
-
-#rf_dat_cl <- replace_na_after_first_vacc(rf_dat_cl) 
-
-
-
-# Lead for new cases
-#rf_dat_cl$cases_new_lead <- lead(rf_dat_cl$cases_new, 14)
-
-# Variable for number of cases on previous day and week
-rf_dat_cl$last_day <- lag(rf_dat_cl$cases_new, 1)
-rf_dat_cl$last_week <- lag(rf_dat_cl$cases_new, 7)
-
-# Smooth deaths, recovered, temperature, fb and vaccination variables with rolling average window = 7 days
-
-vars_to_smooth <- c("deaths_new", "recovered_new", "tavg", "fb_data.percent_cli", "fb_data.percent_mc", "fb_data.percent_dc") 
-#                    "new_vaccinations", "total_vaccinations_per_hundred", "people_vaccinated_per_hundred", 
-#                    "people_fully_vaccinated_per_hundred")
-
-
-rf_dat_cl[, which(colnames(rf_dat_cl) %in% vars_to_smooth)] <-
-  lapply(rf_dat_cl[, which(colnames(rf_dat_cl) %in% vars_to_smooth)], rollmean, 7, fill = NA)
-
-rf_dat_cl$groups <- as.factor(rf_dat_cl$groups)
-
-#
-# Split by cluster 
-cl_rf_dat <- split(rf_dat_cl, rf_dat_cl$groups)
-
-#
-#Standardize by clusters
-
-rf_dat_cl <- lapply(cl_rf_dat, function(x) preproc_predict_cl(x))
-
-#rf_dat_cl <- do.call(rbind, rf_dat_cl)
-
-#find and remove highly correlated predictors
-
-#make a correlation matrix of the numerical predictors
-
-#cm <- cor(as.matrix(rf_dat_cl[, -which(colnames(rf_dat_cl) %in% c("cases_new", "cases_new_cum", "date", "year", "week",
-#                                                            "country_code", "iso_code", "country", "groups"))]))
-#summary(cm[upper.tri(cm)])
-
-#Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
-#-0.6500 -0.0728 -0.0124  0.0153  0.0866  0.8768    1200 
-
-#highlyCorPred <-findCorrelation(cm, cutoff = 0.70)
-
-#No high correlation, no need to remove any predictors
-
-# Merging partially and not partially applied restrictions
-
-#dat <- rf_dat_cl
-#rf_dat_p <- merge_all_partial_rest(dat)
-
-#rf_dat_cl$groups <- as.factor(rf_dat_cl$groups)
+# Preprocess per cluster
+# Split by cluster
+rf_dat_cl_splitted <- split(rf_dat_cl, rf_dat_cl$groups)
+rf_dat_cl_splitted <- lapply(rf_dat_cl_splitted, function(x){
+  # cumulative cases_new
+  x$cases_new[which(is.na(x$cases_new))] <- 0
+  x$cases_new_cum <- cumsum(x$cases_new)
+  
+  # smooth cases_new and cumulative cases_new with rolling average window = 7 days
+  x$cases_new_cum <- rollmean(x$cases_new_cum, 7, fill = NA)
+  x$cases_new<- rollmean(x$cases_new, 7, fill = NA)
+  
+  # Variable for number of cases on previous day and week
+  x$last_day <- lag(x$cases_new, 1)
+  x$last_week <- lag(x$cases_new, 7)
+  
+  # Smooth deaths, recovered, temperature, fb and vaccination variables with rolling average window = 7 days
+  vars_to_smooth <- c("deaths_new", "recovered_new", "tavg", "fb_data.percent_cli", "fb_data.percent_mc", "fb_data.percent_dc")
+  
+  
+  x[, which(colnames(x) %in% vars_to_smooth)] <-
+    lapply(x[, which(colnames(x) %in% vars_to_smooth)], rollmean, 7, fill = NA)
+  
+  # Standardize
+  x <- preproc_predict_cl(x)
+  
+  x$groups <- as.factor(x$groups)
+  
+  x
+})
 
 
-## Random Forest for all countries (with fb data) with timeslice, cumulative smoothed outcome, partial restrictions not merged, 
-# with repeated variable importance
-
-# Removing countries without fb data
-#rf_dat_cl_fb <- rf_dat_cl[-which(rf_dat_cl$country %in% c("Cyprus", "Estonia", "Latvia", "Lithuania", "Luxembourg", "Malta")),]
-# Refactor country
-#rf_dat_cl_fb$country <- as.factor(as.character(rf_dat_cl_fb$country))
-
-# Split by clusters
-# cl_rf_dat_fb <-split(rf_dat_cl, rf_dat_cl$groups)
-
-cl_rf_dat_fb <- rf_dat_cl
+cl_rf_dat_fb <- rf_dat_cl_splitted
 
 cluster_res_varimp <- lapply(cl_rf_dat_fb, function(x) rf_model_cl(x, wind = 28, hori = 5))
 
