@@ -51,8 +51,8 @@ rf_dat_cl <- tdata_cl[(((tdata_cl$date >= "2020-02-28") & (tdata_cl$date <= rf_m
 rf_dat_cl$cases_new <- 100 * rf_dat_cl$cases_new/rf_dat_cl$`Population size`
 
 # Preprocess per cluster
-# Split by cluster
-rf_dat_cl_splitted <- split(rf_dat_cl, rf_dat_cl$groups)
+# Split by country
+rf_dat_cl_splitted <- split(rf_dat_cl, rf_dat_cl$country)
 rf_dat_cl_splitted <- lapply(rf_dat_cl_splitted, function(x){
   # cumulative cases_new
   x$cases_new[which(is.na(x$cases_new))] <- 0
@@ -73,6 +73,16 @@ rf_dat_cl_splitted <- lapply(rf_dat_cl_splitted, function(x){
   x[, which(colnames(x) %in% vars_to_smooth)] <-
     lapply(x[, which(colnames(x) %in% vars_to_smooth)], rollmean, 7, fill = NA)
   
+  
+  x
+})
+
+rf_dat_cl <- do.call("rbind", rf_dat_cl_splitted)
+
+# Split and preprocess by cluster
+rf_dat_cl_splitted <- split(rf_dat_cl, rf_dat_cl$groups)
+rf_dat_cl_splitted <- lapply(rf_dat_cl_splitted, function(x){
+
   # Standardize
   x <- preproc_predict_cl(x)
   
