@@ -81,11 +81,9 @@ ui <- dashboardPage(
                 )
               ),
               fluidRow(
-                box(
                   #checkboxGroupInput("restriction", "Restriction Measures:",
                   #                   choices = rest_names, selected = NULL, inline = TRUE),
                   uiOutput("checkbox_group"), width = 12
-                )
               )
       ),
       
