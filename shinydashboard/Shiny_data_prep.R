@@ -197,7 +197,7 @@ b_vis <- do.call("cbind", b_vis)
 colnames(b_vis) <- names(b_dat)
 b_vis <- b_vis[rowSums(is.na(b_vis)) != ncol(b_vis), ]
 
-# Order of predictors (sorting predictors according to number of countries, where predictor is 1. 2. or 3. most important)
+# Order of predictors (sorting predictors according to reciprocal of their ranks by their feature importance)
 b_vis_r <- 1/b_vis
 b_vis_r$ord <- rowSums(b_vis_r, na.rm = TRUE)
 b_vis <- b_vis[order(b_vis_r$ord, decreasing = TRUE),]
