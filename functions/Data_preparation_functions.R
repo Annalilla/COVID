@@ -3,16 +3,16 @@
 #Response measurements
 # Get active days for response measurements
 days_in_interval <- function(start, end){
-  start_date <- mdy(format(start, format = "%m-%d-%Y"))
-  end_date <- mdy(format(end, format = "%m-%d-%Y"))
-  x<-seq(start_date, end_date, by = "days")
+  #start_date <- mdy(format(start, format = "%m-%d-%Y"))
+  #end_date <- mdy(format(end, format = "%m-%d-%Y"))
+  x <- seq(as.Date(start), as.Date(end), by = "days")
   paste(x, collapse = ", ")
 }
 
 # Response measurements - data preparation
 # Response measurements - data preparation
 prepare_response <- function(resp_dat, rangefrom = NA){
-  resp_dat[which(is.na(resp_dat$date_end)), "date_end"] <- maxdate
+  resp_dat[which(is.na(resp_dat$date_end)), "date_end"] <- as.character(maxdate)
   resp_dat <- resp_dat[with(resp_dat, order(Country, Response_measure)),]
   
   # Replace some values for consistency
