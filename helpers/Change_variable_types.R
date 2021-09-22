@@ -27,7 +27,9 @@ vars_to_numerical <- c("testing_rate", "testing_positivity_rate", "tavg", "total
                        "fb_data.mc_se", "fb_data.percent_mc_unw", "fb_data.mc_se_unw", "fb_data.sample_size_mc", "fb_data.smoothed_mc", 
                        "fb_data.smoothed_mc_se", "fb_data.sample_size_mc_smoothed", "fb_data.percent_dc", "fb_data.mc_se_dc",
                        "fb_data.percent_dc_unw", "fb_data.dc_se_unw", "fb_data.sample_size_dc", "fb_data.smoothed_dc", "fb_data.smoothed_dc_se",
-                       "fb_data.sample_size_dc_smoothed")
+                       "fb_data.sample_size_dc_smoothed", "QuarantineForInternationalTravellersPartial",
+                       "QuarantineForInternationalTravellers", "MassGather50Partial",
+                       "MassGather50")
                        
 
 vars_to_factor <- c("country", "country_code", "iso_code", "fb_data.iso_code", "fb_data.country")
