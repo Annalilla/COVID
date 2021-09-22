@@ -1,3 +1,6 @@
+# Finding the optimal weights for Hierarchical clustering:
+# At least 6 clusters, highest cophenetic correlation
+
 cluster_weight_test <- function(w_total, w_M, w_h_exp, w_cult){
   clust_w_test <- country_char_num
   
@@ -19,8 +22,6 @@ cluster_weight_test <- function(w_total, w_M, w_h_exp, w_cult){
   coph_dist <- cor(cophenetic(clusters), d)
   return(c(w_total, w_M, w_h_exp, w_cult, "opt_n" = opt_n, "coph_dist" = coph_dist))
 }
-
-cluster_weight_test(1.1, 1.1, 1.6, 1.6)
 
 poss_w1 <- c(1.1, 1.3, 1.5)
 poss_w2 <- c(1.4, 1.6, 1.8)
