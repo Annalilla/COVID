@@ -53,7 +53,7 @@ tdata$date <- as.Date(tdata$date)
 
 colnames(country_char) <- gsub("\\.", "-", colnames(country_char))
 
-vars_to_numerical_cc <- c("Y5-9", "Y10-14", "Y15-19", "Y20-24", "Y25-29", "Y30-34", "Y35-39", "Y40-44",
+vars_to_numerical_cc <- c("health_expenditures", "Total", "Y_LT5", "Y5-9", "Y10-14", "Y15-19", "Y20-24", "Y25-29", "Y30-34", "Y35-39", "Y40-44",
                        "Y45-49", "Y50-54", "Y55-59", "Y60-64", "Y65-69", "Y70-74", "Y75-79", "Y_GE75",
                        "Y80-84", "Y_GE80", "Y_GE85", "T", "M", "F",
                       
