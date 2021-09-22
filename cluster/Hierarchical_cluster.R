@@ -36,16 +36,15 @@ clust_dat$health_expenditures <- 1000*clust_dat$health_expenditures/clust_dat$To
 # Scaling variables
 country_char_num <- as.data.frame(scale(clust_dat))
 
-# Bigger weight for population size, percentage of males, health expenditures and cultural participation
+# Hierarchical clustering
+row.names(country_char_num) <- country_char_cl$geo
 
+# Bigger weight for population size, percentage of males, health expenditures and cultural participation (See cluster_opt for mode deatils about finding the optimal weights)
 # 7
 country_char_num$Total <- 1.1 * country_char_num$Total
 country_char_num$M <- 1.1 * country_char_num$M
 country_char_num$health_expenditures <- 1.6 * country_char_num$health_expenditures
 country_char_num$cult_Y_GE16 <- 1.6 * country_char_num$cult_Y_GE16
-
-# Hierarchical clustering
-row.names(country_char_num) <- country_char_cl$geo
 
 # Distance object
 d <- dist(country_char_num, method = "euclidean")
