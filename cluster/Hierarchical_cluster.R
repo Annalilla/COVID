@@ -39,7 +39,7 @@ country_char_num <- as.data.frame(scale(clust_dat))
 # Hierarchical clustering
 row.names(country_char_num) <- country_char_cl$geo
 
-# Bigger weight for population size, percentage of males, health expenditures and cultural participation (See cluster_opt for mode deatils about finding the optimal weights)
+# Bigger weight for population size, percentage of males, health expenditures and cultural participation (See Cluster_Opt_Weights for mode deatils about finding the optimal weights)
 # 7
 country_char_num$Total <- 1.1 * country_char_num$Total
 country_char_num$M <- 1.1 * country_char_num$M
