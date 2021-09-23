@@ -72,6 +72,9 @@ cor(cophenetic(clusters), d)
 
 clust_dat <- cbind(clust_dat, groups)
 
+row.names(clust_dat) <- c("AT", "BE", "BG", "CZ", "DE", "DK", "GR", "ES", "FI", "FR", "HR", "HU", "IE", "IT", "NL", "POL", "PT" ,
+                          "RO", "SE", "SI", "SK")  
+
 # cluster summaries
 clust_res <- as.data.frame(clust_dat) %>%
   group_by(groups) %>%
@@ -206,11 +209,10 @@ saveRDS(clust_dat, 'shinydashboard/dat/clust_dat.RDS')
 tdata$country_code<- as.factor(tdata$country_code)
 
 
-clust_dat <- readRDS('shinydashboard/dat/clust_dat.rds')
+#clust_dat <- readRDS('shinydashboard/dat/clust_dat.rds')
 
-
-row.names(clust_dat) <- c("AT", "BE", "BG", "CZ", "DE", "DK", "GR", "ES", "FI", "FR", "HR", "HU", "IE", "IT", "NL", "POL", "PT" ,
-                          "RO", "SE", "SI", "SK")  
+#row.names(clust_dat) <- c("AT", "BE", "BG", "CZ", "DE", "DK", "GR", "ES", "FI", "FR", "HR", "HU", "IE", "IT", "NL", "POL", "PT" ,
+#                          "RO", "SE", "SI", "SK")  
 clust_dat$country_code <- rownames(clust_dat)
 
 tdata <- as.data.frame(tdata)
@@ -225,3 +227,4 @@ tdata_cl <- tdata_cl[order(tdata_cl$country, tdata_cl$date),]
 #save for cluster_based_RF
 
 saveRDS(tdata_cl, 'shinydashboard/dat/tdata_cl.RDS')
+
