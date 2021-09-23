@@ -19,7 +19,8 @@ res_id <- c("AdaptationOfWorkplace", "BanOnAllEvents", "ClosDaycare",
            "StayHomeGenPartial", "TeleworkingPartial", "AdaptationOfWorkplacePartial",  "ClosureOfPublicTransport",
            "ClosureOfPublicTransportPartial", "IndoorOver50", "StayHomeRiskG", "HotelsAccommodationPartial", "OutdoorOver100",
            "WorkplaceClosures", "WorkplaceClosuresPartial", "MasksVoluntaryAllSpacesPartial","MasksVoluntaryClosedSpaces",
-           "StayHomeRiskGPartial", "RegionalStayHomeOrderPartial", "SocialCirclePartial")
+           "StayHomeRiskGPartial", "RegionalStayHomeOrderPartial", "SocialCirclePartial",
+           "QuarantineForInternationalTravellers", "QuarantineForInternationalTravellersPartial")
           
 res_text <- c("Adaptation Of Workplace", "Ban On All Events", "Close Daycare", 
               "Close Daycare Partial", "Close High", "Close High Partial", 
@@ -40,7 +41,8 @@ res_text <- c("Adaptation Of Workplace", "Ban On All Events", "Close Daycare",
               "Stay Home General Partial", "Teleworking Partial", "Adaptation Of Workplace Partial",  "Closure Of Public Transport",
               "Closure Of Public Transport Partial", "Indoor Over 50", "Stay Home Risk Groups", "Hotels Accommodation Partial", "Outdoor Over 100",
               "Workplace Closures", "Workplace Closures Partial", "Masks Voluntary All Partial","Masks Voluntary Closed",
-              "Stay Home Risk Groups Partial", "Regional Stay Home Order Partial", "Social Circle Partial")
+              "Stay Home Risk Groups Partial", "Regional Stay Home Order Partial", "Social Circle Partial",
+              "Quarantine for International Travellers", "Quarantine for International Travellers Partial")
 
 res_label <- c("Adaptation of workplaces", "Limit all indoor/outdoor mass/public gatherings", "Closure of educational institutions: daycare or nursery", 
                "Closure of educational institutions: daycare or nursery -partially relaxed measure", "Closure of educational institutions: higher education", "Closure of educational institutions: higher education -partially relaxed measure", 
@@ -60,24 +62,25 @@ res_label <- c("Adaptation of workplaces", "Limit all indoor/outdoor mass/public
                "Stay-at-home recommendations for the general population (which are voluntary or not enforced) -partially relaxed measure", "Teleworking recommendation or workplace closures -partially relaxed measure", "Adaptation of workplaces (e.g. to reduce risk of transmission)-partially relaxed measure",  "Closure of public transport",
                "Closure of public transport-partially relaxed measure", "Interventions are in place to limit indoor mass/public gatherings of over 50participants", "Stay-at-home recommendations for risk groups or vulnerable populations (such as the elderly, people with underlying health conditions, physically disabled people, etc.)", "Closure of hotels/accommodation services-partially relaxed measure", "Interventions are in place to limit outdoor mass/public gatherings of over 100participants",
                "Closures of workplaces", "Closures of workplaces-partially relaxed measure", "Protective mask use in all public spaces on voluntary basis (general recommendation not enforced)-partially relaxed measure","Protective mask use in closed public spaces/transport on voluntary basis (general recommendation not enforced)",
-               "Stay-at-home recommendations for risk groups or vulnerable populations (such as the elderly, people with underlying health conditions, physically disabled people, etc.) -partially relaxed measure", "Regional stay-at-home orders for the general population at least in one region (these are enforced and also referred to as 'lockdown')-partially relaxed measure", "Social circle/bubble to limit social contacts e.g. to limited number of households-partially relaxed measure")
+               "Stay-at-home recommendations for risk groups or vulnerable populations (such as the elderly, people with underlying health conditions, physically disabled people, etc.) -partially relaxed measure", "Regional stay-at-home orders for the general population at least in one region (these are enforced and also referred to as 'lockdown')-partially relaxed measure", "Social circle/bubble to limit social contacts e.g. to limited number of households-partially relaxed measure",
+               "Quarantine for International Travellers", "Quarantine for International Travellers Partial")
 rest_table <- as.data.frame(cbind(res_id, res_text, res_label))
 saveRDS(rest_table, "shinydashboard/dat/rest_table.RDS")
 
 # Labels for other predictors
 pred_id <- c("cases_new_lead", "deaths_new", "fb_data.percent_dc", "fb_data.percent_mc", "new_vaccinations",
              "people_fully_vaccinated_per_hundred", "people_vaccinated_per_hundred", "recovered_new", "tavg",
-             "total_vaccinations_per_hundred", "fb_data.percent_cli", "fb_data.sample_size_smoothed_dc",
-             "fb_data.sample_size_smoothed_mc")
+             "total_vaccinations_per_hundred", "fb_data.pct_covid_cli", "fb_data.sample_size_smoothed_dc",
+             "fb_data.sample_size_smoothed_mc", "fb_data.smoothed_pct_covid_cli")
 pred_text <- c("New cases with lead", "Deaths", "Direct Contact", "Mask Coverage", "New Vaccinations", "People Fully Vaccinated Per Hundred",
                "People Vaccinated Per Hundred", "Recovered", "Average Daily Temperature", "Total Vaccinations Per Hundred",
-               "COVID-like Illnes", "Sample Size Direct Contact", "Sample Size Mask Cover")
+               "COVID-like Illnes", "Sample Size Direct Contact", "Sample Size Mask Cover", "COVID-like Illnes Smoothed")
 pred_label <- c("Number of reported new cases with 14 days lead", "Number of reported new deaths", "Percentage of respondents that have reported had direct contact (longer than one minute) with people not staying with them in last 24 hours",
                 "Percentage of respondents that have reported use mask cover", "Number of new vaccinations",
                 "People fully vaccinated per hundred", "People vaccinated per hundred", "Number of recovered",
                 "Average daily temperatures measured in the capital", "Total vaccinations per hundred",
                 "Percentage of respondents that have reported COVID-like symptoms", "Sample size direct contact (smoothed)",
-                "Sample size mask cover (smoothed)")
+                "Sample size mask cover (smoothed)", "Percentage of respondents that have reported COVID-like symptoms (smoothed)")
 pred_table <- as.data.frame(cbind(pred_id, pred_text, pred_label))
 saveRDS(pred_table, "shinydashboard/dat/pred_table.RDS")
 
@@ -91,3 +94,4 @@ bc_country <- paste("bc", c("Austria", "Belgium", "Bulgaria", "Croatia", "Czechi
                 "Greece", "Hungary", "Ireland", "Italy", "Netherlands", "Poland", "Portugal", "Romania", "Slovakia",
                 "Slovenia", "Spain", "Sweden"), sep = "_")
 saveRDS(bc_country, "shinydashboard/dat/bc_country.RDS")
+
