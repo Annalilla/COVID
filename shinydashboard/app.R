@@ -276,6 +276,12 @@ server <- function(input, output, session) {
     
     # Creating the coordinates for the rectangles displaying the restrictions
     rest_coord <- get_coord_for_country(country = var, rest_list = rest, max_y = yLimit()[2])
+    
+    # X coordinates for selected restrictions measures are appropriate
+    if(!is.Date(rest_coord$x_min) | !is.Date(rest_coord$x_max) | length(which(is.na(rest_coord$x_min))) > 0 | length(which(is.na(rest_coord$x_max))) > 0){
+      cat("Error in get_coord_for_country (Shiny_prep_and_functions) - X coordinates are not date or missing for the selected restriction measure")
+    }
+    
     rest_coord <- rest_coord[which(!is.na(rest_coord$x_min)),]
     
     rest_coord
