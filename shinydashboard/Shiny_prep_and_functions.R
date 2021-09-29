@@ -127,7 +127,18 @@ get_x_for_rest <- function(rest, data){
     k_coord <- data.frame("x_min" = k$x_min[which(!is.na(k$x_min))], "x_max" = k$x_max[which(!is.na(k$x_max))])
     k_coord <- cbind("restriction" = rep(rest, nrow(k_coord)), k_coord)
   }else{
-    k_coord <- cbind("restriction" = NA, "x_min" = NA, "x_max" = NA)
+    cat("Restriction not found")
+    k_coord <- as.data.frame(cbind("restriction" = NA, "x_min" = NA, "x_max" = NA))
+    k_coord$x_min <- as.Date(k_coord$x_min)
+    k_coord$x_max <- as.Date(k_coord$x_max)
+  }
+  min_ind <- which(colnames(k_coord) == "x_min")
+  max_ind <- which(colnames(k_coord) == "x_max")
+  k_coord[,min_ind] <- as.Date(k_coord[,min_ind])
+  k_coord[,max_ind] <- as.Date(k_coord[,max_ind])
+  cat(c(rest, ": min date: ", k_coord$x_min, ", max date: ", k_coord$x_max))
+  if((!is.Date(k_coord$x_min) | !is.Date(k_coord$x_max)) | (length(which(is.na(k_coord$x_min))) > 0 | length(which(is.na(k_coord$x_max))))){
+    cat("Error in get_x_for_rest (Shiny_prep_and_functions.R) - x coordinates of selected restriction is na or not date")
   }
   return(k_coord)
 }
@@ -139,7 +150,6 @@ get_coord_for_country <- function(country, rest_list, max_y){
     act_x <- lapply(rest_list, function(x) get_x_for_rest(x, dat))
     rownums <- lapply(act_x, function(x) nrow(x))
     if(all(!is.null(unlist(rownums)))){
-      cat(unlist(rest_list))
       names(act_x) <- rest_list
       
       # Y coordinates
@@ -159,14 +169,23 @@ get_coord_for_country <- function(country, rest_list, max_y){
       names(rest_coord) <- rest_list
       rest_coord <- do.call(rbind, rest_coord)
       
+      # x coordinates to date
+      rest_coord$x_min <- as.Date(rest_coord$x_min)
+      rest_coord$x_max <- as.Date(rest_coord$x_max)
+      
       # Colorlist
       colors <- rep(brewer.pal(n = 8, name = 'Pastel2'), ceiling(length(rest_list)/8))
       col_list <- cbind(rest_list, colors[1:length(rest_list)])
       colnames(col_list) <- c("restriction", "color")
       rest_coord <- merge(rest_coord, col_list, by = "restriction", all.x = TRUE)
       
+      # X coordinates for selected restrictions measures are appropriate
+      if(!is.Date(rest_coord$x_min) | !is.Date(rest_coord$x_max) | length(which(is.na(rest_coord$x_min))) > 0 | length(which(is.na(rest_coord$x_max))) > 0){
+        cat("Error in get_coord_for_country (Shiny_prep_and_functions) - X coordinates are not date or missing for the selected restriction measure")
+      }
+      
       return(rest_coord)
-    }
+    }else(cat("Error in get_coord_for_country(Shiny_prep_and_functions) - No dates to display the selected restrictions"))
   }
   else(return(NULL))
 }
