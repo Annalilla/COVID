@@ -37,16 +37,17 @@ rf_dat <- tdata_cl[(((tdata_cl$date >= "2020-02-28") & (tdata_cl$date <= rf_max_
                                                        "fb_data.smoothed_mc", "fb_data.smoothed_mc_se", "fb_data.sample_size_smoothed_mc",
                                                        "fb_data.mc_se_dc", "fb_data.percent_dc_unw", "fb_data.dc_se_unw", "fb_data.sample_size_dc",               
                                                        "fb_data.smoothed_dc", "fb_data.smoothed_dc_se", "fb_data.sample_size_smoothed_dc",      
-                                                       "new_vaccinations_smoothed", "iso_code", "people_vaccinated", "total_vaccinations", 
-                                                       "new_vaccinations_smoothed", "people_fully_vaccinated", "new_vaccinations_smoothed_per_million",
-                                                       "deaths_new", "recovered_new", "new_vaccinations", "total_vaccinations_per_hundred", 
-                                                       "people_vaccinated_per_hundred", "people_fully_vaccinated_per_hundred"))]
+                                                       "iso_code",
+                                                       "deaths_new", "recovered_new"))]
 
 
 ##Outcome variable
 
 # Number of cases proportionate to population size
 rf_dat$cases_new <- 100 * rf_dat$cases_new/rf_dat$`Population size`
+
+# Lead to new cases
+rf_dat$cases_new <- lead(rf_dat$cases_new, 14)
 
 # Removing group and country characteristics
 rf_dat <- rf_dat[, -which(colnames(rf_dat) %in% c("groups", "Population size", "Males", "Health Expenditures", "Cultural participation", "Under 20",
@@ -67,8 +68,8 @@ rf_dat_splitted <- lapply(rf_dat_splitted, function(x){
   x$cases_new<- rollmean(x$cases_new, 7, fill = NA)
   
   # Variable for number of cases on previous day and week
-  x$last_day <- lag(x$cases_new, 1)
-  x$last_week <- lag(x$cases_new, 7)
+  x$last_day <- lag(x$cases_new, 15)
+  x$last_week <- lag(x$cases_new, 21)
   
   # Smooth deaths, recovered, temperature, fb and vaccination variables with rolling average window = 7 days
   vars_to_smooth <- c("deaths_new", "recovered_new", "tavg", "fb_data.percent_cli", "fb_data.percent_mc", "fb_data.percent_dc") 
