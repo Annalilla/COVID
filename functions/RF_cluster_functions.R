@@ -38,9 +38,8 @@ rf_model_cl <- function(cluster_dat){
   grid <- expand.grid(mtry = c(round(sqrt(ncol(rf_dat_t))),
                                round(log(ncol(rf_dat_t)))))
   
-  rf <- caret::train(as.numeric(cases_new_cum) ~ .,
-                     data = rf_dat_t[,-which(colnames(rf_dat_t) %in% c("country", "country_code", "groups", "cases_new", "date",
-                                                                       "last_day", "last_week", 
+  rf <- caret::train(as.numeric(cases_new) ~ .,
+                     data = rf_dat_t[,-which(colnames(rf_dat_t) %in% c("country", "country_code", "groups", "cases_new_cum", "date",
                                                                        "Population size", "Males", "Health Expenditures", "Cultural participation",
                                                                        "Under 20", "20-39", "40-59", "60-79", "Above 80"    
                                                                        ))],
@@ -52,11 +51,11 @@ rf_model_cl <- function(cluster_dat){
   ## create iml predictor for repeated variable importance to get more robust results
   
   #create features data (without outcome cases_new_cum)
-  feat <- rf_dat_t[,-which(colnames(rf_dat_t) %in% c("cases_new_cum", "country", "country_code", "groups", "cases_new", "date", "last_day", "last_week",
+  feat <- rf_dat_t[,-which(colnames(rf_dat_t) %in% c("cases_new_cum", "country", "country_code", "groups", "cases_new", "date",
                                                      "Population size", "Males", "Health Expenditures", "Cultural participation",
                                                      "Under 20", "20-39", "40-59", "60-79", "Above 80"    
                                                      ))]
-  predictor <- iml::Predictor$new(model = rf, data = feat, y = as.numeric(rf_dat_t$cases_new_cum))
+  predictor <- iml::Predictor$new(model = rf, data = feat, y = as.numeric(rf_dat_t$cases_new))
   # calculate feature importance with repetitions
   permimp <- iml::FeatureImp$new(predictor, loss = "mae", compare = "ratio", n.repetitions = 5)
   
@@ -100,9 +99,8 @@ rf_model_cl <- function(cluster_dat, wind, hori){
   grid <- expand.grid(mtry = c(round(sqrt(ncol(rf_dat_t))),
                                round(log(ncol(rf_dat_t)))))
   
-  rf <- caret::train(as.numeric(cases_new_cum) ~ .,
-                     data = rf_dat_t[,-which(colnames(rf_dat_t) %in% c("country", "country_code", "groups", "cases_new", "date",
-                                                                       "last_day", "last_week", 
+  rf <- caret::train(as.numeric(cases_new) ~ .,
+                     data = rf_dat_t[,-which(colnames(rf_dat_t) %in% c("country", "country_code", "groups", "cases_new_cum", "date",
                                                                        "Population size", "Males", "Health Expenditures", "Cultural participation",
                                                                        "Under 20", "20-39", "40-59", "60-79", "Above 80"    
                                                                        ))],
@@ -114,11 +112,11 @@ rf_model_cl <- function(cluster_dat, wind, hori){
   ## create iml predictor for repeated variable importance to get more robust results
   
   #create features data (without outcome cases_new_cum)
-  feat <- rf_dat_t[,-which(colnames(rf_dat_t) %in% c("cases_new_cum", "country", "country_code", "groups", "cases_new", "date", "last_day", "last_week",
+  feat <- rf_dat_t[,-which(colnames(rf_dat_t) %in% c("cases_new_cum", "country", "country_code", "groups", "cases_new", "date",
                                                      "Population size", "Males", "Health Expenditures", "Cultural participation",
                                                      "Under 20", "20-39", "40-59", "60-79", "Above 80"    
                                                      ))]
-  predictor <- iml::Predictor$new(model = rf, data = feat, y = as.numeric(rf_dat_t$cases_new_cum))
+  predictor <- iml::Predictor$new(model = rf, data = feat, y = as.numeric(rf_dat_t$cases_new))
   # calculate feature importance with repetitions
   permimp <- iml::FeatureImp$new(predictor, loss = "mae", compare = "ratio", n.repetitions = 5)
   
