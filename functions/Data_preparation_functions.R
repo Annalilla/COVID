@@ -12,6 +12,7 @@ days_in_interval <- function(start, end){
 # Response measurements - data preparation
 # Response measurements - data preparation
 prepare_response <- function(resp_dat, rangefrom = NA){
+  resp_dat$date_end <- as.character(resp_dat$date_end)
   resp_dat[which(is.na(resp_dat$date_end)), "date_end"] <- as.character(maxdate)
   resp_dat <- resp_dat[with(resp_dat, order(Country, Response_measure)),]
   
