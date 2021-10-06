@@ -1,128 +1,137 @@
-###Vaccination data: change NAs to 0 after vaccination started
-replace_na_after_first_vacc <- function(dat){
-  first_date <- dat %>%
-    group_by(country) %>%
-    dplyr::summarise(first = min(date))
-  dat <- merge(dat, first_date, by = "country", all.x = TRUE)
-  dat[which(dat$date > dat$first),which(colnames(dat)%in% vacc)] <- dat[which(dat$date > dat$first), which(colnames(dat)%in% vacc)] %>% 
-    replace(is.na(.), 0)
-  dat <- subset(dat, select = -first)
-  return(dat)
-}
+# Formats the data and merges it into two databases
+
+library(lubridate)
+
+source("functions/Data_preparation_functions.R")
+source("functions/Data_cleansing_functions.R")
+
+### Country characteristics
+
+#
+# pop_eurostat
+
+total <- pop_eurostat[pop_eurostat$age == "TOTAL" & pop_eurostat$sex == "T",] %>%
+  group_by(geo, time) %>%
+  summarise(values = sum(values))
+total$variable <- "Total"
+
+sex <- pop_eurostat[pop_eurostat$age == "TOTAL",] %>%
+  group_by(geo, sex, time) %>%
+  summarise(values = sum(values))
+colnames(sex)[colnames(sex) == "sex"] <- "variable"
+sex <- sex[,c("geo", "time", "values", "variable")]
+sex <- filter(sex, variable %in% c("F", "M"))
+
+# Age groups
+
+# Values of agecategories "unknown" if sex is "total"  always 0 in eu countries 
+#pop_eurostat[which(pop_eurostat$age == "UNK" & pop_eurostat$sex == "T"
+#                   & pop_eurostat$values != 0 & pop_eurostat$geo %in% capitals$country_code_iso2),]
+
+age <- pop_eurostat[pop_eurostat$sex == "T" &
+                      pop_eurostat$age %in% c("Y10-14", "Y15-19", "Y20-24", "Y25-29", "Y30-34", "Y35-39",
+                                              "Y40-44", "Y45-49", "Y5-9", "Y50-54", "Y55-59", "Y60-64","Y65-69",
+                                              "Y70-74", "Y75-79", "Y80-84", "Y_GE75", "Y_GE80", "Y_GE85", "Y_LT5"),] %>%
+  group_by(geo, age, time) %>%
+  summarise(values = sum(values))
+colnames(age)[colnames(age) == "age"] <- "variable"
+age <- age[,c("geo", "time", "values", "variable")]
+
+#
+# physicians_eurostat
+#As physicians data is available for only 6 countries, we do not use them.
+#physicians <- physicians_eurostat %>%
+#  group_by(geo, time) %>%
+#  summarise(values = sum(values))
+#physicians$variable <- "physicians"
+
+#
+# health_expenditures_eurostat
+# Categories which sums up the total health care expenditure
+tot_h_sum <- c("Curative care", "Rehabilitative care", "Long-term care (health)", "Ancillary services (non-specified by function)",
+               "Medical goods (non-specified by function)", "Preventive care", "Governance and health system and financing administration",
+               "Other health care services unknown")
+health_expenditures_eurostat <- health_expenditures_eurostat[which((health_expenditures_eurostat$icha11_hc %in% tot_h_sum) &
+                                                               health_expenditures_eurostat$unit == "MIO_EUR"),]
+health_exp <- health_expenditures_eurostat %>%
+  group_by(geo, time) %>%
+  summarise(values = sum(values))
+health_exp$variable <- "health_expenditures"
+
+#
+# cultural_participation_eurostat (Percentage of 16 years and older, under 30, above 75 who didn't attend on any cultural event in the last 12 months)
+cult_part <- cultural_participation_eurostat %>%
+  filter(sex == "T" & isced11 == "TOTAL" &
+           acl00 == "Cultural activities (cinema, live performances or cultural sites)" & frequenc == "NM12") %>%
+  subset(select = c(geo, time, values, age))
+cult_part$age <- paste("cult", cult_part$age, sep = "_")
+colnames(cult_part)[colnames(cult_part) == "age"] <- "variable"
+
+# pop <- rbind(total, sex, age, physicians, health_exp, cult_part)
+pop <- rbind(total, sex, age, health_exp, cult_part)
+pop <- subset(pop, select = -time)
+
+country_char <- spread(pop, key = variable, value = values)
+country_char <- country_char[country_char$geo %in% capitals$country_code_iso2,]
+country_char <- as.data.frame(apply(country_char, 2, as.character))
+
+### Time vars
+
+#
+# Weather
+tempavg <- prepare_weather(weather)
+tempavg <- clean_weather(tempavg)
+
+#
+# Response measurements
+response <- prepare_response(response, rangefrom = NA)
+
+#
+# Testing
+testing <- prepare_testing(testing, rangefrom = NA)
+testing <- clean_testing(testing)
+
+#
+# Merging testing and response
+response_testing <- merge(testing, response, by.x = c("country", "year", "week"),
+                          by.y = c("Country", "year", "week"), all.y = TRUE)
+response_testing <- subset(response_testing, select = -c(country_code))
+response_testing <- merge(response_testing, capitals[,c("country", "country_code")],
+                         by = "country", all.x = TRUE)
+
+#
+# Merging with temperature
+resp_test_temp <- merge(response_testing, tempavg, by = c("country_code", "date"), all = TRUE)
+# Adding year, week number and country
+resp_test_temp$year[which(is.na(resp_test_temp$year))] <- str_extract(resp_test_temp$date[which(is.na(resp_test_temp$year))], "^\\d+")
+resp_test_temp$week[which(is.na(resp_test_temp$week))] <- strftime(resp_test_temp$date[which(is.na(resp_test_temp$week))], format = "%V")
+
+resp_test_temp <- resp_test_temp %>%
+  merge(capitals[, c("country", "country_code")], by ="country_code", all.x = TRUE) %>%
+  mutate(country.x = country.y) %>%
+  subset(select = -c(country.y))
+colnames(resp_test_temp)[colnames(resp_test_temp) == "country.x"] <- "country"
+
+# Fb
+fb <- prepare_fb(fb)
 
 
-## Standardize predictors
+# Merging with fb data
+tdata <- merge(resp_test_temp, fb, by = c("country_code", "date"), all = TRUE)
 
-preproc_predict_cl <- function(rf_cluster_dat){
-  
-  preProcValues <- preProcess(rf_cluster_dat[, -which(colnames(rf_cluster_dat) %in% c("cases_new", "cases_new_cum","date", "year", "week", "groups"))],
-                              method = c("center", "scale"))
-  
-  act_rf_dat <- predict(preProcValues, newdata = rf_cluster_dat)
-  return(act_rf_dat)
-}
+# Covid
+covid <- prepare_covid(covid)
 
-## Random Forest
+# Merging with covid
+tdata <- merge(covid, tdata, by = c("country", "date"), all = TRUE)
 
-rf_model_cl <- function(cluster_dat){
-  cluster <- cluster_dat$cluster[1]
-  rf_dat_t <- cluster_dat[complete.cases(cluster_dat),]
-  
-  # Train and test set
-  set.seed(9985)
-  ctrl <- trainControl(method = "timeslice",
-                       initialWindow = 28,
-                       horizon = 5,
-                       fixedWindow = TRUE)
-  
-  grid <- expand.grid(mtry = c(round(sqrt(ncol(rf_dat_t))),
-                               round(log(ncol(rf_dat_t)))))
-  
-  rf <- caret::train(as.numeric(cases_new) ~ .,
-                     data = rf_dat_t[,-which(colnames(rf_dat_t) %in% c("country", "country_code", "groups", "cases_new_cum", "date",
-                                                                       "Population size", "Males", "Health Expenditures", "Cultural participation",
-                                                                       "Under 20", "20-39", "40-59", "60-79", "Above 80"    
-                                                                       ))],
-                     method = "rf",
-                     trControl = ctrl,
-                     tuneGrid = grid)
-  
-  
-  ## create iml predictor for repeated variable importance to get more robust results
-  
-  #create features data (without outcome cases_new_cum)
-  feat <- rf_dat_t[,-which(colnames(rf_dat_t) %in% c("cases_new_cum", "country", "country_code", "groups", "cases_new", "date",
-                                                     "Population size", "Males", "Health Expenditures", "Cultural participation",
-                                                     "Under 20", "20-39", "40-59", "60-79", "Above 80"    
-                                                     ))]
-  predictor <- iml::Predictor$new(model = rf, data = feat, y = as.numeric(rf_dat_t$cases_new))
-  # calculate feature importance with repetitions
-  permimp <- iml::FeatureImp$new(predictor, loss = "mae", compare = "ratio", n.repetitions = 5)
-  
-  rep_res_cl <- permimp$results[, c("feature", "importance")]
-  
-  #rf1 <- rf$finalModel
-  
-  return(rep_res_cl)
-}
+# Vaccination
+vaccination <- prepare_vaccination(vaccination)
 
-## Random Forest
-# Function to cut interval for countries to be dividable with horizon+window
-cut_time_interval <- function(cluster_dat, wind, hori){
-  #cluster_dat <- cl_rf_dat_fb[[1]]
-  # Length of intervals for countries within cluster
-  cluster_dat <- split(cluster_dat, as.character(cluster_dat$country))
-  #
-  # Cut interval to be dividable with horizon+window
-  interv <- wind + hori
-  cluster_dat <- lapply(cluster_dat, function(x){
-    int_l <- nrow(x)
-    to_cut <- int_l %% interv
-    x <- x[-c(1:to_cut),]
-  })
-  
-  cluster_dat <- do.call(rbind, cluster_dat)
-  return(cluster_dat)
-}
+# Merging with vaccination
+tdata <- merge(tdata, vaccination, by = c("country", "date"), all.x = TRUE)
 
-rf_model_cl <- function(cluster_dat, wind, hori){
-  cluster <- cluster_dat$groups[1]
-  cluster_dat <- cluster_dat[complete.cases(cluster_dat),]
-  rf_dat_t <- cut_time_interval(cluster_dat, wind, hori)
-  # Train and test set
-  set.seed(9985)
-  ctrl <- trainControl(method = "timeslice",
-                       initialWindow = wind,
-                       horizon =hori,
-                       fixedWindow = TRUE)
-  
-  grid <- expand.grid(mtry = c(round(sqrt(ncol(rf_dat_t))),
-                               round(log(ncol(rf_dat_t)))))
-  
-  rf <- caret::train(as.numeric(cases_new) ~ .,
-                     data = rf_dat_t[,-which(colnames(rf_dat_t) %in% c("country", "country_code", "groups", "cases_new_cum", "date",
-                                                                       "Population size", "Males", "Health Expenditures", "Cultural participation",
-                                                                       "Under 20", "20-39", "40-59", "60-79", "Above 80"    
-                                                                       ))],
-                     method = "rf",
-                     trControl = ctrl,
-                     tuneGrid = grid)
-  
-  
-  ## create iml predictor for repeated variable importance to get more robust results
-  
-  #create features data (without outcome cases_new_cum)
-  feat <- rf_dat_t[,-which(colnames(rf_dat_t) %in% c("cases_new_cum", "country", "country_code", "groups", "cases_new", "date",
-                                                     "Population size", "Males", "Health Expenditures", "Cultural participation",
-                                                     "Under 20", "20-39", "40-59", "60-79", "Above 80"    
-                                                     ))]
-  predictor <- iml::Predictor$new(model = rf, data = feat, y = as.numeric(rf_dat_t$cases_new))
-  # calculate feature importance with repetitions
-  permimp <- iml::FeatureImp$new(predictor, loss = "mae", compare = "ratio", n.repetitions = 5)
-  
-  rep_res_cl <- permimp$results[, c("feature", "importance")]
-  
-  #rf1 <- rf$finalModel
-  
-  return(rep_res_cl)
-}
+
+# Year and week numeric
+tdata$year <- as.numeric(tdata$year)
+tdata$week <- as.numeric(tdata$week)
