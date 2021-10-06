@@ -30,16 +30,15 @@ rf_max_date <- min(as.Date(do.call(c, lapply(unique(tdata$country), function(x){
 }))))
 
 rf_dat_cl <- tdata_cl[(((tdata_cl$date >= "2020-02-28") & (tdata_cl$date <= rf_max_date))), 
-                      -which(colnames(tdata_cl) %in% c("year", "week", "country_code","testing_new_cases", "tests_done", "testing_population", 
-                                                       "testing_rate", "testing_positivity_rate", "fb_data.iso_code","fb_data.country", "fb_status",
-                                                       "fb_data.cli_se", "fb_data.percent_cli_unw","fb_data.cli_se_unw", "fb_data.sample_size_cli", 
-                                                       "fb_data.smoothed_cli", "fb_data.smoothed_cli_se", "fb_data.sample_size_smoothed_cli",
-                                                       "fb_data.mc_se", "fb_data.percent_mc_unw", "fb_data.mc_se_unw", "fb_data.sample_size_mc",
-                                                       "fb_data.smoothed_mc", "fb_data.smoothed_mc_se", "fb_data.sample_size_smoothed_mc",
-                                                       "fb_data.mc_se_dc", "fb_data.percent_dc_unw", "fb_data.dc_se_unw", "fb_data.sample_size_dc",               
-                                                       "fb_data.smoothed_dc", "fb_data.smoothed_dc_se", "fb_data.sample_size_smoothed_dc",      
-                                                       "iso_code",
-                                                       "deaths_new", "recovered_new"))]
+                -which(colnames(tdata_cl) %in% c("year", "week", "country_code","testing_new_cases", "tests_done", "testing_population", 
+                                              "testing_rate", "testing_positivity_rate", "fb_data.iso_code","fb_data.country", "fb_status",
+                                              "fb_data.cli_se", "fb_data.percent_cli_unw","fb_data.cli_se_unw", "fb_data.sample_size_cli", 
+                                              "fb_data.smoothed_cli", "fb_data.smoothed_cli_se", "fb_data.sample_size_smoothed_cli",
+                                              "fb_data.mc_se", "fb_data.percent_mc_unw", "fb_data.mc_se_unw", "fb_data.sample_size_mc",
+                                              "fb_data.smoothed_mc", "fb_data.smoothed_mc_se", "fb_data.sample_size_smoothed_mc",
+                                              "fb_data.mc_se_dc", "fb_data.percent_dc_unw", "fb_data.dc_se_unw", "fb_data.sample_size_dc",               
+                                              "fb_data.smoothed_dc", "fb_data.smoothed_dc_se", "fb_data.sample_size_smoothed_dc",      
+                                              "iso_code", "deaths_new", "recovered_new"))]
 
 
 
@@ -49,7 +48,7 @@ rf_dat_cl <- tdata_cl[(((tdata_cl$date >= "2020-02-28") & (tdata_cl$date <= rf_m
 rf_dat_cl$cases_new <- 100 * rf_dat_cl$cases_new/rf_dat_cl$`Population size`
 
 # Lead to new cases
-rf_dat_cl$cases_new <- lead(rf_dat_cl$cases_new, 14)
+rf_dat$cases_new <- lead(rf_dat$cases_new, 14)
 
 # Preprocess per cluster
 # Split by country
@@ -83,7 +82,7 @@ rf_dat_cl <- do.call("rbind", rf_dat_cl_splitted)
 # Split and preprocess by cluster
 rf_dat_cl_splitted <- split(rf_dat_cl, rf_dat_cl$groups)
 rf_dat_cl_splitted <- lapply(rf_dat_cl_splitted, function(x){
-  
+
   # Standardize
   x <- preproc_predict_cl(x)
   
