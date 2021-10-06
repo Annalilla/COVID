@@ -27,7 +27,6 @@ country_list <- lapply(country_list, function(x) cbind(x, "smoothed_fb_dc_se" = 
 country_list <- lapply(country_list, function(x) cbind(x, "smoothed_people_vaccinated_per_hundred" = rollapply(x$people_vaccinated_per_hundred, 7, mean, na.rm = TRUE, fill = NA)))
 saveRDS(country_list, "shinydashboard/dat/country_list.RDS")
 
-
 # Maximum limit of y (list of maximum limits for absolute number and smoothed number of cases for all countries)
 multi <- 1.05
 y_limit_list <- lapply(country_list, function(x)
@@ -108,8 +107,8 @@ rf_train <- function(country_dat){
   grid <- expand.grid(mtry = c(round(sqrt(ncol(rf_dat_t))),
                                round(log(ncol(rf_dat_t)))))
   
-  rf <- caret:: train(as.numeric(cases_new_cum) ~ .,
-              data = rf_dat_t[,-which(colnames(rf_dat_t) %in% c( "cases_new", "date", "last_day", "last_week", "country"))],
+  rf <- caret:: train(as.numeric(cases_new) ~ .,
+              data = rf_dat_t[,-which(colnames(rf_dat_t) %in% c( "cases_new_cum", "date", "last_day", "last_week", "country"))],
               method = "rf",
               trControl = ctrl,
               tuneGrid = grid)
