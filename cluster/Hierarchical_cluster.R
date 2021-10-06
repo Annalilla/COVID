@@ -227,4 +227,3 @@ tdata_cl <- tdata_cl[order(tdata_cl$country, tdata_cl$date),]
 #save for cluster_based_RF
 
 saveRDS(tdata_cl, 'shinydashboard/dat/tdata_cl.RDS')
-
