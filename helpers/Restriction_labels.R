@@ -71,16 +71,25 @@ saveRDS(rest_table, "shinydashboard/dat/rest_table.RDS")
 pred_id <- c("cases_new_lead", "deaths_new", "fb_data.percent_dc", "fb_data.percent_mc", "new_vaccinations",
              "people_fully_vaccinated_per_hundred", "people_vaccinated_per_hundred", "recovered_new", "tavg",
              "total_vaccinations_per_hundred", "fb_data.pct_covid_cli", "fb_data.sample_size_smoothed_dc",
-             "fb_data.sample_size_smoothed_mc", "fb_data.smoothed_pct_covid_cli")
+             "fb_data.sample_size_smoothed_mc", "fb_data.smoothed_pct_covid_cli",
+             "last_day", "last_week", "people_fully_vaccinated", "new_vaccinations_smoothed_per_million", "new_vaccinations_smoothed",
+             "total_vaccinations", "people_vaccinated")
 pred_text <- c("New cases with lead", "Deaths", "Direct Contact", "Mask Coverage", "New Vaccinations", "People Fully Vaccinated Per Hundred",
                "People Vaccinated Per Hundred", "Recovered", "Average Daily Temperature", "Total Vaccinations Per Hundred",
-               "COVID-like Illnes", "Sample Size Direct Contact", "Sample Size Mask Cover", "COVID-like Illnes Smoothed")
-pred_label <- c("Number of reported new cases with 14 days lead", "Number of reported new deaths", "Percentage of respondents that have reported had direct contact (longer than one minute) with people not staying with them in last 24 hours",
+               "COVID-like Illnes", "Sample Size Direct Contact", "Sample Size Mask Cover",
+               "COVID-like Illnes Smoothed", "New cases on the last day", "New cases on the last week",
+               "People Fully Vaccinated", "New Vaccinations per Million Smoothed", "New Vaccinations Smoothed",
+               "Total Vaccinations", "People Vacinated")
+pred_label <- c("Number of reported new cases with 14 days lead", "Number of reported new deaths",
+                "Percentage of respondents that have reported had direct contact (longer than one minute) with people not staying with them in last 24 hours",
                 "Percentage of respondents that have reported use mask cover", "Number of new vaccinations",
                 "People fully vaccinated per hundred", "People vaccinated per hundred", "Number of recovered",
                 "Average daily temperatures measured in the capital", "Total vaccinations per hundred",
                 "Percentage of respondents that have reported COVID-like symptoms", "Sample size direct contact (smoothed)",
-                "Sample size mask cover (smoothed)", "Percentage of respondents that have reported COVID-like symptoms (smoothed)")
+                "Sample size mask cover (smoothed)", "Percentage of respondents that have reported COVID-like symptoms (smoothed)",
+                "Number of reported new cases on the last day", "Number of reported new cases on the last week",
+                "People fully vaccinated", "Number of new vaccinations per Million (smoothed)", "Number of new vaccinations (smoothed)",
+                "Total number of vaccinations", "Number of people vaccinated")
 pred_table <- as.data.frame(cbind(pred_id, pred_text, pred_label))
 saveRDS(pred_table, "shinydashboard/dat/pred_table.RDS")
 
