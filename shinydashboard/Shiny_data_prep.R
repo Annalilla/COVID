@@ -204,6 +204,9 @@ b_vis_r <- 1/b_vis
 b_vis_r$ord <- rowSums(b_vis_r, na.rm = TRUE)
 b_vis <- b_vis[order(b_vis_r$ord, decreasing = TRUE),]
 
+# Removing last_day and last_week from bump chart
+b_vis <- b_vis[-which(row.names(b_vis) %in% c("last_day", "last_week")),]
+
 pred_order <- as.data.frame(cbind("predictor" = rownames(b_vis), "order" = 1:nrow(b_vis)))
 saveRDS(pred_order, "shinydashboard/dat/pred_order.RDS")
 
@@ -212,11 +215,13 @@ b_vis$predictor <- rownames(b_vis)
 b_vis_long <- as.data.frame(melt(setDT(b_vis), id.vars = c("predictor"), variable.name = "country"))
 colnames(b_vis_long) <- c("predictor", "country", "ranking")
 
+
 # Merging with prediction order
 b_vis_long <- merge(b_vis_long, pred_order, by = "predictor", all.x = TRUE)
 b_vis_long$order <- as.numeric(b_vis_long$order)
 b_vis_long <- b_vis_long[order(b_vis_long$country, b_vis_long$order),]
 b_vis_long <- merge(b_vis_long, all_pred_table[,c("pred_id", "pred_text")], by.x = "predictor", by.y = "pred_id")
+
 saveRDS(b_vis_long, "shinydashboard/dat/pred_imp_ranking.RDS")
 
 # Number of top predictors per countries (30 top predictors from pred_order)
