@@ -38,7 +38,11 @@ rf_dat_cl <- tdata_cl[(((tdata_cl$date >= "2020-02-28") & (tdata_cl$date <= rf_m
                                               "fb_data.smoothed_mc", "fb_data.smoothed_mc_se", "fb_data.sample_size_smoothed_mc",
                                               "fb_data.mc_se_dc", "fb_data.percent_dc_unw", "fb_data.dc_se_unw", "fb_data.sample_size_dc",               
                                               "fb_data.smoothed_dc", "fb_data.smoothed_dc_se", "fb_data.sample_size_smoothed_dc",      
-                                              "iso_code", "deaths_new", "recovered_new"))]
+                                              "iso_code", "deaths_new", "recovered_new",
+                                              "fb_data.covid_se_cli" , "fb_data.pct_covid_unw_cli" , 
+                                              "fb_data.covid_se_unw_cli" , "fb_data.sample_size_cli" , "fb_data.smoothed_pct_covid_cli" , 
+                                              "fb_data.smoothed_covid_se_cli" , "fb_data.sample_size_smoothed_cli"
+                                              ))]
 
 
 
