@@ -38,7 +38,11 @@ rf_dat <- tdata_cl[(((tdata_cl$date >= "2020-02-28") & (tdata_cl$date <= rf_max_
                                                        "fb_data.mc_se_dc", "fb_data.percent_dc_unw", "fb_data.dc_se_unw", "fb_data.sample_size_dc",               
                                                        "fb_data.smoothed_dc", "fb_data.smoothed_dc_se", "fb_data.sample_size_smoothed_dc",      
                                                        "iso_code",
-                                                       "deaths_new", "recovered_new"))]
+                                                       "deaths_new", "recovered_new",
+                                                       "fb_data.covid_se_cli" , "fb_data.pct_covid_unw_cli" , 
+                                                       "fb_data.covid_se_unw_cli" , "fb_data.sample_size_cli" , "fb_data.smoothed_pct_covid_cli" , 
+                                                       "fb_data.smoothed_covid_se_cli" , "fb_data.sample_size_smoothed_cli"
+                                                       ))]
 
 
 ##Outcome variable
@@ -46,7 +50,7 @@ rf_dat <- tdata_cl[(((tdata_cl$date >= "2020-02-28") & (tdata_cl$date <= rf_max_
 # Number of cases proportionate to population size
 rf_dat$cases_new <- 100 * rf_dat$cases_new/rf_dat$`Population size`
 
-# Lead to new cases
+# Lead to new case
 rf_dat$cases_new <- lead(rf_dat$cases_new, 14)
 
 # Removing group and country characteristics
