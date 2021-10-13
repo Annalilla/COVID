@@ -74,7 +74,11 @@ country_char[, which(colnames(country_char) %in% vars_to_numerical_cc)] <-
   lapply(country_char[, which(colnames(country_char) %in% vars_to_numerical_cc)], as.numeric)
 
 # Convert variables to factor
+#country_char[, which(colnames(country_char) %in% vars_to_factor_cc)] <-
+#  as.factor(country_char[, which(colnames(country_char) %in% vars_to_factor_cc)])
+
 country_char[, which(colnames(country_char) %in% vars_to_factor_cc)] <-
-  as.factor(country_char[, which(colnames(country_char) %in% vars_to_factor_cc)])
+  lapply(country_char[, which(colnames(country_char) %in% vars_to_factor_cc)], as.factor)
+         
          
     
