@@ -79,7 +79,7 @@ pred_text <- c("New cases with lead", "Deaths", "Direct Contact", "Mask Coverage
                "COVID-like Illnes", "Sample Size Direct Contact", "Sample Size Mask Cover",
                "COVID-like Illnes Smoothed", "New cases on the last day", "New cases on the last week",
                "People Fully Vaccinated", "New Vaccinations per Million Smoothed", "New Vaccinations Smoothed",
-               "Total Vaccinations", "People Vacinated")
+               "Total Vaccinations", "People Vaccinated")
 pred_label <- c("Number of reported new cases with 14 days lead", "Number of reported new deaths",
                 "Percentage of respondents that have reported had direct contact (longer than one minute) with people not staying with them in last 24 hours",
                 "Percentage of respondents that have reported use mask cover", "Number of new vaccinations",
