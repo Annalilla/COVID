@@ -230,3 +230,22 @@ n_top <- as.data.frame(top_pred_c[which(top_pred_c$predictor %in% pred_order$pre
   group_by(country) %>%
   dplyr::summarise(n = n()))
 summary(n_top)
+                             
+                             ## Reverse scaling the x axis for rug of pdp
+
+# Min-max values for all variables in all countries
+x_min_max <- list()
+x_min_max <- lapply(country_list, function(x){
+  lapply(x, function(y) if(is.numeric(y) & !allMissing(y)){
+      c(min(y, na.rm = TRUE), max(y, na.rm = TRUE))
+    }else{
+      c(0,0)
+    })
+})
+x_min_max <- lapply(x_min_max, function(x) do.call("rbind", x))
+x_min_max <- lapply(names(x_min_max), function(x){
+  x_min_max[[x]] <- cbind(as.data.frame(x_min_max[[x]]), "country" = x, "predictor" = row.names(x_min_max[[x]]))
+})
+x_min_max <- do.call("rbind", x_min_max)
+colnames(x_min_max)[1:2] <- c("min", "max")
+saveRDS(x_min_max, "shinydashboard/dat/x_min_max.RDS")
