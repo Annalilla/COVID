@@ -340,19 +340,42 @@ server <- function(input, output, session) {
   
   output$plot_pdp <-renderPlot({
     
-    ggplot(selectedData()) +
-      geom_line(aes(x = selectedData()[,1],
-                    y = selectedData()[,2],
+    act_dat <- selectedData()
+    act_pred <- selectedPredictorpdp()
+    act_rug <- selectedRug()
+    act_country <- input$country_pdp
+    
+    # Labels on x axis
+    act_min_max <- x_min_max[which(x_min_max$country == act_country & x_min_max$predictor == act_pred),]
+    if(length(unique(act_dat[,1])) <= 2){
+      x_range = c(min(act_dat[,1]), max(act_dat[,1]))
+      x_vals = c(act_min_max$min, act_min_max$max)
+    }else{
+      x_range = c(min(act_dat[,1]), min(act_dat[,1]) + ((max(act_dat[,1]) - min(act_dat[,1]))/3),
+                  min(act_dat[,1]) + (2*(max(act_dat[,1]) - min(act_dat[,1]))/3),  max(act_dat[,1]))
+      x_vals = round(c(act_min_max$min, act_min_max$min + (act_min_max$max - act_min_max$min)/3,
+                 act_min_max$min + 2* (act_min_max$max - act_min_max$min)/3, act_min_max$max), 2)
+    }
+    cat(x_range)
+    cat(x_vals)
+    
+    ggplot(act_dat) +
+      
+      geom_line(aes(x = act_dat[,1],
+                    y = act_dat[,2],
                     color = "darkred") , size = 0.8) +
       xlab(input$predictor_pdp) +
+      #xlab(act_pred) +
       ylab("% of new cases") +
-      geom_rug(data=selectedRug(), aes(x = selectedRug()[,selectedPredictorpdp()], inherit.aes = F, alpha = 0.3, color="darkred")) + 
+      geom_rug(data = act_rug, aes(x = act_rug[,act_pred], inherit.aes = F, alpha = 0.3, color="darkred")) + 
       theme_minimal() +
+      scale_x_continuous(breaks = x_range,labels=x_vals) +
       theme(axis.text.x=element_text(angle=60, hjust=1),
             panel.grid.major = element_blank(),
             panel.grid.minor = element_blank(),
             legend.position = "none",
-            plot.margin = unit(c(1,1,0,1), "lines")) 
+            plot.margin = unit(c(1,1,0,1), "lines")
+            ) 
   })
 
   
