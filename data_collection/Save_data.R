@@ -15,26 +15,32 @@ save_data <- function(data, datname, dirname = NA, archieve = FALSE)
 save_data_online <- function(data, datname, archieve = FALSE)
 {
   # File for authentication available
-  if(file.exists(".secrets/dbea2094459b0986454785bfcd2781b5_covid.data.storage@gmail.com")){
-    if(!("googlesheets4" %in% (.packages()))) library(googlesheets4)
-    if(!gs4_has_token()){
-      # google sheets authentication
-      gs4_auth(
-        cache = ".secrets",
-        email = "covid.data.storage@gmail.com"
-      )
-    }
   
-    covid_sheet <- "https://docs.google.com/spreadsheets/d/1K6jzpSKJHVQBVyRfAtVhkOcgepGEnrTVK-Ifnw85_vM/edit#gid=0"
-    if(archieve == TRUE)
-    {
-      attach <- str_replace_all(str_extract_all(Sys.time(), ".+ \\d+:\\d+:\\d+"), "[ :]", "_")
-      if(datname %in% sheet_names(covid_sheet)){
-        sheet_rename(covid_sheet, sheet = datname, new_name = paste(datname, attach, sep = "_"))
+  if(file.exists(".secrets")){
+    all_files <- list.files(".secrets")
+    if(length(which(grepl(".+@gmail.com$", all_files))) > 0){
+      if(!("googlesheets4" %in% (.packages()))) library(googlesheets4)
+      if(!gs4_has_token()){
+        # google sheets authentication
+        gs4_auth(
+          cache = ".secrets",
+          email = "covid.data.storage@gmail.com"
+        )
       }
-    }
-    sheet_write(data, ss = covid_sheet, sheet = datname)
-  }else{
+      
+      covid_sheet <- "https://docs.google.com/spreadsheets/d/1K6jzpSKJHVQBVyRfAtVhkOcgepGEnrTVK-Ifnw85_vM/edit#gid=0"
+      if(archieve == TRUE)
+      {
+        attach <- str_replace_all(str_extract_all(Sys.time(), ".+ \\d+:\\d+:\\d+"), "[ :]", "_")
+        if(datname %in% sheet_names(covid_sheet)){
+          sheet_rename(covid_sheet, sheet = datname, new_name = paste(datname, attach, sep = "_"))
+        }
+      }
+      sheet_write(data, ss = covid_sheet, sheet = datname)
+    }else{
       cat("Save data to googlesheets was unsuccesfull - File for authentication not available")
+    }
+  }else{
+    cat("Save data to googlesheets was unsuccesfull - .secrets dir not found")
   }
 }
