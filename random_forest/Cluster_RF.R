@@ -41,7 +41,10 @@ rf_dat_cl <- tdata_cl[(((tdata_cl$date >= "2020-02-28") & (tdata_cl$date <= rf_m
                                               "iso_code", "deaths_new", "recovered_new",
                                               "fb_data.covid_se_cli" , "fb_data.pct_covid_unw_cli" , 
                                               "fb_data.covid_se_unw_cli" , "fb_data.sample_size_cli" , "fb_data.smoothed_pct_covid_cli" , 
-                                              "fb_data.smoothed_covid_se_cli" , "fb_data.sample_size_smoothed_cli"
+                                              "fb_data.smoothed_covid_se_cli" , "fb_data.sample_size_smoothed_cli",
+                                              # From vaccination keep only people_vaccinated_per_hundred and people_fully_vaccinated_per_hundred
+                                              "total_vaccinations", "people_vaccinated", "people_fully_vaccinated", "new_vaccinations",
+                                              "new_vaccinations_smoothed", "total_vaccinations_per_hundred", "new_vaccinations_smoothed_per_million"
                                               ))]
 
 
@@ -63,19 +66,20 @@ rf_dat_cl_splitted <- lapply(rf_dat_cl_splitted, function(x){
   x$cases_new_cum <- cumsum(x$cases_new)
   
   # smooth cases_new and cumulative cases_new with rolling average window = 7 days
-  x$cases_new_cum <- rollmean(x$cases_new_cum, 7, fill = NA)
-  x$cases_new<- rollmean(x$cases_new, 7, fill = NA)
+  x$cases_new_cum <- rollapply(x$cases_new_cum, 7, mean, na.rm = TRUE, fill = NA)
+  x$cases_new<- rollapply(x$cases_new, 7, mean, na.rm = TRUE, fill = NA)
   
   # Variable for number of cases on previous day and week
-  x$last_day <- lag(x$cases_new, 15)
-  x$last_week <- lag(x$cases_new, 21)
+  x$last_day <- lag(x$cases_new, 1)
+  #x$last_week <- lag(x$cases_new, 21)
   
   # Smooth deaths, recovered, temperature, fb and vaccination variables with rolling average window = 7 days
-  vars_to_smooth <- c("deaths_new", "recovered_new", "tavg", "fb_data.percent_cli", "fb_data.percent_mc", "fb_data.percent_dc")
+  vars_to_smooth <- c("deaths_new", "recovered_new", "tavg", "fb_data.pct_covid_cli", "fb_data.percent_mc", "fb_data.percent_dc",
+                      "people_vaccinated_per_hundred", "people_fully_vaccinated_per_hundred")
   
   
   x[, which(colnames(x) %in% vars_to_smooth)] <-
-    lapply(x[, which(colnames(x) %in% vars_to_smooth)], rollmean, 7, fill = NA)
+    lapply(x[, which(colnames(x) %in% vars_to_smooth)], function(y)  rollapply(y, 7, mean, na.rm = TRUE, fill = NA))
   
   
   x
