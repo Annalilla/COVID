@@ -22,6 +22,7 @@ rest_table <- readRDS("dat/rest_table.RDS")
 eu_clusters_map <- readRDS("dat/eu_clusters_map.RDS")
 region_lab <- readRDS("dat/region_lab.RDS")
 eu_map <- readRDS("dat/eu_map.RDS")
+x_min_max <- readRDS("dat/x_min_max.RDS")
 
 # Functions
 smooth_or_not <- function(to_smooth, cvar, min_date, max_date){
