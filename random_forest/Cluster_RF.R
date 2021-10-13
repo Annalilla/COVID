@@ -22,12 +22,19 @@ source("functions/RF_cluster_functions.R")
 ###preprocessing
 
 ##Selecting the variables, defining the period with meaningful amount of data at the end of the period
-rf_max_date <- min(as.Date(do.call(c, lapply(unique(tdata$country), function(x){
+#rf_max_date <- min(do.call(c, lapply(unique(tdata$country), function(x){
+#  act_country <- tdata[tdata$country == x,]
+#  if(!all(is.na(act_country$fb_data.percent_mc)) & !all(is.na(act_country$fb_data.percent_dc))){
+#    max(act_country[!is.na(act_country$fb_data.percent_mc) & !is.na(act_country$fb_data.percent_dc), "date"])
+#  }
+#})))
+
+rf_max_date <- min(do.call(c, lapply(unique(tdata$country), function(x){
   act_country <- tdata[tdata$country == x,]
-  if(!all(is.na(act_country$fb_data.percent_mc)) & !all(is.na(act_country$fb_data.percent_dc))){
-    max(act_country[!is.na(act_country$fb_data.percent_mc) & !is.na(act_country$fb_data.percent_dc), "date"])
+  if(!all(is.na(act_country$fb_data.percent_mc))){
+    max(act_country[!is.na(act_country$fb_data.percent_mc), "date"])
   }
-}))))
+})))
 
 rf_dat_cl <- tdata_cl[(((tdata_cl$date >= "2020-02-28") & (tdata_cl$date <= rf_max_date))), 
                 -which(colnames(tdata_cl) %in% c("year", "week", "country_code","testing_new_cases", "tests_done", "testing_population", 
@@ -44,7 +51,9 @@ rf_dat_cl <- tdata_cl[(((tdata_cl$date >= "2020-02-28") & (tdata_cl$date <= rf_m
                                               "fb_data.smoothed_covid_se_cli" , "fb_data.sample_size_smoothed_cli",
                                               # From vaccination keep only people_vaccinated_per_hundred and people_fully_vaccinated_per_hundred
                                               "total_vaccinations", "people_vaccinated", "people_fully_vaccinated", "new_vaccinations",
-                                              "new_vaccinations_smoothed", "total_vaccinations_per_hundred", "new_vaccinations_smoothed_per_million"
+                                              "new_vaccinations_smoothed", "total_vaccinations_per_hundred", "new_vaccinations_smoothed_per_million",
+                                              # Remove direct contact because of missing values at the end
+                                              "fb_data.percent_dc"
                                               ))]
 
 
