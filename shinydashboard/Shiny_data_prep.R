@@ -30,10 +30,10 @@ saveRDS(country_list, "shinydashboard/dat/country_list.RDS")
 # Maximum limit of y (list of maximum limits for absolute number and smoothed number of cases for all countries)
 multi <- 1.05
 y_limit_list <- lapply(country_list, function(x)
-  cbind("y_limit_abs" = multi * max(x$cases_new, na.rm = TRUE),
-        "y_limit_smo" = multi * max(x$smoothed_cases, na.rm = TRUE),
-        "y_min_abs_temp" = multi * min(x$tavg, na.rm = TRUE) * (max(x$cases, na.rm = TRUE)/max(x$tavg, na.rm = TRUE)),
-        "y_min_smo_temp" = multi * min(x$smoothed_tavg, na.rm = TRUE) * (max(x$cases, na.rm = TRUE)/max(x$tavg, na.rm = TRUE))))
+  cbind("y_limit_abs" = floor(multi * max(x$cases_new, na.rm = TRUE)),
+        "y_limit_smo" = floor(multi * max(x$smoothed_cases, na.rm = TRUE)),
+        "y_min_abs_temp" = floor(multi * min(x$tavg, na.rm = TRUE) * (max(x$cases, na.rm = TRUE)/max(x$tavg, na.rm = TRUE))),
+        "y_min_smo_temp" = floor(multi * min(x$smoothed_tavg, na.rm = TRUE) * (max(x$cases, na.rm = TRUE)/max(x$tavg, na.rm = TRUE)))))
 saveRDS(y_limit_list, "shinydashboard/dat/y_limit_list.RDS")
 
 # Restrictions 
