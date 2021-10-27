@@ -56,7 +56,15 @@ exp_plot_base <- function(dat, y_min, y_max, mc, dc, vacc){
   p <- p +
     scale_y_continuous(limits = c(y_min, y_max),
                        sec.axis = sec_axis(~./y_max, name = axis_title,
-                                           labels = function(x) { paste0(round(x * 100, 0), "%")}))
+                                           labels = function(x) {
+                                             unlist(lapply(x, function(y){
+                                               if(!is.na(y) & y >= 0){
+                                                 paste0(round(y * 100, 0), "%")
+                                               }else{
+                                                 " "
+                                               }
+                                             }))
+                                           }))
   }
   else{
     p <- p +
