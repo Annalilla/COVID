@@ -131,6 +131,7 @@ pdp_all_pred <- function(countr){
 
 #Creates the RF train objects from the RF data
 rf_train <- lapply(c_rf_dat_fb, function(x) rf_train(x))
+saveRDS(rf_train, "shinydashboard/dat/rf_train.RDS")
 
 #Get the predictors applied by countries
 preds <- lapply(rf_train, function(x){ x <- predictors(x)
