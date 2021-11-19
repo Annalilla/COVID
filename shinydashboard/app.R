@@ -7,6 +7,9 @@ library(lubridate)
 library(reshape2)
 library(shinyBS)
 library(maps)
+library(akima)
+library(plotly)
+library(shinybusy)
 
 library(shiny)
 
@@ -27,6 +30,7 @@ ui <- dashboardPage(
     sidebarMenu(
       menuItem("Exploratory", tabName = "exploratory", icon = icon("object-align-bottom", lib = "glyphicon")),
       menuItem("Partial Dependence", tabName = "pdp", icon=icon("object-align-bottom", lib = "glyphicon")),
+      menuItem("3D Partial Dependence", tabName = "3d_pdp", icon=icon("object-align-bottom", lib = "glyphicon")),
       menuItem("Bump Chart", tabName = "bc", icon=icon("object-align-bottom", lib = "glyphicon")),
       menuItem("Country Characteristics", tabName = "rankcorr", icon=icon("object-align-bottom", lib = "glyphicon")),
       menuItem("Documentation", tabName = "source", icon = icon("th"))
@@ -86,28 +90,6 @@ ui <- dashboardPage(
                   uiOutput("checkbox_group"), width = 12
               )
       ),
-      
-      #Pdp tab content
-     # tabItem(tabName = "pdp",
-     #         #h2("Partial Dependence Plots - ToDo")),
-     #          fluidRow(
-     #            column(4,
-     #                   box(
-     #                     
-     #                     selectInput("country_pdp", "Country:",
-     #                                 choices = names(pdp_all_c_all_pred)),
-     #                   bsTooltip(id = "country_pdp", title = "Select a country", 
-     #                             placement = "left", trigger = "hover"),
-     #                 ),
-     #                 box(
-     #                   
-     #                   selectInput("predictor_pdp", "Predictor:",
-     #                               choices = NULL), #to be updated by each session based on values of the country_pdp
-     #                   bsTooltip(id = "predictor_pdp", title = "Select a predictor", 
-     #                             placement = "left", trigger = "hover"),
-     #                 )
-     #          ),
-                
                 
       tabItem(tabName = "pdp",
               fluidRow(
@@ -123,6 +105,26 @@ ui <- dashboardPage(
                 box(title = textOutput("charttitle_pdp"), "Partial Dependence Plot",
                            plotOutput("plot_pdp",  height = 450), width = 12, height = 580)
               )),
+      
+     # 3D PDP
+     tabItem(tabName = "3d_pdp",
+             fluidRow(
+               box(
+               column(4,
+                      tags$div(title = "Select a country", selectInput("country_3d_pdp", "Country:",
+                                                                       choices = names(pdp_all_c_all_pred)))),
+               column(4,
+                      tags$div(title = "Select a predictor for the X axis", selectInput("predictor_3d_pdp_1", "Predictor X:",
+                                                                                        choices = NULL, selected = NULL))),
+               column(4,
+                      tags$div(title = "Select a predictor for the Y axis", selectInput("predictor_3d_pdp_2", "Predictor Y:",
+                                                                                        choices = NULL, selected = NULL))),
+               width = 12),
+               
+               
+               box("3D Partial Dependence Plot", htmlOutput("diff_error"),
+                   plotlyOutput("plot_3d_pdp",  height = 450), width = 12, height = 580)
+             )),
       # Content Bump Chart
       tabItem(tabName = "bc",
               fluidRow(
@@ -306,7 +308,7 @@ server <- function(input, output, session) {
   observeEvent(input$country_pdp,{
   act_choices <- all_pred_table[which(all_pred_table$pred_id %in% names(pdp_all_c_all_pred[[input$country_pdp]])), "pred_text"]
     # Ordering predictors: average daily temperature, fb variables, restriction measures
-    first_vars <- c("Average Daily Temperature", "COVID-like Illnes", "Direct Contact", "Mask Coverage")
+    first_vars <- c("Average Daily Temperature", "COVID-like Illnes", "Mask Coverage")
     rest_choices <- act_choices[-which(act_choices %in% first_vars)]
     act_choices <- c(first_vars, rest_choices[order(rest_choices)])
     updateSelectInput(session,'predictor_pdp',
@@ -376,6 +378,101 @@ server <- function(input, output, session) {
             legend.position = "none",
             plot.margin = unit(c(1,1,0,1), "lines")
             ) 
+  })
+  
+  ## 3D PDP
+  output$diff_error <- renderText({
+    ""
+  })
+  
+  observeEvent(input$country_3d_pdp,{
+    all_choices <- all_pred_table[which(all_pred_table$pred_id %in% names(pdp_all_c_all_pred[[input$country_3d_pdp]])), "pred_text"]
+    # Ordering predictors: average daily temperature, fb variables, restriction measures
+    first_vars <- c("Average Daily Temperature", "COVID-like Illnes", "Mask Coverage", "People Fully Vaccinated Per Hundred")
+    rest_choices <- all_choices[-which(all_choices %in% first_vars)]
+    act_choices <- c(first_vars, rest_choices[order(rest_choices)])
+    updateSelectInput(session,'predictor_3d_pdp_1',
+                      choices = act_choices)
+    updateSelectInput(session,'predictor_3d_pdp_2',
+                      choices = act_choices)
+    output$diff_error <- renderText({
+      ""
+    })
+  })
+  
+  observeEvent(input$predictor_3d_pdp_1,{
+    if(input$predictor_3d_pdp_1 == input$predictor_3d_pdp_1)
+    {
+      output$diff_error <- renderText({
+        "Please select two different predictors for X and Y axis"
+      })
+    }else{
+      output$diff_error <- renderText({
+        ""
+      })
+    }
+  })
+  
+  observeEvent(input$predictor_3d_pdp_2,{
+    if(input$predictor_3d_pdp_2 == input$predictor_3d_pdp_1)
+    {
+      output$diff_error <- renderText({
+        "Please select two different predictors for X and Y axis"
+      })
+    }else{
+      output$diff_error <- renderText({
+        ""
+      })
+    }
+  })
+  
+  
+  selectedPredictor3dpdp_1 <- reactive({
+    all_pred_table[all_pred_table$pred_text == input$predictor_3d_pdp_1, "pred_id"]
+  })
+  
+  selectedPredictor3dpdp_2 <- reactive({
+    all_pred_table[all_pred_table$pred_text == input$predictor_3d_pdp_2, "pred_id"]
+  })
+  
+  output$plot_3d_pdp <-renderPlotly({
+    
+    act_country <- input$country_3d_pdp
+    
+    cat("Lets start with 3d")
+    
+    if(selectedPredictor3dpdp_1() != selectedPredictor3dpdp_2()){
+      
+      output$diff_error <- renderText({
+        ""
+      })
+      
+      show_modal_spinner()
+      
+      predx <- selectedPredictor3dpdp_1()
+      predy <- selectedPredictor3dpdp_2()
+      object <- pdp_pred_paired(rf_train[[act_country]], predx, predy)
+      
+      cat("Object calculated")
+      
+      dens <- akima::interp(y = object[,predx], x = object[,predy], z = object$yhat)
+      
+      p3 <- plot_ly(x = dens$x, 
+                    y = dens$y, 
+                    z = dens$z,
+                    type = "surface")
+      
+      p3 <- p3 %>% layout(scene = list(xaxis = list(title = "X"),
+                                       yaxis = list(title = "Y"),
+                                       zaxis = list(title = "Partial Dependence")))
+      
+      
+      remove_modal_spinner() 
+      
+      p3
+      
+    }
+
   })
 
   
