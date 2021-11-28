@@ -16,6 +16,7 @@ cluster_res_varimp <- readRDS("shinydashboard/dat/cluster_res_varimp.RDS")
 #Split data by cluster groups
 cluster_res_varimp_list <- split(cluster_res_varimp, cluster_res_varimp$groups)
 
+
 # Order does not give same values for same importance, rank is used instead.
 #create order variable (most important predictor is ranked nr. 1)  per cluster
 
@@ -163,9 +164,9 @@ rma_cluster_res_varimp %>%
   group_by(groups) %>%
   shapiro_test(importance) #normality fails
 
-ggqqplot(rma_cluster_res_varimp, "importance", facet.by = "groups") #normality fails -> non parametric test needed
+ggqqplot(rma_cluster_res_varimp, "importance", facet.by = "groups") #normality fails -> non-parametric test needed
 
-#Friedman-test
+#Friedman-test on varimp between clusters
 
 res_fried <-rma_cluster_res_varimp %>%
   friedman_test(importance ~ groups | feature )
@@ -182,6 +183,21 @@ pwc
 print(tbl_df(pwc), n=40) #clusters significatly differ (5 pairs out of the 21 combinations): 
 #                                                        1 - 4, 1- 6, 1 - 7
 #                                                        4 -5, 5 -6
+
+# Friedman test on varimp RANKINGs between clusters
+
+# add ranks within clusters
+
+#Unsplit cluster_res_varimp_list (contains ranks)
+cluster_res_rank <- unname(cluster_res_varimp_list) #remove list names
+cluster_rank <- do.call(what = "rbind", cluster_res_rank) #unsplit
+
+
+res_rank_fried <-cluster_rank %>%
+  friedman_test(rank ~ groups | feature )
+res_rank_fried #groups are NOT significantly different
+
+
 
 
 
