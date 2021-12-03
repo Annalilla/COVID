@@ -194,13 +194,6 @@ get_coord_for_country <- function(country, rest_list, max_y){
   else(return(NULL))
 }
 
-##3D Partial Dependence Plot
-
-pdp_pred_paired <- function(countr, pred1, pred2){
-  res <-  pdp::partial(countr, pred.var = c(pred1, pred2))
-  return(res)
-}
-
 ## Bump Chart
 # Coordinates for labelling the predictors
 bc_pred_label <- function(vis_dat){
