@@ -256,6 +256,12 @@ saveRDS(x_min_max, "shinydashboard/dat/x_min_max.RDS")
 #
 ## Data preparation for 3D partial dependence
 all_country <- names(country_res)
+                    
+##Function to calculate the object for the 3D Partial Dependence Plot
+pdp_pred_paired <- function(countr, pred1, pred2){
+  res <-  pdp::partial(countr, pred.var = c(pred1, pred2))
+  return(res)
+}
 
 # Get selectable predictors for left and right vars
 # Using rank of predictors calculated for the bump chart: b_dat
