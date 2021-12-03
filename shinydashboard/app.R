@@ -386,15 +386,17 @@ server <- function(input, output, session) {
   })
   
   observeEvent(input$country_3d_pdp,{
-    all_choices <- all_pred_table[which(all_pred_table$pred_id %in% names(pdp_all_c_all_pred[[input$country_3d_pdp]])), "pred_text"]
+    #all_choices <- all_pred_table[which(all_pred_table$pred_id %in% names(pdp_all_c_all_pred[[input$country_3d_pdp]])), "pred_text"]
     # Ordering predictors: average daily temperature, fb variables, restriction measures
-    first_vars <- c("Average Daily Temperature", "COVID-like Illnes", "Mask Coverage", "People Fully Vaccinated Per Hundred")
-    rest_choices <- all_choices[-which(all_choices %in% first_vars)]
-    act_choices <- c(first_vars, rest_choices[order(rest_choices)])
+    #first_vars <- c("Average Daily Temperature", "COVID-like Illnes", "Mask Coverage", "People Fully Vaccinated Per Hundred")
+    #rest_choices <- all_choices[-which(all_choices %in% first_vars)]
+    #act_choices <- c(first_vars, rest_choices[order(rest_choices)])
+    left_vars = selectable_ctr[[input$country_3d_pdp]]$left_vars
+    right_vars= selectable_ctr[[input$country_3d_pdp]]$right_vars
     updateSelectInput(session,'predictor_3d_pdp_1',
-                      choices = act_choices)
+                      choices = selectable_ctr[[input$country_3d_pdp]]$left_vars)
     updateSelectInput(session,'predictor_3d_pdp_2',
-                      choices = act_choices)
+                      choices = selectable_ctr[[input$country_3d_pdp]]$right_vars)
     output$diff_error <- renderText({
       ""
     })
@@ -447,15 +449,32 @@ server <- function(input, output, session) {
         ""
       })
       
-      show_modal_spinner()
-      
       predx <- selectedPredictor3dpdp_1()
       predy <- selectedPredictor3dpdp_2()
-      object <- pdp_pred_paired(rf_train[[act_country]], predx, predy)
       
-      cat("Object calculated")
+      #"fb_data.pct_covid_cli*tavg"
+      #predx <- "tavg"
+      #predy <- "fb_data.pct_covid_cli"
       
+      sel_pred_combi <- paste(predx, predy, sep = "*")
+      
+      # In the combinations of preictors each pairs only once appear -> in some cases we have to look for the reverse order
+      reverse_preds <- FALSE
+      if(sel_pred_combi %nin% names(pdp_3d_country[[act_country]])){
+        sel_pred_combi <- paste(predy, predx, sep = "*")
+        reverse_preds <- TRUE
+      }
+
+      object <- pdp_3d_country[[act_country]][sel_pred_combi][[1]]
       dens <- akima::interp(y = object[,predx], x = object[,predy], z = object$yhat)
+      
+      # If the dens was calculated from predictors in a reversed order as selected, switch x and y
+      if(reverse_preds){
+        dens[["temp_x"]] <- dens[["x"]]
+        dens[["x"]] <- dens[["y"]]
+        dens[["y"]] <- dens[["temp_x"]]
+        dens <- dens[which(names(dens) != "temp_x")]
+      }
       
       p3 <- plot_ly(x = dens$x, 
                     y = dens$y, 
@@ -465,9 +484,6 @@ server <- function(input, output, session) {
       p3 <- p3 %>% layout(scene = list(xaxis = list(title = "X"),
                                        yaxis = list(title = "Y"),
                                        zaxis = list(title = "Partial Dependence")))
-      
-      
-      remove_modal_spinner() 
       
       p3
       
