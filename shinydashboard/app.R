@@ -460,7 +460,7 @@ server <- function(input, output, session) {
       
       # In the combinations of preictors each pairs only once appear -> in some cases we have to look for the reverse order
       reverse_preds <- FALSE
-      if(sel_pred_combi %nin% names(pdp_3d_country[[act_country]])){
+      if(!(sel_pred_combi %in% names(pdp_3d_country[[act_country]]))){
         sel_pred_combi <- paste(predy, predx, sep = "*")
         reverse_preds <- TRUE
       }
