@@ -9,6 +9,7 @@ library(readr)
 library(stringr)
 library(dplyr)
 library(caret)
+library(plotly)
 
 source("helpers/Restriction_labels.R")
 
@@ -250,3 +251,91 @@ x_min_max <- lapply(names(x_min_max), function(x){
 x_min_max <- do.call("rbind", x_min_max)
 colnames(x_min_max)[1:2] <- c("min", "max")
 saveRDS(x_min_max, "shinydashboard/dat/x_min_max.RDS")
+
+
+#
+## Data preparation for 3D partial dependence
+all_country <- names(country_res)
+
+# Get selectable predictors for left and right vars
+# Using rank of predictors calculated for the bump chart: b_dat
+# 10 top predictors will be selectable per country
+# From vaccination only kept one -> People Vaccinated Per Hundred will be removed
+get_selectable <- function(country, no_top_predictors)
+{
+  all_pred <- b_dat[[country]]
+  all_pred <- all_pred[-which(rownames(all_pred) == "people_vaccinated_per_hundred")]
+  all_pred <- cbind("pred" = rownames(all_pred), all_pred)
+  # Remove variables that are not in the training data
+  all_pred <- all_pred[-which(all_pred$pred %nin% colnames(rf_train[[country]]$trainingData)),]
+  sel_pred <- all_pred[order(all_pred$ranking),]
+  sel_pred <- merge(sel_pred, all_pred_table, by.x = "pred", by.y = "pred_id")
+  sel_pred <- sel_pred[order(sel_pred$ranking),]
+  all_choices <- sel_pred$pred_text
+  des_left <- c("Average Daily Temperature", "COVID-like Illnes", "Mask Coverage", "People Fully Vaccinated Per Hundred")
+  left_vars <- des_left[which(des_left %in% sel_pred$pred_text)]
+  right_vars <- c(left_vars, all_choices[-which(all_choices %in% left_vars)])[1:no_top_predictors]
+  
+  des_left_id = c("tavg", "fb_data.pct_covid_cli", "fb_data.percent_mc", "people_fully_vaccinated_per_hundred")
+  left_vars_id <- des_left_id[which(des_left_id %in% sel_pred$pred)]
+  right_vars_id = c(c(left_vars_id, sel_pred$pred[-which(sel_pred$pred %in% left_vars_id)])[1:no_top_predictors])
+  return(as.data.frame(cbind("left_vars" = left_vars, "right_vars" = right_vars, "left_vars_id" = left_vars_id,
+                             "right_vars_id" = right_vars_id)))  
+}
+
+selectable_ctr <- list()
+selectable_ctr <- lapply(all_country, function(x){
+  get_selectable(x, 10)
+})
+names(selectable_ctr) <- all_country
+
+# Function to create pdp object
+pdp_3d_object <- function(pred_id1, pred_id2, country){
+  predx <- pred_id1
+  predy <- pred_id2
+  object <- pdp_pred_paired(rf_train[[country]], predx, predy)
+  
+  cat("Object calculated")
+  
+  #dens <- akima::interp(y = object[,predx], x = object[,predy], z = object$yhat)
+  
+  #return(dens)
+  return(object)
+}
+
+# Function to calculate 3d pdp object for all predictor combinations for a country
+ctr_pdp_3d_object <- function(country)
+{
+  left_vars <- selectable_ctr[[country]]$left_vars
+  right_vars <- selectable_ctr[[country]]$right_vars
+  left_vars_id <- selectable_ctr[[country]]$left_vars_id
+  right_vars_id <- selectable_ctr[[country]]$right_vars_id
+  
+  pred_table <- expand.grid(left_vars_id, right_vars_id)
+  pred_table <- pred_table[!duplicated(t(apply(pred_table, 1, sort))),]
+  pred_table <- pred_table[-which(as.character(pred_table$Var1) == as.character(pred_table$Var2)),]
+  
+  combi_names <- paste(pred_table$Var1, pred_table$Var2, sep = "*")
+  
+  ctr_3d <- list()
+  ctr_3d <- lapply(combi_names, function(x){
+    preds <- strsplit(x, split = "\\*")
+    pred1 = preds[[1]][1]
+    pred2 = preds[[1]][2]
+    return(pdp_3d_object(pred1, pred2, country))
+  })
+  names(ctr_3d) <- combi_names
+  
+  return(ctr_3d)
+}
+
+pdp_3d_country <- list()
+pdp_3d_country <- lapply(all_country, function(x){
+  ctr_pdp_3d_object(x)
+})
+
+names(pdp_3d_country) <- all_country
+
+saveRDS(pdp_3d_country, "shinydashboard/dat/pdp_3d_country.RDS")
+saveRDS(selectable_ctr, "shinydashboard/dat/selectable_3d_country.RDS")
+
