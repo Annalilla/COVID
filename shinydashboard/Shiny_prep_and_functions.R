@@ -24,6 +24,8 @@ region_lab <- readRDS("dat/region_lab.RDS")
 eu_map <- readRDS("dat/eu_map.RDS")
 x_min_max <- readRDS("dat/x_min_max.RDS")
 rf_train <- readRDS("dat/rf_train.RDS")
+pdp_3d_country <- readRDS("dat/pdp_3d_country.RDS")
+selectable_ctr <- readRDS("dat/selectable_3d_country.RDS")
 
 # Functions
 smooth_or_not <- function(to_smooth, cvar, min_date, max_date){
@@ -383,4 +385,3 @@ rank_corr_all$corr_cut <- cut(rank_corr_all$correlation, 3, labels = c("low", "m
 rank_corr_all <- rbind(rank_corr_all, c(ire_corr, "corr_cut" = "high"))
 rank_corr_all <- rank_corr_all[order(rank_corr_all$groups),]
 rank_corr_res <- split(rank_corr_all, rank_corr_all$groups)
-
