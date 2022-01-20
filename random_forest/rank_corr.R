@@ -124,7 +124,7 @@ rc_btw_cluster <- function(cluster_btw){
   return(act_res)
 }
 
-rank_btw_corr_res <- lapply(c(1:max(clust_dat$groups)-1), rc_btw_cluster)
+#rank_btw_corr_res <- lapply(c(1:max(clust_dat$groups)-1), rc_btw_cluster)
 
 
 #Manually
