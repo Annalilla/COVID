@@ -128,7 +128,7 @@ ui <- dashboardPage(
       # Content Bump Chart
       tabItem(tabName = "bc",
               fluidRow(
-                column(9,
+                column(8,
                        box(
                          box(title = "Variable Importance Plot", "Ranking of predictors accross countries",
                              htmlOutput("bump_message", height = 20), plotOutput("plot_bc", height = 310),
@@ -139,7 +139,7 @@ ui <- dashboardPage(
                            height = 60, width = 12, solidHeader = TRUE), width = 12),
                        box(title = "Countries", uiOutput("checkbox_group_bc_country"), width = 12)
                 ),
-                column(3,
+                column(4,
                        box(title = "Predictors", uiOutput("checkbox_group_bc"), width = 12, height = 750)
                        #box(title = "Countries", uiOutput("checkbox_group_bc_country"), width = 12)
                 )
