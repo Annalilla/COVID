@@ -1,6 +1,7 @@
 # Formats the data and merges it into two databases
 
 library(lubridate)
+library(stringr)
 
 source("functions/Data_preparation_functions.R")
 source("functions/Data_cleansing_functions.R")
@@ -99,9 +100,18 @@ response_testing <- subset(response_testing, select = -c(country_code))
 response_testing <- merge(response_testing, capitals[,c("country", "country_code")],
                          by = "country", all.x = TRUE)
 
+# Dominant variant
+variant <- prepare_variant(variant)
+
+# Merging reponse and testing with variant
+resp_test_temp <- merge(response_testing, variant, by = c("country", "year", "week"), all.x = TRUE)
+
+# Replace NAs in variants with 0
+
+
 #
 # Merging with temperature
-resp_test_temp <- merge(response_testing, tempavg, by = c("country_code", "date"), all = TRUE)
+resp_test_temp <- merge(resp_test_temp, tempavg, by = c("country_code", "date"), all = TRUE)
 # Adding year, week number and country
 resp_test_temp$year[which(is.na(resp_test_temp$year))] <- str_extract(resp_test_temp$date[which(is.na(resp_test_temp$year))], "^\\d+")
 resp_test_temp$week[which(is.na(resp_test_temp$week))] <- strftime(resp_test_temp$date[which(is.na(resp_test_temp$week))], format = "%V")
