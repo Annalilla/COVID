@@ -123,7 +123,8 @@ ui <- dashboardPage(
                
                
                box("3D Partial Dependence Plot", htmlOutput("diff_error"),
-                   plotlyOutput("plot_3d_pdp",  height = 450), width = 12, height = 580)
+                   plotOutput("plot_3d_pdp",  height = 450), width = 12, height = 580)
+                   #plotlyOutput("plot_3d_pdp",  height = 450), width = 12, height = 580)
              )),
       # Content Bump Chart
       tabItem(tabName = "bc",
@@ -437,11 +438,10 @@ server <- function(input, output, session) {
     all_pred_table[all_pred_table$pred_text == input$predictor_3d_pdp_2, "pred_id"]
   })
   
-  output$plot_3d_pdp <-renderPlotly({
+  #output$plot_3d_pdp <-renderPlotly({
+  output$plot_3d_pdp <- renderPlot({
     
     act_country <- input$country_3d_pdp
-    
-    cat("Lets start with 3d")
     
     if(selectedPredictor3dpdp_1() != selectedPredictor3dpdp_2()){
       
@@ -452,9 +452,10 @@ server <- function(input, output, session) {
       predx <- selectedPredictor3dpdp_1()
       predy <- selectedPredictor3dpdp_2()
       
+      
       #"fb_data.pct_covid_cli*tavg"
       #predx <- "tavg"
-      #predy <- "fb_data.pct_covid_cli"
+      #predy <- "people_fully_vaccinated_per_hundred"
       
       sel_pred_combi <- paste(predx, predy, sep = "*")
       
@@ -466,24 +467,37 @@ server <- function(input, output, session) {
       }
 
       object <- pdp_3d_country[[act_country]][sel_pred_combi][[1]]
-      dens <- akima::interp(y = object[,predx], x = object[,predy], z = object$yhat)
+      #dens <- akima::interp(y = object[,predx], x = object[,predy], z = object$yhat)
       
       # If the dens was calculated from predictors in a reversed order as selected, switch x and y
+      #if(reverse_preds){
+      #  dens[["temp_x"]] <- dens[["x"]]
+      #  dens[["x"]] <- dens[["y"]]
+      #  dens[["y"]] <- dens[["temp_x"]]
+      #  dens <- dens[which(names(dens) != "temp_x")]
+      #}
+      
       if(reverse_preds){
-        dens[["temp_x"]] <- dens[["x"]]
-        dens[["x"]] <- dens[["y"]]
-        dens[["y"]] <- dens[["temp_x"]]
-        dens <- dens[which(names(dens) != "temp_x")]
+        pred_temp <- predx
+        predx <- predy
+        predy <- pred_temp
       }
       
-      p3 <- plot_ly(x = dens$x, 
-                    y = dens$y, 
-                    z = dens$z,
-                    type = "surface")
+      # Axis labels
+      labelx <- pred_table[pred_table$pred_id == predx, "pred_text"]
+      labely <- pred_table[pred_table$pred_id == predy, "pred_text"]
       
-      p3 <- p3 %>% layout(scene = list(xaxis = list(title = "X"),
-                                       yaxis = list(title = "Y"),
-                                       zaxis = list(title = "Partial Dependence")))
+      p3 <- plotPartial(object, contour = TRUE, col.regions = colorRampPalette(c("red", "white", "blue")),
+                  xlab = labelx, ylab = labely)
+      
+      #p3 <- plot_ly(x = dens$x, 
+      #              y = dens$y, 
+      #              z = dens$z,
+      #              type = "surface")
+    #  
+      #p3 <- p3 %>% layout(scene = list(xaxis = list(title = "X"),
+      #                                 yaxis = list(title = "Y"),
+      #                                 zaxis = list(title = "Partial Dependence")))
       
       p3
       
