@@ -9,6 +9,7 @@ library(shinyBS)
 library(maps)
 library(akima)
 library(plotly)
+library(pdp)
 library(shinybusy)
 
 library(shiny)
