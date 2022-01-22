@@ -13,7 +13,6 @@ library(sjlabelled)
 
 source("functions/RF_functions.R")
 
-
 ###preprocessing
 
 ##Selecting the variables, defining the period with meaningful amount of data at the end of the period
@@ -52,6 +51,7 @@ rf_dat <- tdata_cl[(((tdata_cl$date >= "2020-02-28") & (tdata_cl$date <= rf_max_
                                                        # From vaccination keep only people_vaccinated_per_hundred and people_fully_vaccinated_per_hundred
                                                        "total_vaccinations", "people_vaccinated", "people_fully_vaccinated", "new_vaccinations",
                                                        "new_vaccinations_smoothed", "total_vaccinations_per_hundred", "new_vaccinations_smoothed_per_million",
+                                                       "new_people_vaccinated_smoothed",
                                                        # Remove direct contact because of missing values at the end
                                                        "fb_data.percent_dc"
                                                        ))]
@@ -122,9 +122,10 @@ rf_dat <- do.call("rbind", rf_dat_splitted)
 
 #make a correlation matrix of the numerical predictors
 
-cm <- cor(as.matrix(rf_dat[, -which(colnames(rf_dat) %in% c("cases_new", "cases_new_cum", "date", "year", "week",
-                                                                 "country_code", "iso_code", "country"))]))
-summary(cm[upper.tri(cm)])
+##
+#cm <- cor(as.matrix(rf_dat[, -which(colnames(rf_dat) %in% c("cases_new", "cases_new_cum", "date", "year", "week",
+#                                                                 "country_code", "iso_code", "country"))]))
+#summary(cm[upper.tri(cm)])
 
 #Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
 #-0.6884 -0.0602  0.0000  0.0185  0.0800  0.9056     399  
@@ -199,6 +200,8 @@ summary(cm[upper.tri(cm)])
 rf_dat_fb <- rf_dat
 rf_dat_fb$country <- as.factor(as.character(rf_dat_fb$country))
 
+#rf_dat_fb$variant <- as.factor(rf_dat_fb$variant)
+
 # Split by countries
 c_rf_dat_fb <- c_rf_dat <- split(rf_dat_fb, rf_dat_fb$country)
 
@@ -223,3 +226,5 @@ country_res_varimp <- lapply(c_rf_dat_fb, function(x) rf_model_varimp(x))
 
 #Save results and further input for the Shiny visualization
 saveRDS(country_res_varimp, "shinydashboard/dat/country_res_varimp.RDS")
+
+
