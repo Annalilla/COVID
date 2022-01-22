@@ -45,6 +45,11 @@ url_testing <- "https://opendata.ecdc.europa.eu/covid19/testing/csv"
 response <- fread(url_response)
 testing <- fread(url_testing)
 
+#
+# Dominant variant
+url_variant <- "https://opendata.ecdc.europa.eu/covid19/virusvariant/csv/data.csv"
+variant <- fread(url_variant)
+
 # Covid cases
 covid <- refresh_coronavirus_jhu()%>%
   group_by(location, date, data_type) %>%
