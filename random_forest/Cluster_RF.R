@@ -52,6 +52,7 @@ rf_dat_cl <- tdata_cl[(((tdata_cl$date >= "2020-02-28") & (tdata_cl$date <= rf_m
                                               # From vaccination keep only people_vaccinated_per_hundred and people_fully_vaccinated_per_hundred
                                               "total_vaccinations", "people_vaccinated", "people_fully_vaccinated", "new_vaccinations",
                                               "new_vaccinations_smoothed", "total_vaccinations_per_hundred", "new_vaccinations_smoothed_per_million",
+                                              "new_people_vaccinated_smoothed",
                                               # Remove direct contact because of missing values at the end
                                               "fb_data.percent_dc"
                                               ))]
