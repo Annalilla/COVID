@@ -342,6 +342,22 @@ pdp_3d_country <- lapply(all_country, function(x){
 
 names(pdp_3d_country) <- all_country
 
+
+#test
+#pred1 <- "tavg"
+#pred2 <- "people_fully_vaccinated_per_hundred"
+#pdp_3d_country <- ctr_pdp_3d_object("Austria")
+
+#plotPartial(pdp_3d_country)
+
+#plotPartial(pdp_3d_country, contour = TRUE, col.regions = colorRampPalette(c("red", "white", "blue")),
+#            xlab = "knkl")
+
+#plotPartial(pdp_3d_country, levelplot = FALSE, zlab = "cmedv", colorkey = TRUE, 
+#            screen = list(z = -20, x = -60))
+
+
+
 saveRDS(pdp_3d_country, "shinydashboard/dat/pdp_3d_country.RDS")
 saveRDS(selectable_ctr, "shinydashboard/dat/selectable_3d_country.RDS")
 
