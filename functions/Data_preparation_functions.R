@@ -109,6 +109,64 @@ prepare_testing <- function(test_dat, rangefrom = NA){
 }
 
 #
+# Dominant variant
+prepare_variant <- function(variant_dat){
+  variant_list <- split(variant_dat, variant_dat$country)
+  
+  format_variant <- function(var_dat){
+    act_country <- var_dat$country[1]
+    vari <- var_dat[,c("year_week", "variant", "percent_variant")]
+    vari <- reshape(vari, idvar = "year_week", timevar = "variant", direction = "wide")
+    vari$country = act_country
+    year_week <- colsplit(vari$year_week, '-', names =  c('year','week'))
+    vari <- cbind(vari, year_week)  
+    vari$year <- as.character(vari$year)
+    vari$week <- as.character(vari$week)
+    vari <- as.data.frame(vari)
+    vari <- vari[,-which(colnames(vari) == "year_week")]
+    return(vari)
+  }
+  
+  all_variants <- lapply(variant_list, function(x) format_variant(x))
+  
+  # Get most frequent variants for each country
+  #common_vari <- lapply(all_variants, function(x){
+  #  act_x <- as.data.frame(sort(colSums(x[,1:(ncol(x) - 3)], na.rm = TRUE), decreasing = TRUE)[1:10])
+  #  return(rownames(act_x))
+  #  })
+  #intersect(common_va)
+  #Reduce(intersect, common_vari)
+  
+  #common_vari <- do.call("c", common_vari)
+  #sort(table(common_vari), decreasing = TRUE)
+  
+  # 10 most common variants are:
+  # "percent_variant.B.1.1.7", "percent_variant.B.1.351", "percent_variant.Other", "percent_variant.B.1.1.529",
+  #"percent_variant.B.1.617.2", "percent_variant.AY.4.2", " percent_variant.P.1", "percent_variant.B.1.525",
+  #"percent_variant.B.1.1.7+E484K", "percent_variant.SGTF"
+  
+  # Keep only 10 most common variants
+  most_common <- c("percent_variant.B.1.1.7", "percent_variant.B.1.351", "percent_variant.Other", "percent_variant.B.1.1.529",
+                   "percent_variant.B.1.617.2", "percent_variant.AY.4.2", "percent_variant.P.1", "percent_variant.B.1.525",
+                   "percent_variant.B.1.1.7+E484K", "percent_variant.SGTF")
+  
+  y <- do.call("rbind", lapply(all_variants, function(x){
+    x[,most_common[which(most_common %nin% colnames(x))]] <- 0
+    x <- x[,c(most_common, "country", "year", "week")]
+    return(x)
+    }))
+  
+  # Replace na with 0
+  y <- y %>% mutate_all(~replace_na(., 0))
+  
+  # Change variable name 'percent_variant.B.1.1.7+E484K' because '+' symbol can cause problems in the analysis
+  colnames(y)[which(colnames(y) == 'percent_variant.B.1.1.7+E484K')] <- "percent_variant.B.1.1.7_E484K"
+  
+  return(y)
+}
+
+
+
 # Weather
 prepare_weather <- function(weat_dat){
   if(length(weat_dat) > 1 & nrow(weat_dat[[1]] > 0)){
