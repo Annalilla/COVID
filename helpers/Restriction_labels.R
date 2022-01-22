@@ -20,7 +20,7 @@ res_id <- c("AdaptationOfWorkplace", "BanOnAllEvents", "ClosDaycare",
            "ClosureOfPublicTransportPartial", "IndoorOver50", "StayHomeRiskG", "HotelsAccommodationPartial", "OutdoorOver100",
            "WorkplaceClosures", "WorkplaceClosuresPartial", "MasksVoluntaryAllSpacesPartial","MasksVoluntaryClosedSpaces",
            "StayHomeRiskGPartial", "RegionalStayHomeOrderPartial", "SocialCirclePartial",
-           "QuarantineForInternationalTravellers", "QuarantineForInternationalTravellersPartial")
+           "QuarantineForInternationalTravellers", "QuarantineForInternationalTravellersPartial", "new_people_vaccinated_smoothed")
           
 res_text <- c("Adaptation Of Workplace", "Ban On All Events", "Close Daycare", 
               "Close Daycare Partial", "Close High", "Close High Partial", 
@@ -73,13 +73,19 @@ pred_id <- c("cases_new_lead", "deaths_new", "fb_data.percent_dc", "fb_data.perc
              "total_vaccinations_per_hundred", "fb_data.pct_covid_cli", "fb_data.sample_size_smoothed_dc",
              "fb_data.sample_size_smoothed_mc", "fb_data.smoothed_pct_covid_cli",
              "last_day", "last_week", "people_fully_vaccinated", "new_vaccinations_smoothed_per_million", "new_vaccinations_smoothed",
-             "total_vaccinations", "people_vaccinated", "new_people_vaccinated_smoothed", "new_people_vaccinated_smoothed_per_hundred")
+             "total_vaccinations", "people_vaccinated", "new_people_vaccinated_smoothed", "new_people_vaccinated_smoothed_per_hundred",
+             "percent_variant.B.1.1.7", "percent_variant.B.1.351", "percent_variant.Other", "percent_variant.B.1.1.529",
+             "percent_variant.B.1.617.2", "percent_variant.AY.4.2", "percent_variant.P.1", "percent_variant.B.1.525",
+             "percent_variant.B.1.1.7_E484K", "percent_variant.SGTF")
 pred_text <- c("New cases with lead", "Deaths", "Direct Contact", "Mask Coverage", "New Vaccinations", "People Fully Vaccinated Per Hundred",
                "People Vaccinated Per Hundred", "Recovered", "Average Daily Temperature", "Total Vaccinations Per Hundred",
                "COVID-like Illnes", "Sample Size Direct Contact", "Sample Size Mask Cover",
                "COVID-like Illnes Smoothed", "New cases on the last day", "New cases on the last week",
                "People Fully Vaccinated", "New Vaccinations per Million Smoothed", "New Vaccinations Smoothed",
-               "Total Vaccinations", "People Vaccinated", "New people vaccinated smoothed", "New people vaccinated per hundred smoothed")
+               "Total Vaccinations", "People Vaccinated", "New people vaccinated smoothed", "New people vaccinated per hundred smoothed",
+               "Variant B.1.1.7", "Variant B.1.351", "Variant Other", "Variant B.1.1.529",
+               "Variant B.1.617.2", "Variant AY.4.2", "Variant P.1", "Variant B.1.525",
+               "Variant B.1.1.7+E484K", "Variant SGTF")
 pred_label <- c("Number of reported new cases with 14 days lead", "Number of reported new deaths",
                 "Percentage of respondents that have reported had direct contact (longer than one minute) with people not staying with them in last 24 hours",
                 "Percentage of respondents that have reported use mask cover", "Number of new vaccinations",
@@ -89,7 +95,12 @@ pred_label <- c("Number of reported new cases with 14 days lead", "Number of rep
                 "Sample size mask cover (smoothed)", "Percentage of respondents that have reported COVID-like symptoms (smoothed)",
                 "Number of reported new cases on the last day", "Number of reported new cases on the last week",
                 "People fully vaccinated", "Number of new vaccinations per Million (smoothed)", "Number of new vaccinations (smoothed)",
-                "Total number of vaccinations", "Number of people vaccinated", "New people vaccinated smoothed", "New people vaccinated per hundred smoothed")
+                "Total number of vaccinations", "Number of people vaccinated", "New people vaccinated smoothed", "New people vaccinated per hundred smoothed",
+                "Percentage of detected SARS-COV2 variant B.1.1.7", "Percentage of detected SARS-COV2 variant B.1.351",
+                "Percentage of detected SARS-COV2 variant Other", "Percentage of detected SARS-COV2 variant B.1.1.529",
+                "Percentage of detected SARS-COV2 variant B.1.617.2", "Percentage of detected SARS-COV2 variant AY.4.2",
+                "Percentage of detected SARS-COV2 variant P.1", "Percentage of detected SARS-COV2 variant B.1.525",
+                "Percentage of detected SARS-COV2 variant B.1.1.7+E484K", "Percentage of detected SARS-COV2 variant SGTF")
 pred_table <- as.data.frame(cbind(pred_id, pred_text, pred_label))
 saveRDS(pred_table, "shinydashboard/dat/pred_table.RDS")
 
