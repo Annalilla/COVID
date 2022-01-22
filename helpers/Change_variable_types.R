@@ -32,7 +32,10 @@ vars_to_numerical <- c("testing_rate", "testing_positivity_rate", "tavg", "total
                        "MassGather50", 
                        "fb_data.pct_covid_cli", "fb_data.covid_se_cli", "fb_data.pct_covid_unw_cli", "fb_data.covid_se_unw_cli",
                        "fb_data.sample_size_cli", "fb_data.smoothed_pct_covid_cli", "fb_data.smoothed_covid_se_cli", "fb_data.sample_size_smoothed_cli",
-                       "new_people_vaccinated_smoothed_per_hundred")
+                       "new_people_vaccinated_smoothed_per_hundred",
+                       "percent_variant.B.1.1.7", "percent_variant.B.1.351", "percent_variant.Other", "percent_variant.B.1.1.529",
+                       "percent_variant.B.1.617.2", "percent_variant.AY.4.2", "percent_variant.P.1", "percent_variant.B.1.525", "percent_variant.B.1.1.7_E484K",
+                       "percent_variant.SGTF")
                        
 
 vars_to_factor <- c("country", "country_code", "iso_code", "fb_data.iso_code", "fb_data.country")
