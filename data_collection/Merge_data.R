@@ -2,6 +2,7 @@
 
 library(lubridate)
 library(stringr)
+library(reshape2)
 
 source("functions/Data_preparation_functions.R")
 source("functions/Data_cleansing_functions.R")
