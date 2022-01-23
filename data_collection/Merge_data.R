@@ -139,6 +139,23 @@ tdata <- merge(covid, tdata, by = c("country", "date"), all = TRUE)
 # Vaccination
 vaccination <- prepare_vaccination(vaccination)
 
+## Missing values in variants
+# Replace variant other with 100%, other variants with 0 for the beginning of the time periods of each country
+variant_vars <- which(grepl("percent_variant", colnames(tdata)))
+variant_vars_spec <- variant_vars[-which(variant_vars == which(colnames(tdata) == "percent_variant.Other"))]
+tdata[,variant_vars_spec] <- lapply(tdata[,variant_vars_spec], function(x){
+  x[which(is.na(x) & resp_test_temp$date < "2021.01.01")] <- 0
+  return(x)
+})
+tdata[,"percent_variant.Other"][which(is.na(tdata[,"percent_variant.Other"]) & tdata$date < "2021.01.01")] <- 100
+
+# Remove last rows, where variants are missing
+missing_vari <- which(apply(tdata[,variant_vars], 1, function(x) sum(which(is.na(x)))) > 0)
+
+max_date <- min(tdata[missing_vari, "date"])
+
+tdata <- tdata[tdata$date < max_date,]
+
 # Merging with vaccination
 tdata <- merge(tdata, vaccination, by = c("country", "date"), all.x = TRUE)
 
