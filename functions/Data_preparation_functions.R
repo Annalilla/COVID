@@ -111,6 +111,19 @@ prepare_testing <- function(test_dat, rangefrom = NA){
 #
 # Dominant variant
 prepare_variant <- function(variant_dat){
+  
+  #select source of data
+  
+  source_GISAID <- c('Austria','Belgium', 'Bulgaria', 'Croatia', 'Denmark', 'Finland', 'France', 'Germany', 'Greece',
+                     'Ireland', 'Italy', 'Netherlands', 'Poland', 'Portugal', 'Romania', 'Slovakia', 'Slovenia', 
+                     'Spain', 'Sweden')
+  source_TESSy <- c('Hungary')
+  
+  variant_gisaid <- variant_dat[variant_dat$country %in% source_GISAID & variant_dat$source == 'GISAID',]
+  variant_tessy <-  variant_dat[variant_dat$country %in% source_TESSy & variant_dat$source == 'TESSy',]
+  
+  variant_dat <- rbind(variant_gisaid, variant_tessy)
+  
   variant_list <- split(variant_dat, variant_dat$country)
   
   format_variant <- function(var_dat){
