@@ -20,7 +20,7 @@ res_id <- c("AdaptationOfWorkplace", "BanOnAllEvents", "ClosDaycare",
            "ClosureOfPublicTransportPartial", "IndoorOver50", "StayHomeRiskG", "HotelsAccommodationPartial", "OutdoorOver100",
            "WorkplaceClosures", "WorkplaceClosuresPartial", "MasksVoluntaryAllSpacesPartial","MasksVoluntaryClosedSpaces",
            "StayHomeRiskGPartial", "RegionalStayHomeOrderPartial", "SocialCirclePartial",
-           "QuarantineForInternationalTravellers", "QuarantineForInternationalTravellersPartial", "new_people_vaccinated_smoothed")
+           "QuarantineForInternationalTravellers", "QuarantineForInternationalTravellersPartial")
           
 res_text <- c("Adaptation Of Workplace", "Ban On All Events", "Close Daycare", 
               "Close Daycare Partial", "Close High", "Close High Partial", 
