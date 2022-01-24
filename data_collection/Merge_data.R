@@ -144,7 +144,7 @@ vaccination <- prepare_vaccination(vaccination)
 variant_vars <- which(grepl("percent_variant", colnames(tdata)))
 variant_vars_spec <- variant_vars[-which(variant_vars == which(colnames(tdata) == "percent_variant.Other"))]
 tdata[,variant_vars_spec] <- lapply(tdata[,variant_vars_spec], function(x){
-  x[which(is.na(x) & x$date < "2021.01.01")] <- 0
+  x[which(is.na(x) & tdata$date < "2021.01.01")] <- 0
   return(x)
 })
 tdata[,"percent_variant.Other"][which(is.na(tdata[,"percent_variant.Other"]) & tdata$date < "2021.01.01")] <- 100
