@@ -124,6 +124,13 @@ prepare_variant <- function(variant_dat){
   
   variant_dat <- rbind(variant_gisaid, variant_tessy)
   
+  # Keep only variants that were dominant
+  common_vari <- variant_dat %>%
+    group_by(country, year_week) %>%
+    top_n(1, percent_variant)
+  most_common <- unlist(unique(common_vari$variant))
+  most_common <- paste("percent_variant.", most_common, sep = "")
+  
   variant_list <- split(variant_dat, variant_dat$country)
   
   format_variant <- function(var_dat){
@@ -159,9 +166,10 @@ prepare_variant <- function(variant_dat){
   #"percent_variant.B.1.1.7+E484K", "percent_variant.SGTF"
   
   # Keep only 10 most common variants
-  most_common <- c("percent_variant.B.1.1.7", "percent_variant.B.1.351", "percent_variant.Other", "percent_variant.B.1.1.529",
-                   "percent_variant.B.1.617.2", "percent_variant.AY.4.2", "percent_variant.P.1", "percent_variant.B.1.525",
-                   "percent_variant.B.1.1.7+E484K", "percent_variant.SGTF")
+  #most_common <- c("percent_variant.B.1.1.7", "percent_variant.B.1.351", "percent_variant.Other", "percent_variant.B.1.1.529",
+  #                 "percent_variant.B.1.617.2", "percent_variant.AY.4.2", "percent_variant.P.1", "percent_variant.B.1.525",
+  #                 "percent_variant.B.1.1.7+E484K", "percent_variant.SGTF")
+  
   
   y <- do.call("rbind", lapply(all_variants, function(x){
     x[,most_common[which(most_common %nin% colnames(x))]] <- 0
@@ -247,5 +255,3 @@ prepare_vaccination <- function(vaccine_dat){
   vaccine_dat$date <- as.character(vaccine_dat$date)
   return(vaccine_dat)
 } 
-
-
