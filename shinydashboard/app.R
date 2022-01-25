@@ -179,13 +179,14 @@ ui <- dashboardPage(
       #Content Manual
       tabItem(tabName = "source",
               h1("Datasources"),
-              h4(tags$div(tags$a(href = "https://covidmap.umd.edu/", "Facebook/UMD COVID-19 World Symptom Survey"))),
+              h4(tags$div(tags$a(href = "https://covidmap.umd.edu/", "Facebook/UMD Global COVID-19 Trends and Impact Survey"))),
               h4(tags$div(tags$a(href ="https://github.com/RamiKrispin/coronavirus", "Johns Hopkins University CSSE COVID-19 Data Repository"))),
               h4(tags$div(tags$a(href ="https://ourworldindata.org/coronavirus", "Vaccination from Our World in Data"))),
               h4(tags$div(tags$a(href ="https://www.ecdc.europa.eu/en/publications-data/download-data-response-measures-covid-19", 
                      "Country response measures to COVID-19 by week and by country, European Centre for Disease Prevention and Control"))),
               h4(tags$div(tags$a(href ="https://www.ncdc.noaa.gov/", "Temperature, National Centers for Environmental Information"))), 
               h4(tags$div(tags$a(href ="https://ec.europa.eu/eurostat", "Eurostat databases on Population, Health expenditures and Cultural participation"))),
+              h4(tags$div(tags$a(href ="https://www.ecdc.europa.eu/en/publications-data/data-virus-variants-covid-19-eueea", "COVID-19 variants in the EU, European Centre for Disease Prevention and Control"))),
               
               # Documentation tab with linked datasources and downloadable manual
               h1("User's Manual"),
