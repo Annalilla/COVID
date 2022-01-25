@@ -124,12 +124,14 @@ prepare_variant <- function(variant_dat){
   
   variant_dat <- rbind(variant_gisaid, variant_tessy)
   
-  # Keep only variants that were dominant
+  # Keep only variants that were dominant for at least 5 weeks
   common_vari <- variant_dat %>%
     group_by(country, year_week) %>%
-    top_n(1, percent_variant)
-  most_common <- unlist(unique(common_vari$variant))
-  most_common <- paste("percent_variant.", most_common, sep = "")
+    top_n(1, percent_variant) %>%
+    group_by(variant) %>%
+    dplyr::summarise(n = n())
+  common_vari <- common_vari$variant[common_vari$n > 4]
+  most_common <- paste("percent_variant.", common_vari, sep = "")
   
   variant_list <- split(variant_dat, variant_dat$country)
   
