@@ -38,24 +38,25 @@ rf_max_date <- min(do.call(c, lapply(unique(tdata$country), function(x){
 
 rf_dat_cl <- tdata_cl[(((tdata_cl$date >= "2020-02-28") & (tdata_cl$date <= rf_max_date))), 
                 -which(colnames(tdata_cl) %in% c("year", "week", "country_code","testing_new_cases", "tests_done", "testing_population", 
-                                              "testing_rate", "testing_positivity_rate", "fb_data.iso_code","fb_data.country", "fb_status",
-                                              "fb_data.cli_se", "fb_data.percent_cli_unw","fb_data.cli_se_unw", "fb_data.sample_size_cli", 
-                                              "fb_data.smoothed_cli", "fb_data.smoothed_cli_se", "fb_data.sample_size_smoothed_cli",
-                                              "fb_data.mc_se", "fb_data.percent_mc_unw", "fb_data.mc_se_unw", "fb_data.sample_size_mc",
-                                              "fb_data.smoothed_mc", "fb_data.smoothed_mc_se", "fb_data.sample_size_smoothed_mc",
-                                              "fb_data.mc_se_dc", "fb_data.percent_dc_unw", "fb_data.dc_se_unw", "fb_data.sample_size_dc",               
-                                              "fb_data.smoothed_dc", "fb_data.smoothed_dc_se", "fb_data.sample_size_smoothed_dc",      
-                                              "iso_code", "deaths_new", "recovered_new",
-                                              "fb_data.covid_se_cli" , "fb_data.pct_covid_unw_cli" , 
-                                              "fb_data.covid_se_unw_cli" , "fb_data.sample_size_cli" , "fb_data.smoothed_pct_covid_cli" , 
-                                              "fb_data.smoothed_covid_se_cli" , "fb_data.sample_size_smoothed_cli",
-                                              # From vaccination keep only people_vaccinated_per_hundred and people_fully_vaccinated_per_hundred
-                                              "total_vaccinations", "people_vaccinated", "people_fully_vaccinated", "new_vaccinations",
-                                              "new_vaccinations_smoothed", "total_vaccinations_per_hundred", "new_vaccinations_smoothed_per_million",
-                                              "new_people_vaccinated_smoothed",
-                                              # Remove direct contact because of missing values at the end
-                                              "fb_data.percent_dc"
-                                              ))]
+                                                 "testing_rate", "testing_positivity_rate", "fb_data.iso_code","fb_data.country", "fb_status",
+                                                 "fb_data.cli_se", "fb_data.percent_cli_unw","fb_data.cli_se_unw", "fb_data.sample_size_cli", 
+                                                 "fb_data.smoothed_cli", "fb_data.smoothed_cli_se", "fb_data.sample_size_smoothed_cli",
+                                                 "fb_data.mc_se", "fb_data.percent_mc_unw", "fb_data.mc_se_unw", "fb_data.sample_size_mc",
+                                                 "fb_data.smoothed_mc", "fb_data.smoothed_mc_se", "fb_data.sample_size_smoothed_mc",
+                                                 "fb_data.mc_se_dc", "fb_data.percent_dc_unw", "fb_data.dc_se_unw", "fb_data.sample_size_dc",               
+                                                 "fb_data.smoothed_dc", "fb_data.smoothed_dc_se", "fb_data.sample_size_smoothed_dc",      
+                                                 "iso_code",
+                                                 "deaths_new", "recovered_new",
+                                                 "fb_data.covid_se_cli" , "fb_data.pct_covid_unw_cli" , 
+                                                 "fb_data.covid_se_unw_cli" , "fb_data.sample_size_cli" , "fb_data.smoothed_pct_covid_cli" , 
+                                                 "fb_data.smoothed_covid_se_cli" , "fb_data.sample_size_smoothed_cli",
+                                                 # From vaccination keep only people_vaccinated_per_hundred and new_people_vaccinated_smoothed_per_hundred
+                                                 "total_vaccinations", "people_vaccinated", "people_fully_vaccinated", "new_vaccinations",
+                                                 "new_vaccinations_smoothed", "total_vaccinations_per_hundred", "new_vaccinations_smoothed_per_million",
+                                                 "new_people_vaccinated_smoothed", "people_vaccinated_per_hundred",
+                                                 # Remove direct contact because of missing values at the end
+                                                 "fb_data.percent_dc"
+                                                 ))]
 
 
 
