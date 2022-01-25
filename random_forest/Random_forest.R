@@ -48,10 +48,10 @@ rf_dat <- tdata_cl[(((tdata_cl$date >= "2020-02-28") & (tdata_cl$date <= rf_max_
                                                        "fb_data.covid_se_cli" , "fb_data.pct_covid_unw_cli" , 
                                                        "fb_data.covid_se_unw_cli" , "fb_data.sample_size_cli" , "fb_data.smoothed_pct_covid_cli" , 
                                                        "fb_data.smoothed_covid_se_cli" , "fb_data.sample_size_smoothed_cli",
-                                                       # From vaccination keep only people_vaccinated_per_hundred and people_fully_vaccinated_per_hundred
+                                                       # From vaccination keep only people_vaccinated_per_hundred and new_people_vaccinated_smoothed_per_hundred
                                                        "total_vaccinations", "people_vaccinated", "people_fully_vaccinated", "new_vaccinations",
                                                        "new_vaccinations_smoothed", "total_vaccinations_per_hundred", "new_vaccinations_smoothed_per_million",
-                                                       "new_people_vaccinated_smoothed",
+                                                       "new_people_vaccinated_smoothed", "people_vaccinated_per_hundred",
                                                        # Remove direct contact because of missing values at the end
                                                        "fb_data.percent_dc"
                                                        ))]
@@ -226,5 +226,4 @@ country_res_varimp <- lapply(c_rf_dat_fb, function(x) rf_model_varimp(x))
 
 #Save results and further input for the Shiny visualization
 saveRDS(country_res_varimp, "shinydashboard/dat/country_res_varimp.RDS")
-
 
