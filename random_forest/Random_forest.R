@@ -227,3 +227,4 @@ country_res_varimp <- lapply(c_rf_dat_fb, function(x) rf_model_varimp(x))
 #Save results and further input for the Shiny visualization
 saveRDS(country_res_varimp, "shinydashboard/dat/country_res_varimp.RDS")
 
+
