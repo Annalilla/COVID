@@ -13,6 +13,20 @@ library(plotly)
 
 source("helpers/Restriction_labels.R")
 
+# Adding variables to tdata to mark where a variant was presence
+vari_names <- colnames(tdata)[which(grepl("variant", colnames(tdata)))]
+vari_names <- str_replace_all(vari_names, "percent_variant.", "variant_")
+t_dat <- as.data.frame(matrix(0:0, ncol = length(vari_names), nrow = nrow(tdata)))
+colnames(t_dat) <- vari_names
+t_dat <- lapply(vari_names, function(x){
+  act_vari <- t_dat[, x]
+  act_vari[tdata[,which(colnames(tdata) == str_replace(x, "variant_", "percent_variant."))] > 0] <- 1
+  return(act_vari)
+})
+t_dat <- do.call("cbind", t_dat)
+colnames(t_dat) <- vari_names
+tdata <- cbind(tdata, t_dat)
+
 # Smooth variables as new variable in tdata: cases, tavg
 country_list <- split(tdata, tdata$country)
 country_list <- lapply(country_list, function(x) cbind(x, "smoothed_cases" = rollapply(x$cases_new, 7, mean, na.rm = TRUE, fill = NA)))
@@ -37,35 +51,45 @@ y_limit_list <- lapply(country_list, function(x)
         "y_min_smo_temp" = floor(multi * min(x$smoothed_tavg, na.rm = TRUE) * (max(x$cases, na.rm = TRUE)/max(x$tavg, na.rm = TRUE)))))
 saveRDS(y_limit_list, "shinydashboard/dat/y_limit_list.RDS")
 
-# Restrictions 
+## Restrictions and variants
 
 # Restriction variables are binary
 rest_names <- colnames(tdata[, unlist(lapply(tdata, function(x) all(na.omit(x) %in% c(0, 1))))])
+# Adding variants
+rest_names <- c(rest_names, vari_names)
 saveRDS(rest_names, "shinydashboard/dat/rest_names.RDS")
 
 # Selecting applied restrictions in all countries
 rest_list <- lapply(country_list, function(x) x %>% dplyr::select("date", rest_names))
 rest_list <- lapply(rest_list, function(x) cbind("date" = x$date, as.data.frame(apply(x[,-which(colnames(x) == "date")], 2, as.numeric))))
+#rest_list <- lapply(rest_list, function(x) cbind("date" = x$date, x[,-which(colnames(x) == "date")][, which(colSums(x[,-which(colnames(x) == "date")], na.rm = TRUE) > 0)], x[, which(grepl("variant_", colnames(x)))]))
 rest_list <- lapply(rest_list, function(x) cbind("date" = x$date, x[,-which(colnames(x) == "date")][, which(colSums(x[,-which(colnames(x) == "date")], na.rm = TRUE) > 0)]))
 sel_rest_country <- lapply(rest_list, function(x) colnames(x[,-which(colnames(x) == "date")]))
 sel_rest_country <- lapply(sel_rest_country, function(x) x[order(x)])
 saveRDS(sel_rest_country, "shinydashboard/dat/sel_rest_country.RDS")
                            
 # Restriction measures and tooltips for countries
-# rest_table created by helpers/restriction_labels.R
+# rest_table, pred_table created by helpers/restriction_labels.R
+vari_table <- data.frame("res_id" = c("variant_B.1.1.529", "variant_B.1.1.7", "variant_B.1.617.2", "variant_Other"),
+                         "res_text" = c("Variant B.1.1.529", "Variant B.1.1.7", "Variant B.1.617.2", "Variant Other"),
+                         "res_label" = c("Percentage of detected SARS-COV2 variant B.1.1.529",
+                                         "Percentage of detected SARS-COV2 variant B.1.1.7",
+                                         "Percentage of detected SARS-COV2 variant B.1.617.2",
+                                         "Percentage of detected SARS-COV2 variant Other")) 
+rest_var_table <- rbind(rest_table, vari_table)
 res_label_country <- lapply(sel_rest_country, function(x){
   x <- as.data.frame(x)
   colnames(x) <- "res_id"
-  y <- merge(x, rest_table, by = "res_id", all.x = TRUE)
+  y <- merge(x, rest_var_table, by = "res_id", all.x = TRUE)
   # If label or tooltip is missing the id will be used
-  y$res_text[which(is.na(y$res_text))] <- y$res_id[which(is.na(y$res_text))]
   y$res_label[which(is.na(y$res_label))] <- y$res_id[which(is.na(y$res_text))]
+  y$res_text[which(is.na(y$res_text))] <- y$res_id[which(is.na(y$res_text))]
   y
 })
 saveRDS(res_label_country, "shinydashboard/dat/res_label_country.RDS")
 
 #Deleting missing values from the beginning
-rest_list <- lapply(rest_list, function(x) x[-which(apply(x[, -which(colnames(x) == "date")], 1, function(y) all(is.na(y)))),])
+rest_list <- lapply(rest_list, function(x) x[-which(apply(x[, -c(which(colnames(x) == "date"), which(colnames(x) %in% vari_names))], 1, function(y) all(is.na(y)))),])
 
 # Creating variables to calculate the x coordinates later for the visualization
 rest_prev <- lapply(rest_list, function(x) cbind(x, rbind(rep(NA, ncol(x)), x[1:(nrow(x) - 1),])))
@@ -233,7 +257,7 @@ n_top <- as.data.frame(top_pred_c[which(top_pred_c$predictor %in% pred_order$pre
   dplyr::summarise(n = n()))
 summary(n_top)
                              
-                             ## Reverse scaling the x axis for rug of pdp
+## Reverse scaling the x axis for rug of pdp
 
 # Min-max values for all variables in all countries
 x_min_max <- list()
@@ -270,17 +294,20 @@ pdp_pred_paired <- function(countr, pred1, pred2){
 get_selectable <- function(country, no_top_predictors)
 {
   all_pred <- b_dat[[country]]
-  all_pred <- all_pred[-which(rownames(all_pred) == "people_vaccinated_per_hundred")]
+  #all_pred <- all_pred[-which(rownames(all_pred) == "people_vaccinated_per_hundred")]
   all_pred <- cbind("pred" = rownames(all_pred), all_pred)
-  # Remove variables that are not in the training data
-  all_pred <- all_pred[-which(all_pred$pred %nin% colnames(rf_train[[country]]$trainingData)),]
+  # Remove variables that are not in the training data or which has no ranking (no variance)
+  all_pred <- all_pred[-c(which(is.na(all_pred$ranking)), which(all_pred$pred %nin% colnames(rf_train[[country]]$trainingData))),]
   sel_pred <- all_pred[order(all_pred$ranking),]
   sel_pred <- merge(sel_pred, all_pred_table, by.x = "pred", by.y = "pred_id")
   sel_pred <- sel_pred[order(sel_pred$ranking),]
   all_choices <- sel_pred$pred_text
   des_left <- c("Average Daily Temperature", "COVID-like Illnes", "Mask Coverage", "People Fully Vaccinated Per Hundred")
   left_vars <- des_left[which(des_left %in% sel_pred$pred_text)]
-  right_vars <- c(left_vars, all_choices[-which(all_choices %in% left_vars)])[1:no_top_predictors]
+  des_variant_vars <- c("Variant B.1.1.529", "Variant B.1.1.7", "Variant B.1.617.2", "Variant Other")
+  variant_vars <- des_variant_vars[which(des_variant_vars %in% sel_pred$pred_text)]
+  right_top_vars <- c(left_vars, variant_vars)
+  right_vars <- c(right_top_vars, all_choices[-which(all_choices %in% right_top_vars)])[1:no_top_predictors]
   
   des_left_id = c("tavg", "fb_data.pct_covid_cli", "fb_data.percent_mc", "people_fully_vaccinated_per_hundred")
   left_vars_id <- des_left_id[which(des_left_id %in% sel_pred$pred)]
@@ -291,9 +318,10 @@ get_selectable <- function(country, no_top_predictors)
 
 selectable_ctr <- list()
 selectable_ctr <- lapply(all_country, function(x){
-  get_selectable(x, 10)
+  get_selectable(x, 15)
 })
 names(selectable_ctr) <- all_country
+saveRDS(selectable_ctr, "shinydashboard/dat/selectable_3d_country.RDS")
 
 # Function to create pdp object
 pdp_3d_object <- function(pred_id1, pred_id2, country){
@@ -342,22 +370,5 @@ pdp_3d_country <- lapply(all_country, function(x){
 
 names(pdp_3d_country) <- all_country
 
-
-#test
-#pred1 <- "tavg"
-#pred2 <- "people_fully_vaccinated_per_hundred"
-#pdp_3d_country <- ctr_pdp_3d_object("Austria")
-
-#plotPartial(pdp_3d_country)
-
-#plotPartial(pdp_3d_country, contour = TRUE, col.regions = colorRampPalette(c("red", "white", "blue")),
-#            xlab = "knkl")
-
-#plotPartial(pdp_3d_country, levelplot = FALSE, zlab = "cmedv", colorkey = TRUE, 
-#            screen = list(z = -20, x = -60))
-
-
-
 saveRDS(pdp_3d_country, "shinydashboard/dat/pdp_3d_country.RDS")
-saveRDS(selectable_ctr, "shinydashboard/dat/selectable_3d_country.RDS")
 
