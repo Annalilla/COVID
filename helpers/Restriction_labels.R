@@ -114,4 +114,3 @@ bc_country <- paste("bc", c("Austria", "Belgium", "Bulgaria", "Croatia", "Czechi
                 "Greece", "Hungary", "Ireland", "Italy", "Netherlands", "Poland", "Portugal", "Romania", "Slovakia",
                 "Slovenia", "Spain", "Sweden"), sep = "_")
 saveRDS(bc_country, "shinydashboard/dat/bc_country.RDS")
-
