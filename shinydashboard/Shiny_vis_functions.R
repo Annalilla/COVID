@@ -80,17 +80,17 @@ exp_plot_add_temp <- function(plot, temp, dat){
     multi <- max(dat$cases, na.rm = TRUE)/max(dat$tavg, na.rm = TRUE)
     labpx1 <- (dat[which.max(dat$tavg), "date"] + x_dist)
     labpy1 <- (multi * dat[1, "tavg"] + multi)
-    labt1 <- paste(round(dat[1, "tavg"], 1), "°C", sep = "")
+    labt1 <- paste(round(dat[1, "tavg"], 1), "Â°C", sep = "")
     pointx1 <- dat[1, "date"]
     pointy1 <- (multi * dat[1, "tavg"])
     labpx <- (dat[which.max(dat$tavg), "date"] + x_dist)
     labpy <- (multi * dat[which.max(dat$tavg), "tavg"] + multi)
-    labt <- paste(round(dat[which.max(dat$tavg), "tavg"], 1), "°C", sep = "")
+    labt <- paste(round(dat[which.max(dat$tavg), "tavg"], 1), "Â°C", sep = "")
     pointx <- dat[which.max(dat$tavg), "date"]
     pointy <- (multi * dat[which.max(dat$tavg), "tavg"])
     labpxmin <- (dat[which.min(dat$tavg), "date"] + x_dist)
     labpymin <- (multi * dat[which.min(dat$tavg), "tavg"])
-    labtmin <- paste(round(dat[which.min(dat$tavg), "tavg"], 1), "°C", sep = "")
+    labtmin <- paste(round(dat[which.min(dat$tavg), "tavg"], 1), "Â°C", sep = "")
     pointxmin <- dat[which.min(dat$tavg), "date"]
     pointymin <- (multi * dat[which.min(dat$tavg), "tavg"])
     
