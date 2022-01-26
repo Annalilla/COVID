@@ -87,4 +87,4 @@ country_char[, which(colnames(country_char) %in% vars_to_factor_cc)] <-
   lapply(country_char[, which(colnames(country_char) %in% vars_to_factor_cc)], as.factor)
          
          
-    
+   
