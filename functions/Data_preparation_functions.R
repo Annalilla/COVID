@@ -114,8 +114,9 @@ prepare_variant <- function(variant_dat){
   
   #select source of data
   
-  source_GISAID <- c('Austria','Belgium', 'Bulgaria', 'Croatia', 'Denmark', 'Finland', 'France', 'Germany', 'Greece',
-                     'Ireland', 'Italy', 'Netherlands', 'Poland', 'Portugal', 'Romania', 'Slovakia', 'Slovenia', 
+  source_GISAID <- c('Austria','Belgium', 'Bulgaria', 'Croatia', 'Cyprus', 'Czechia', 'Denmark', 'Estonia', 'Finland', 'France',
+                     'Germany', 'Greece',
+                     'Ireland', 'Italy', "Latvia", "Lithuania", "Luxembourg", "Malta", 'Netherlands', 'Poland', 'Portugal', 'Romania', 'Slovakia', 'Slovenia', 
                      'Spain', 'Sweden')
   source_TESSy <- c('Hungary')
   
@@ -257,3 +258,5 @@ prepare_vaccination <- function(vaccine_dat){
   vaccine_dat$date <- as.character(vaccine_dat$date)
   return(vaccine_dat)
 } 
+
+
