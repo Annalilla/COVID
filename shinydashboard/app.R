@@ -372,7 +372,7 @@ server <- function(input, output, session) {
                     color = "darkred") , size = 0.8) +
       xlab(input$predictor_pdp) +
       #xlab(act_pred) +
-      ylab("% of new cases") +
+      ylab("Change in new cases (percentage point)") +
       geom_rug(data = act_rug, aes(x = act_rug[,act_pred], inherit.aes = F, alpha = 0.3, color="darkred")) + 
       theme_minimal() +
       scale_x_continuous(breaks = x_range,labels=x_vals) +
@@ -489,20 +489,26 @@ server <- function(input, output, session) {
       # Axis labels
       labelx <- pred_table[pred_table$pred_id == predx, "pred_text"]
       labely <- pred_table[pred_table$pred_id == predy, "pred_text"]
-      
-      p3 <- plotPartial(object, contour = TRUE, col.regions = colorRampPalette(c("red", "white", "blue")),
-                  xlab = labelx, ylab = labely)
-      
-      #p3 <- plot_ly(x = dens$x, 
-      #              y = dens$y, 
-      #              z = dens$z,
-      #              type = "surface")
-    #  
-      #p3 <- p3 %>% layout(scene = list(xaxis = list(title = "X"),
-      #                                 yaxis = list(title = "Y"),
-      #                                 zaxis = list(title = "Partial Dependence")))
-      
-      p3
+
+      if(!is_null(object)){
+        p3 <- plotPartial(object, contour = TRUE, col.regions = colorRampPalette(c("red", "white", "blue")),
+                    xlab = labelx, ylab = labely)
+        
+        #p3 <- plot_ly(x = dens$x, 
+        #              y = dens$y, 
+        #              z = dens$z,
+        #              type = "surface")
+      #  
+        #p3 <- p3 %>% layout(scene = list(xaxis = list(title = "X"),
+        #                                 yaxis = list(title = "Y"),
+        #                                 zaxis = list(title = "Partial Dependence")))
+        
+        p3
+      }else{
+        output$diff_error <- renderText({
+          "Visualization not possible. Please select an other predictor!"
+        })
+      }
       
     }
 
