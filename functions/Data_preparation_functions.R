@@ -125,8 +125,11 @@ prepare_variant <- function(variant_dat){
   
   variant_dat <- rbind(variant_gisaid, variant_tessy)
   
-  # Keep only variants that were dominant for at least 5 weeks
-  common_vari <- variant_dat %>%
+  # Keep only variants that were dominant for at least 5 weeks in countries involved in the random forest
+  rf_count<- c("Austria", "Belgium", "Bulgaria", "Croatia", "Czechia", "Denmark", "Finland",
+               "France","Germany", "Greece",  "Hungary", "Ireland", "Italy", "Netherlands",
+               "Poland", "Portugal", "Romania", "Slovakia", "Slovenia", "Spain", "Sweden")
+  common_vari <- variant_dat[variant_dat$country %in% rf_count] %>%
     group_by(country, year_week) %>%
     top_n(1, percent_variant) %>%
     group_by(variant) %>%
@@ -184,7 +187,7 @@ prepare_variant <- function(variant_dat){
   y <- y %>% mutate_all(~replace_na(., 0))
   
   # Change variable name 'percent_variant.B.1.1.7+E484K' because '+' symbol can cause problems in the analysis
-  colnames(y)[which(colnames(y) == 'percent_variant.B.1.1.7+E484K')] <- "percent_variant.B.1.1.7_E484K"
+  #colnames(y)[which(colnames(y) == 'percent_variant.B.1.1.7+E484K')] <- "percent_variant.B.1.1.7_E484K"
   
   return(y)
 }
