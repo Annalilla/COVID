@@ -12,7 +12,6 @@ library(caret)
 library(plotly)
 
 source("helpers/Restriction_labels.R")
-
 # Adding variables to tdata to mark where a variant was presence
 vari_names <- colnames(tdata)[which(grepl("variant", colnames(tdata)))]
 vari_names <- str_replace_all(vari_names, "percent_variant.", "variant_")
@@ -231,7 +230,9 @@ b_vis_r$ord <- rowSums(b_vis_r, na.rm = TRUE)
 b_vis <- b_vis[order(b_vis_r$ord, decreasing = TRUE),]
 
 # Removing last_day and last_week from bump chart
-b_vis <- b_vis[-which(row.names(b_vis) %in% c("last_day", "last_week")),]
+if(length(which(row.names(b_vis) %in% c("last_day", "last_week"))) > 0){
+  b_vis <- b_vis[-which(row.names(b_vis) %in% c("last_day", "last_week")),]
+}
 
 pred_order <- as.data.frame(cbind("predictor" = rownames(b_vis), "order" = 1:nrow(b_vis)))
 saveRDS(pred_order, "shinydashboard/dat/pred_order.RDS")
@@ -302,23 +303,25 @@ get_selectable <- function(country, no_top_predictors)
   sel_pred <- merge(sel_pred, all_pred_table, by.x = "pred", by.y = "pred_id")
   sel_pred <- sel_pred[order(sel_pred$ranking),]
   all_choices <- sel_pred$pred_text
-  des_left <- c("Average Daily Temperature", "COVID-like Illnes", "Mask Coverage", "People Fully Vaccinated Per Hundred")
+  des_left <- c("Average Daily Temperature", "COVID-like Illnes", "Mask Coverage")
   left_vars <- des_left[which(des_left %in% sel_pred$pred_text)]
   des_variant_vars <- c("Variant B.1.1.529", "Variant B.1.1.7", "Variant B.1.617.2", "Variant Other")
   variant_vars <- des_variant_vars[which(des_variant_vars %in% sel_pred$pred_text)]
   right_top_vars <- c(left_vars, variant_vars)
   right_vars <- c(right_top_vars, all_choices[-which(all_choices %in% right_top_vars)])[1:no_top_predictors]
   
-  des_left_id = c("tavg", "fb_data.pct_covid_cli", "fb_data.percent_mc", "people_fully_vaccinated_per_hundred")
+  des_left_id = c("tavg", "fb_data.pct_covid_cli", "fb_data.percent_mc")
   left_vars_id <- des_left_id[which(des_left_id %in% sel_pred$pred)]
-  right_vars_id = c(c(left_vars_id, sel_pred$pred[-which(sel_pred$pred %in% left_vars_id)])[1:no_top_predictors])
-  return(as.data.frame(cbind("left_vars" = left_vars, "right_vars" = right_vars, "left_vars_id" = left_vars_id,
-                             "right_vars_id" = right_vars_id)))  
+  sel_table <- cbind(left_vars, left_vars_id,  right_vars, "order" = c(1:length(right_vars)))
+  sel_table <- as.data.frame(merge(sel_table, sel_pred[, c("pred", "pred_text")], by.x = "right_vars", by.y = "pred_text", all.x = TRUE))
+  sel_table <- sel_table[order(as.numeric(sel_table$order)),]
+  colnames(sel_table)[which(colnames(sel_table) == "pred")] <- "right_vars_id" 
+  return(sel_table[,c("left_vars", "right_vars", "left_vars_id", "right_vars_id")])
 }
 
 selectable_ctr <- list()
 selectable_ctr <- lapply(all_country, function(x){
-  get_selectable(x, 15)
+  get_selectable(x, 12)
 })
 names(selectable_ctr) <- all_country
 saveRDS(selectable_ctr, "shinydashboard/dat/selectable_3d_country.RDS")
