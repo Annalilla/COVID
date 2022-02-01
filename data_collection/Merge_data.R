@@ -107,7 +107,27 @@ variant <- prepare_variant(variant)
 # Merging reponse and testing with variant
 resp_test_temp <- merge(response_testing, variant, by = c("country", "year", "week"), all.x = TRUE)
 
-# Replace NAs in variants with 0
+# Set variants to 0 before first detection
+# Source of detection date: https://www.ecdc.europa.eu/en/covid-19/variants-concern
+min_dates <- as.data.frame(matrix(ncol = 4, nrow = 1))
+colnames(min_dates) <- c("B.1.1.7", "P.1", "B.1.617.2", "B.1.1.529")
+min_dates$B.1.1.7 <- "2020-09.01"
+min_dates$P.1 <- "2020-12-01"
+min_dates$B.1.617.2 <- "2020-12-01"
+min_dates$B.1.1.529 <- "2021-11-01"
+
+resp_test_temp <- as.data.frame(resp_test_temp)
+new_var_cols <- lapply(colnames(min_dates), function(x){
+  act_col <- resp_test_temp[, c(which(colnames(resp_test_temp) == "date"), which(grepl(x, colnames(resp_test_temp))))]
+  act_min_date <- min_dates[,which(colnames(min_dates) == x)]
+  act_col[which(act_col$date < act_min_date & act_col[,2] > 0), 2] <- 0
+  return(act_col)
+})
+new_var_cols <- do.call("cbind", new_var_cols)
+new_var_cols <- new_var_cols[,-which(colnames(new_var_cols) == "date")]
+
+resp_test_temp <- cbind(resp_test_temp[,-which(colnames(resp_test_temp) %in% colnames(new_var_cols))],
+                        new_var_cols)
 
 
 #
@@ -149,15 +169,17 @@ tdata[,variant_vars_spec] <- lapply(tdata[,variant_vars_spec], function(x){
 })
 tdata[,"percent_variant.Other"][which(is.na(tdata[,"percent_variant.Other"]) & tdata$date < "2021.01.01")] <- 100
 
-# Remove last rows, where variants are missing
-missing_vari <- which(apply(tdata[,variant_vars], 1, function(x) sum(which(is.na(x)))) > 0)
+# Remove last rows, where variants are missing <- they will be removed later
+# missing_vari <- which(apply(tdata[,variant_vars], 1, function(x) sum(which(is.na(x)))) > 0)
 
-max_date <- min(tdata[missing_vari, "date"])
+#max_date <- min(tdata[missing_vari, "date"])
 
-tdata <- tdata[tdata$date < max_date,]
+#tdata <- tdata[tdata$date < max_date,]
 
 # Merging with vaccination
 tdata <- merge(tdata, vaccination, by = c("country", "date"), all.x = TRUE)
+
+tdata <- tdata[,-which(colnames(tdata) == "percent_variant.P.1")]
 
 
 # Year and week numeric
