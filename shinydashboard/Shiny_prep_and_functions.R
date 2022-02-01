@@ -36,6 +36,7 @@ smooth_or_not <- function(to_smooth, cvar, min_date, max_date){
     df <- df[,c(which(colnames(df) %in% c("date", "cases_new", "tavg")))]
   }
   colnames(df) <- c("date", "cases", "tavg")
+  
   return(df)
 }
 y_limits <- function(lim_list, to_smooth, temp){
