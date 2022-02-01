@@ -50,43 +50,73 @@ rf_dat_cl <- tdata_cl[(((tdata_cl$date >= "2020-02-28") & (tdata_cl$date <= rf_m
                                                  "fb_data.covid_se_cli" , "fb_data.pct_covid_unw_cli" , 
                                                  "fb_data.covid_se_unw_cli" , "fb_data.sample_size_cli" , "fb_data.smoothed_pct_covid_cli" , 
                                                  "fb_data.smoothed_covid_se_cli" , "fb_data.sample_size_smoothed_cli",
-                                                 # From vaccination keep only people_vaccinated_per_hundred and new_people_vaccinated_smoothed_per_hundred
+                                                 # From vaccination keep only "people_vaccinated_per_hundred" and new_people_vaccinated_smoothed_per_hundred
                                                  "total_vaccinations", "people_vaccinated", "people_fully_vaccinated", "new_vaccinations",
                                                  "new_vaccinations_smoothed", "total_vaccinations_per_hundred", "new_vaccinations_smoothed_per_million",
-                                                 "new_people_vaccinated_smoothed", "people_vaccinated_per_hundred",
+                                                 "new_people_vaccinated_smoothed", "people_fully_vaccinated_per_hundred",
                                                  # Remove direct contact because of missing values at the end
                                                  "fb_data.percent_dc"
-                                                 ))]
+                ))]
 
-
-
-##Outcome variable
-
-# Number of cases proportionate to population size
-rf_dat_cl$cases_new <- 100 * rf_dat_cl$cases_new/rf_dat_cl$`Population size`
-
-# Lead to new cases
-rf_dat$cases_new <- lead(rf_dat$cases_new, 14)
 
 # Preprocess per cluster
 # Split by country
 rf_dat_cl_splitted <- split(rf_dat_cl, rf_dat_cl$country)
+
+# In some countries only weekly reports about vaccination
+# function to replace miccing vaccination values with the previous one
+replace_na_with_prev <- function(country_dat){
+  act_dat <- country_dat
+  if(nrow(act_dat) > 0){
+    for(i in 2:nrow(act_dat)){
+      if(is.na(act_dat$people_vaccinated_per_hundred[i])){
+        act_dat$people_vaccinated_per_hundred[i] <- act_dat$people_vaccinated_per_hundred[i-1]
+      }
+      #if(is.na(act_dat$people_fully_vaccinated_per_hundred[i])){
+      #  act_dat$people_fully_vaccinated_per_hundred[i] <- act_dat$people_fully_vaccinated_per_hundred[i-1]
+      #}
+    }
+  }
+  return(act_dat)
+}
+
+rf_dat_cl_splitted <- lapply(rf_dat_cl_splitted, function(x) replace_na_with_prev(x))
+
 rf_dat_cl_splitted <- lapply(rf_dat_cl_splitted, function(x){
   # cumulative cases_new
   x$cases_new[which(is.na(x$cases_new))] <- 0
-  x$cases_new_cum <- cumsum(x$cases_new)
+  #x$cases_new_cum <- cumsum(x$cases_new)
+  
+  # Difference in new cases 14 days later and now
+  #x$cases_new <- lead(x$cases_new, 14)/x$cases_new
+  x$cases_new <- (x$cases_new/x$`Population size`) * 100
+  x$cases_new <- lead(x$cases_new, 14) - x$cases_new
+  
+  # Giving more time for vaccination to show an effect (time for effect of vaccination and time for appear the case in the new_cases)
+  x$people_vaccinated_per_hundred <- lag(x$people_vaccinated_per_hundred, 14)
+  #x$people_fully_vaccinated_per_hundred <- lag(x$people_fully_vaccinated_per_hundred, 14)
+  x$new_people_vaccinated_smoothed_per_hundred <- lag(x$new_people_vaccinated_smoothed_per_hundred, 14)
+  
+  # Data only from 2020.09.01
+  #x <- x[which(x$date >= "2020-09-01"),]
+  
+  # If infinity (cases new is 0 or na) set to na
+  x$cases_new[which(x$cases_new == Inf)] <- NA
+  x$cases_new[which(is.infinite(x$cases_new))] <- NA
   
   # smooth cases_new and cumulative cases_new with rolling average window = 7 days
-  x$cases_new_cum <- rollapply(x$cases_new_cum, 7, mean, na.rm = TRUE, fill = NA)
+  #x$cases_new_cum <- rollapply(x$cases_new_cum, 7, mean, na.rm = TRUE, fill = NA)
   x$cases_new<- rollapply(x$cases_new, 7, mean, na.rm = TRUE, fill = NA)
   
   # Variable for number of cases on previous day and week
-  x$last_day <- lag(x$cases_new, 1)
+  #x$last_day <- lag(x$cases_new, 1)
   #x$last_week <- lag(x$cases_new, 21)
   
   # Smooth deaths, recovered, temperature, fb and vaccination variables with rolling average window = 7 days
   vars_to_smooth <- c("deaths_new", "recovered_new", "tavg", "fb_data.pct_covid_cli", "fb_data.percent_mc", "fb_data.percent_dc",
-                      "people_vaccinated_per_hundred", "people_fully_vaccinated_per_hundred")
+                      "people_vaccinated_per_hundred", "percent_variant.B.1.1.529",
+                      "percent_variant.B.1.1.7", "percent_variant.B.1.617.2",
+                      "percent_variant.Other", "percent_variant.P.1")
   
   
   x[, which(colnames(x) %in% vars_to_smooth)] <-
