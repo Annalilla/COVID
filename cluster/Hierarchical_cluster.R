@@ -173,7 +173,8 @@ ggsave("age_groups.png", age_groups, width = 10, height = 6)
 # Visualization of clusters on a map
 # Prepare data with clusters
 map_cluster <- cbind(clust_dat, "country_code" = rownames(clust_dat))
-map_cluster <- merge(map_cluster, capitals[, c("country", "country_code_iso2")], by.x = "country_code", by.y = "country_code_iso2")
+#map_cluster <- merge(map_cluster, capitals[, c("country", "country_code_iso2")], by.x = "country_code", by.y = "country_code_iso2")
+map_cluster <- merge(map_cluster, capitals[, c("country", "country_code")], by.x = "country_code", by.y = "country_code")
 map_cluster <- map_cluster %>%
   dplyr::select(country, groups) %>%
   dplyr::rename(region = country, cluster = groups)
