@@ -375,3 +375,13 @@ names(pdp_3d_country) <- all_country
 
 saveRDS(pdp_3d_country, "shinydashboard/dat/pdp_3d_country.RDS")
 
+                    # Percentage of vaccinated people
+vacc_p <- lapply(country_list, function(x){
+  x %>% group_by(country) %>% summarise(vacc = max(people_vaccinated_per_hundred, na.rm = TRUE))})
+vacc_p <- unlist(lapply(vacc_p, function(x) sum(x$vacc)))
+low_vacc_c <- c("Bulgaria", "Croatia", "Czechia", "Hungary", "Romania", "Slovakia")
+
+#mean(vacc_p[which(names(vacc_p) %in% low_vacc_c)])
+#51.21667
+#mean(vacc_p[-which(names(vacc_p) %in% low_vacc_c)])
+#76.52048
