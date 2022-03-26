@@ -70,7 +70,7 @@ ui <- dashboardPage(
                                               # Minimum and maximum date is restricted to the interval of the analysis
                                               min = as.Date("2020-02-01"),
                                               max = as.Date("2021-12-31"),
-                                              value = c(min, max))
+                                              value = c(as.Date("2020-02-01"), as.Date("2021-12-31")))
                          ),
                          
                          tags$div(title = "Percentage of respondents that have reported use mask cover",
