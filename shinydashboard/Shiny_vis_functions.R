@@ -206,8 +206,8 @@ bump_chart <- function(vis_dat, x_coord){
         labs(x = "Countries",
              y = "Rank") +
         theme_minimal() +
-        theme(axis.text.x = element_text(angle=60, hjust=1, size = 12),
-              axis.text.y = element_text(size = 12),
+        theme(axis.text.x = element_text(angle=60, hjust=1, size = 14),
+              axis.text.y = element_text(size = 14),
               panel.grid.major.x = element_blank(),
               legend.position = "none",
               plot.margin = unit(c(1,3,1,1), "lines")) +
