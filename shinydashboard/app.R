@@ -64,9 +64,13 @@ ui <- dashboardPage(
                          
                          tags$div(title = "Set the date interval",
                                   sliderInput("dateinterval", "Date Range",
-                                              min = min(country_list[[1]]$date),
-                                              max = max(country_list[[1]]$date),
-                                              value = c(min(country_list[[1]]$date), max(country_list[[1]]$date)))
+                                              #min = min(country_list[[1]]$date),
+                                              #max = max(country_list[[1]]$date),
+                                              #value = c(min(country_list[[1]]$date), max(country_list[[1]]$date)))
+                                              # Minimum and maximum date is restricted to the interval of the analysis
+                                              min = as.Date("2020-02-01"),
+                                              max = as.Date("2021-12-31"),
+                                              value = c(min, max))
                          ),
                          
                          tags$div(title = "Percentage of respondents that have reported use mask cover",
