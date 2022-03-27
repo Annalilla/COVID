@@ -3,6 +3,7 @@
 
 source("functions/Get_data.R")
 
+# To reproduce published results: tdata <- get_data("tdata_2022-01-26", local = FALSE)
 tdata <- get_data("tdata", local = FALSE)
 country_char <- get_data("country_char", local = FALSE)
 
