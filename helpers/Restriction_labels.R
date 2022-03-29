@@ -79,8 +79,8 @@ pred_id <- c("cases_new_lead", "deaths_new", "fb_data.percent_dc", "fb_data.perc
              "percent_variant.B.1.1.7_E484K", "percent_variant.SGTF")
 pred_text <- c("New cases with lead", "Deaths", "Direct Contact", "Mask Coverage", "New Vaccinations", "People Fully Vaccinated Per Hundred",
                "People Vaccinated Per Hundred", "Recovered", "Average Daily Temperature", "Total Vaccinations Per Hundred",
-               "COVID-like Illnes", "Sample Size Direct Contact", "Sample Size Mask Cover",
-               "COVID-like Illnes Smoothed", "New cases on the last day", "New cases on the last week",
+               "COVID-like Illness", "Sample Size Direct Contact", "Sample Size Mask Cover",
+               "COVID-like Illness Smoothed", "New cases on the last day", "New cases on the last week",
                "People Fully Vaccinated", "New Vaccinations per Million Smoothed", "New Vaccinations Smoothed",
                "Total Vaccinations", "People Vaccinated", "New people vaccinated smoothed", "New people vaccinated per hundred smoothed",
                "Variant B.1.1.7", "Variant B.1.351", "Variant Other", "Variant B.1.1.529",
