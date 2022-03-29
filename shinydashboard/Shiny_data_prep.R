@@ -272,7 +272,7 @@ get_selectable <- function(country, no_top_predictors)
   sel_pred <- merge(sel_pred, all_pred_table, by.x = "pred", by.y = "pred_id")
   sel_pred <- sel_pred[order(sel_pred$ranking),]
   all_choices <- sel_pred$pred_text
-  des_left <- c("Average Daily Temperature", "COVID-like Illnes", "Mask Coverage")
+  des_left <- c("Average Daily Temperature", "COVID-like Illness", "Mask Coverage")
   left_vars <- des_left[which(des_left %in% sel_pred$pred_text)]
   des_variant_vars <- c("Variant B.1.1.529", "Variant B.1.1.7", "Variant B.1.617.2", "Variant Other")
   variant_vars <- des_variant_vars[which(des_variant_vars %in% sel_pred$pred_text)]
