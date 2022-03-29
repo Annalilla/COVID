@@ -314,7 +314,7 @@ server <- function(input, output, session) {
   observeEvent(input$country_pdp,{
   act_choices <- all_pred_table[which(all_pred_table$pred_id %in% names(pdp_all_c_all_pred[[input$country_pdp]])), "pred_text"]
     # Ordering predictors: average daily temperature, fb variables, restriction measures
-    first_vars <- c("Average Daily Temperature", "COVID-like Illnes", "Mask Coverage")
+    first_vars <- c("Average Daily Temperature", "COVID-like Illness", "Mask Coverage")
     rest_choices <- act_choices[-which(act_choices %in% first_vars)]
     act_choices <- c(first_vars, rest_choices[order(rest_choices)])
     updateSelectInput(session,'predictor_pdp',
@@ -396,7 +396,7 @@ server <- function(input, output, session) {
   observeEvent(input$country_3d_pdp,{
     #all_choices <- all_pred_table[which(all_pred_table$pred_id %in% names(pdp_all_c_all_pred[[input$country_3d_pdp]])), "pred_text"]
     # Ordering predictors: average daily temperature, fb variables, restriction measures
-    #first_vars <- c("Average Daily Temperature", "COVID-like Illnes", "Mask Coverage", "People Fully Vaccinated Per Hundred")
+    #first_vars <- c("Average Daily Temperature", "COVID-like Illness", "Mask Coverage", "People Fully Vaccinated Per Hundred")
     #rest_choices <- all_choices[-which(all_choices %in% first_vars)]
     #act_choices <- c(first_vars, rest_choices[order(rest_choices)])
     left_vars = selectable_ctr[[input$country_3d_pdp]]$left_vars
