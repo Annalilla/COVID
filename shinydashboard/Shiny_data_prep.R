@@ -101,52 +101,20 @@ saveRDS(rest_prev, "shinydashboard/dat/rest_prev.RDS")
 
 
 c_rf_dat_fb <- readRDS("shinydashboard/dat/c_rf_dat_fb.RDS")
+c_rf_dat_fb <- lapply(c_rf_dat_fb, function(x){
+  x <- x[complete.cases(x),]
+  return(x)})
 
 ##Functions for Shiny pdp data preparation
 
 #Creates the train object per countries, then the pdp input for one country, all predictors
-
-#Creates the train object
-
-rf_train <- function(country_dat){
-  country <- country_dat$country[1]
-  rf_dat_t <- country_dat[complete.cases(country_dat),]
-  
-  # Train and test set
-  #set.seed(9985)
-  #to_train <- createDataPartition(rf_dat_t$cases_new_cum,
-  #                                p = .8,
-  #                                list = FALSE,
-  #                                times = 1)
-  
-  #rf_train <- rf_dat_t[to_train,]
-  #rf_test <- rf_dat_t[-to_train,]
-  
-  # RF
-  ctrl <- trainControl(method = "timeslice",
-                       initialWindow = 28,
-                       horizon = 5,
-                       fixedWindow = TRUE)
-  
-  grid <- expand.grid(mtry = c(round(sqrt(ncol(rf_dat_t))),
-                               round(log(ncol(rf_dat_t)))))
-  
-  rf <- caret:: train(as.numeric(cases_new) ~ .,
-              data = rf_dat_t[,-which(colnames(rf_dat_t) %in% c( "cases_new_cum", "date", "last_day", "last_week", "country"))],
-              method = "rf",
-              trControl = ctrl,
-              tuneGrid = grid)
-  
-  
-  return(rf)
-}
 
 
 #Function for Pdp input for one country, all of its predictors
 pdp_all_pred <- function(countr){
   res_AUT <- list()
   for (i in seq_along(preds[[countr]])){
-    res_AUT[[i]]<-  pdp::partial(rf_train[[countr]], pred.var = preds[[countr]][[i]])
+    res_AUT[[i]]<-  pdp::partial(rf_train[[countr]], pred.var = preds[[countr]][[i]], train = c_rf_dat_fb[[countr]])
   }
   return(res_AUT)
 }
@@ -154,7 +122,7 @@ pdp_all_pred <- function(countr){
 
 
 #Creates the RF train objects from the RF data
-rf_train <- lapply(c_rf_dat_fb, function(x) rf_train(x))
+rf_train <- country_res
 saveRDS(rf_train, "shinydashboard/dat/rf_train.RDS")
 
 #Get the predictors applied by countries
@@ -284,7 +252,8 @@ all_country <- names(country_res)
                     
 ##Function to calculate the object for the 3D Partial Dependence Plot
 pdp_pred_paired <- function(countr, pred1, pred2){
-  res <-  pdp::partial(countr, pred.var = c(pred1, pred2))
+  train_dat <- c_rf_dat_fb[[countr]]
+  res <-  pdp::partial(rf_train[[countr]], pred.var = c(pred1, pred2), train = train_dat)
   return(res)
 }
 
@@ -298,7 +267,7 @@ get_selectable <- function(country, no_top_predictors)
   #all_pred <- all_pred[-which(rownames(all_pred) == "people_vaccinated_per_hundred")]
   all_pred <- cbind("pred" = rownames(all_pred), all_pred)
   # Remove variables that are not in the training data or which has no ranking (no variance)
-  all_pred <- all_pred[-c(which(is.na(all_pred$ranking)), which(all_pred$pred %nin% colnames(rf_train[[country]]$trainingData))),]
+  all_pred <- all_pred[-c(which(is.na(all_pred$ranking)), which(all_pred$pred %nin% colnames(c_rf_dat_fb[[country]]))),]
   sel_pred <- all_pred[order(all_pred$ranking),]
   sel_pred <- merge(sel_pred, all_pred_table, by.x = "pred", by.y = "pred_id")
   sel_pred <- sel_pred[order(sel_pred$ranking),]
@@ -321,7 +290,7 @@ get_selectable <- function(country, no_top_predictors)
 
 selectable_ctr <- list()
 selectable_ctr <- lapply(all_country, function(x){
-  get_selectable(x, 12)
+  get_selectable(x, 10)
 })
 names(selectable_ctr) <- all_country
 saveRDS(selectable_ctr, "shinydashboard/dat/selectable_3d_country.RDS")
@@ -330,7 +299,7 @@ saveRDS(selectable_ctr, "shinydashboard/dat/selectable_3d_country.RDS")
 pdp_3d_object <- function(pred_id1, pred_id2, country){
   predx <- pred_id1
   predy <- pred_id2
-  object <- pdp_pred_paired(rf_train[[country]], predx, predy)
+  object <- pdp_pred_paired(country, predx, predy)
   
   cat("Object calculated")
   
